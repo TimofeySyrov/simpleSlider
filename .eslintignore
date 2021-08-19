@@ -1,0 +1,9 @@
+dist/*
+demo/*
+__mocks__/*
+src/*.test.ts
+node_modules/*
+babelrc.js
+jest.config.js
+webpack.dev.js
+webpack.prod.js
