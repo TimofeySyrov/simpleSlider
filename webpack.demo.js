@@ -1,22 +1,23 @@
 const path = require('path');
 const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.ts',
-  mode: 'production',
+  entry: './src/demo/index.ts',
+  mode: 'development',
   devServer: {
-    contentBase: './dist'
+    contentBase: './demo'
   },
   optimization: {
     usedExports: true
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'index.js',
+    path: path.resolve(__dirname, 'demo'),
   },
   module: {
     rules: [
@@ -36,7 +37,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-          presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env']
           }
         }
       },
@@ -73,6 +74,10 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/demo/index.html',
+      filename: 'index.html'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css'

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack serve --open --config webpack.dev.js",
-    "dev": "cross-env NODE_ENV=development webpack --config webpack.dev.js",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
+    "start": "cross-env NODE_ENV=development webpack serve --open --config webpack.demo.js",
+    "dev": "cross-env NODE_ENV=development webpack --config webpack.slider.jswebpack.demo.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.slider.js webpack.demo.js",
     "test": "npx jest"
   },
   "author": "",
