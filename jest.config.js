@@ -21,6 +21,7 @@ module.exports = {
   },
   transform: {
     "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest",
-    "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest"
+    "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
+    "^.+\\.hbs$": "<rootDir>/node_modules/handlebars-jest"
   }
 };
