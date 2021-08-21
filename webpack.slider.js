@@ -3,20 +3,29 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = !isDev;
 
 module.exports = {
+  mode: 'development',
+  devtool: false,
   entry: './src/slider/index.ts',
-  mode: 'production',
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[id].[chunkhash].js'
+  },
   devServer: {
     contentBase: './dist'
   },
   optimization: {
-    usedExports: true
+    minimize: isProd,
+    minimizer: [new TerserPlugin()]
   },
-  output: {
-    filename: 'index.js',
-    path: path.resolve(__dirname, 'dist'),
+  externals: {
+    jquery: 'jQuery'
   },
   module: {
     rules: [
@@ -59,6 +68,10 @@ module.exports = {
           'sass-loader',
         ],
       },
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader'
+      }
     ],
   },
   resolve: {
@@ -67,9 +80,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin(),
-    new ESLintPlugin({
-      extensions: ['ts']
-    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',

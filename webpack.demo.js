@@ -4,20 +4,17 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
-  entry: './src/demo/index.ts',
   mode: 'development',
-  devServer: {
-    contentBase: './demo'
-  },
-  optimization: {
-    usedExports: true
-  },
+  devtool: false,
+  entry: './src/demo/index.ts',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'demo'),
+  },
+  devServer: {
+    contentBase: './demo'
   },
   module: {
     rules: [
@@ -60,6 +57,10 @@ module.exports = {
           'sass-loader',
         ],
       },
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader'
+      }
     ],
   },
   resolve: {
@@ -68,9 +69,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin(),
-    new ESLintPlugin({
-      extensions: ['ts']
-    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
