@@ -18,6 +18,7 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .bar {
@@ -48,8 +49,8 @@ body {
   border-radius: 5px;
   text-align: center;
   color: #fafafa;
-  font-family: Arial, Helvetica, sans-serif;
   cursor: pointer;
+  user-select: none;
 
   &::after {
     content: '';
@@ -77,6 +78,21 @@ body {
     border: none;
     border-radius: 50%;
     background-color: rgb(109, 172, 255);
+    cursor: pointer;
+  }
+}
+
+.ruler {
+  position: relative;
+  list-style: none;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+
+  &__item {
+    position: absolute;
+    top: 0;
     cursor: pointer;
   }
 }

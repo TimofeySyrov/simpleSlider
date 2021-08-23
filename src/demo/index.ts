@@ -10,47 +10,80 @@ var handle = toggle.querySelector('.toggle__handle');
 var thumb = toggle.querySelector('.thumb');
 
 var ruler = slider.querySelector('.ruler');
+var ruler__item = ruler.querySelector('.ruler__item');
 
-const maxValue = 100;
-const minValue = 0;
+const maxValue = 10;
+const minValue = 5;
+const step = 2;
 
-function updateDisplay(event: any) {
+function getRulerValues(): any[] {
 
+  const midQuantity = Math.ceil((maxValue - minValue) / step);
+  const viewStep = Math.ceil(midQuantity / 5) * step;
+  const midArr = [];
+  let value = minValue;
+
+  for (let i = 0; value < maxValue; i += 1) {
+    value += viewStep;
+    if (value < maxValue) {
+      midArr.push(value);
+    }
+  }
+  
+  return [minValue, ...midArr, maxValue]
+}
+
+function getRulerItemPosition(item:number) {
+  const posItem = ((item - minValue) / (maxValue - minValue)) * 320;
+  return posItem
+}
+
+function setRulerValues() {
+  const values = getRulerValues();
+  
+
+  values.map(function(item) {
+    const posX = getRulerItemPosition(item)
+    ruler.innerHTML += `<li class="ruler__item" style="transform: translateX(${posX}px);">${item}</li>`;
+  })
+}
+
+setRulerValues();
+
+thumb.innerHTML = `${minValue}`;
+
+function updateDisplay(event: MouseEvent) {
   // ПОЛУЧАЕМ ЗНАЧЕНИЯ
   var sliderWidth = bar.getBoundingClientRect().width; // длина слайдера
   var windowXSliderStart = bar.getBoundingClientRect().x; // координата X начала слайдера относительно окна пользователя
   var windowX = event.pageX; // координата X из места клика относительно окна пользователя
 
   // ВЫЧИСЛЯЕМ КУДА КЛИКНУЛ
-  var sliderX = (windowX - windowXSliderStart); // координата X из места клика относительно длины слайдера
-  var procent = ((sliderX / sliderWidth)); // sliderX переводится в проценты для transform: scale
+  var sliderX = windowX - windowXSliderStart; // координата X из места клика относительно длины слайдера
+  var procent = sliderX / sliderWidth; // sliderX переводится в проценты для transform: scale
 
-  if((procent*100) >= minValue && (procent*100) <= maxValue){
-    // УСТАНАВЛИВАЕМ ДЛИНУ
+  // ВЫЧИСЛЯЕМ currentValue относительно position
+  var currentValue = step * Math.round(procent * (maxValue - minValue) / step) + minValue;
+
+  if(procent >= 0 && procent <= 1){
+    // УСТАНАВЛИВАЕМ ДЛИНУ для scale
     scale.setAttribute("style", `transform: scale(${procent}, 1);`);
 
     // Переносим toggle в место клика
     toggle.setAttribute("style", `transform: translateX(${sliderX}px);`);
 
-    // ВЫЧИСЛЯЕМ ЗНАЧЕНИЕ КООРДИНАТЫ ОТНОСИТЕЛЬНО ДЛИНЫ
-    var currentValue = Math.floor(maxValue * procent);
-
-    // Передаем current value в thumb
+    // Передаем currentValue в thumb
     thumb.innerHTML = `${currentValue}`;
   }
-
-  // // ТЕСТ
-  // console.log('')
-  // console.log(`/ Длина слайдера: ${sliderWidth}px`)
-  // console.log(`| Начало слайдера: ${windowXSliderStart}px`)
-  // console.log(`| Клик относительно окна: ${windowX}px`)
-  // console.log(`| Клик относительно слайдера: ${sliderX}px`)
-  // console.log(`| Процент длины для scale: ${procent}`)
 }
 
 slider.addEventListener('click', updateDisplay);
 
-slider.addEventListener('mousedown', e => {
+bar.addEventListener('mousedown', e => {
+  document.addEventListener('mousemove', updateDisplay);
+});
+
+toggle.addEventListener('mousedown', e => {
   document.addEventListener('mousemove', updateDisplay);
 });
 
