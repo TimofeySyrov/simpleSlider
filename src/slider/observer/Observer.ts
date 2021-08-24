@@ -16,10 +16,8 @@ class Observer implements IObserver {
     this.subscribers = this.subscribers.filter(sub => sub !== cb);
   }
 
-  public publish(data: any) {
-    this.subscribers.forEach((subscriber) => {
-        subscriber(data);
-    });
+  public notify(data: any) {
+    this.subscribers.forEach((subscriber) => subscriber(data));
   }
 }
 

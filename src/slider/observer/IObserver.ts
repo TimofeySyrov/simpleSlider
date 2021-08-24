@@ -1,7 +1,7 @@
 interface IObserver {
   subscribe: Function;
   unsubscribe: Function;
-  publish: Function;
+  notify: Function;
 }
 
 export default IObserver;
