@@ -19,7 +19,9 @@ class Controller extends Observer {
     this.sliderOptions = sliderOptions;
 
     this.model = new Model(this.sliderOptions);
-    this.view = new View(this.domParent, this.sliderOptions);
+    this.view = new View(this.domParent, this.model.getModelOptions());
+
+    this.subscribeToModules();
   }
 
   private subscribeToModules () {
