@@ -3,6 +3,6 @@ import SimpleSlider from '../simpleSlider';
 
 declare global {
   interface JQuery {
-    simpleSlider(options: IModelOptions): SimpleSlider;
+    simpleSlider(options?: IModelOptions): SimpleSlider;
   }
 }
