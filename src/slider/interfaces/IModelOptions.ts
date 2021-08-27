@@ -1,11 +1,13 @@
+import ICurrentValue from "./ICurrentValue";
+
 interface IModelOptions {
-  min?: number,
-  max?: number,
+  min: number,
+  max: number,
   orientation?: 'horizontal' | 'vertical',
   withDoubleHandle?: boolean,
   withThumb?: boolean,
   withRuler?: boolean,
-  currentValue?: number | { min?: number, max?: number } | 'middle',
+  currentValue?: number | ICurrentValue,
   step?: number
 }
 
