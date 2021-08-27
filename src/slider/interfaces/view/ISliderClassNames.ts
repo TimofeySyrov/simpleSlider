@@ -6,7 +6,10 @@ interface ISliderClassNames {
   rulerItem: string,
   toggle: string,
   toggleHandle: string,
-  thumb: string
+  thumb: string,
+  thumbVertical: string,
+  barVertical: string,
+  toggleVertical: string
 }
 
 export default ISliderClassNames
