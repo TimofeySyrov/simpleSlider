@@ -1,6 +1,7 @@
 import sliderClassNames from '../utils/sliderClassNames'
 
 class Toggle {
+  private dom: HTMLElement;
   constructor () {
 
   }
@@ -13,8 +14,17 @@ class Toggle {
     toggleHandle.classList.add(`${sliderClassNames.toggleHandle}`);
 
     htmlDOM.appendChild(toggleHandle)
+    this.saveDom(htmlDOM)
 
     return htmlDOM
+  }
+
+  public saveDom (el: HTMLElement) {
+    this.dom = el;
+  }
+
+  public getDom (): HTMLElement {
+    return this.dom;
   }
 }
 

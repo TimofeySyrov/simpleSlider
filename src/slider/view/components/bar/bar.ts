@@ -2,21 +2,32 @@ import sliderClassNames from '../utils/sliderClassNames'
 
 class Bar {
   
+  private dom: HTMLElement;
+  
   constructor () {
     
   }
 
   public getHtml ():ChildNode {
-    const htmlDOM = document.createElement('div');
-    htmlDOM.classList.add(`${sliderClassNames.bar}`);
+    const bar = document.createElement('div');
+    bar.classList.add(`${sliderClassNames.bar}`);
 
     const barScale = document.createElement('div');
     barScale.classList.add(`${sliderClassNames.barScale}`);
 
-    htmlDOM.appendChild(barScale)
+    bar.appendChild(barScale)
+    this.saveDom(bar);
 
-    return htmlDOM
+    return bar;
+  }
+
+  public saveDom (el: HTMLElement) {
+    this.dom = el;
+  }
+
+  public getDom (): HTMLElement {
+    return this.dom;
   }
 }
 
-export default Bar
+export default Bar;
