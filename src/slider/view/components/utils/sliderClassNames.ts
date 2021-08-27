@@ -9,6 +9,9 @@ const sliderClassNames: ISliderClassNames = {
   thumb: 'thumb',
   ruler: 'ruler',
   rulerItem: 'ruler__item',
+  thumbVertical: 'thumb_vertical',
+  barVertical: 'bar_vertical',
+  toggleVertical: 'toggle_vertical'
 };
 
 export default sliderClassNames
