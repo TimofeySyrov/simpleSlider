@@ -6,19 +6,14 @@ class Bar {
   
   constructor () {
     
+    this.createDom();
   }
 
-  public getHtml ():ChildNode {
-    const bar = document.createElement('div');
-    bar.classList.add(`${sliderClassNames.bar}`);
+  private createDom () {
+    const barDom = document.createElement('div');
+    barDom.classList.add(`${sliderClassNames.bar}`);
 
-    const barScale = document.createElement('div');
-    barScale.classList.add(`${sliderClassNames.barScale}`);
-
-    bar.appendChild(barScale)
-    this.saveDom(bar);
-
-    return bar;
+    this.saveDom(barDom);
   }
 
   public saveDom (el: HTMLElement) {

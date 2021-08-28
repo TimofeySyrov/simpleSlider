@@ -1,18 +1,17 @@
 import sliderClassNames from '../utils/sliderClassNames'
 
-class Thumb {
+class Scale {
   private dom: HTMLElement;
-
   constructor () {
+
+    this.createDom();
   }
 
-  public createDom ():ChildNode {
-    const domThumb = document.createElement('div');
-    domThumb.classList.add(`${sliderClassNames.thumb}`);
+  private createDom () {
+    const domScale = document.createElement('div');
+    domScale.classList.add(`${sliderClassNames.scale}`);
 
-    this.saveDom(domThumb)
-
-    return domThumb;
+    this.saveDom(domScale);
   }
 
   public saveDom (el: HTMLElement) {
@@ -24,4 +23,4 @@ class Thumb {
   }
 }
 
-export default Thumb
+export default Scale;

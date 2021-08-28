@@ -2,21 +2,17 @@ import sliderClassNames from '../utils/sliderClassNames'
 
 class Toggle {
   private dom: HTMLElement;
-  constructor () {
 
+  constructor () {
   }
 
-  public getHtml ():ChildNode {
-    const htmlDOM = document.createElement('div');
-    htmlDOM.classList.add(`${sliderClassNames.toggle}`);
+  public createDom ():ChildNode {
+    const domToggle = document.createElement('div');
+    domToggle.classList.add(`${sliderClassNames.toggle}`);
 
-    const toggleHandle = document.createElement('input');
-    toggleHandle.classList.add(`${sliderClassNames.toggleHandle}`);
+    this.saveDom(domToggle)
 
-    htmlDOM.appendChild(toggleHandle)
-    this.saveDom(htmlDOM)
-
-    return htmlDOM
+    return domToggle;
   }
 
   public saveDom (el: HTMLElement) {

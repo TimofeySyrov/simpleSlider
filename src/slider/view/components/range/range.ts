@@ -1,18 +1,19 @@
 import sliderClassNames from '../utils/sliderClassNames'
 
-class Thumb {
+class Range {
+  
   private dom: HTMLElement;
-
+  
   constructor () {
+    
+    this.createDom();
   }
 
-  public createDom ():ChildNode {
-    const domThumb = document.createElement('div');
-    domThumb.classList.add(`${sliderClassNames.thumb}`);
+  private createDom () {
+    const rangeDom = document.createElement('div');
+    rangeDom.classList.add(`${sliderClassNames.range}`);
 
-    this.saveDom(domThumb)
-
-    return domThumb;
+    this.saveDom(rangeDom);
   }
 
   public saveDom (el: HTMLElement) {
@@ -24,4 +25,4 @@ class Thumb {
   }
 }
 
-export default Thumb
+export default Range;
