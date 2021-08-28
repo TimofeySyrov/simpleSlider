@@ -2,16 +2,11 @@ import ISliderClassNames from '../../../interfaces/view/ISliderClassNames'
 
 const sliderClassNames: ISliderClassNames = {
   slider: 'simpleSlider',
-  bar: 'bar',
-  barScale: 'bar__scale',
-  toggle: 'toggle',
-  toggleHandle: 'toggle__handle',
-  thumb: 'thumb',
-  ruler: 'ruler',
-  rulerItem: 'ruler__item',
-  thumbVertical: 'thumb_vertical',
-  barVertical: 'bar_vertical',
-  toggleVertical: 'toggle_vertical'
+  bar: 'simpleSlider__bar',
+  range: 'simpleSlider__range',
+  toggle: 'simpleSlider__toggle',
+  thumb: 'simpleSlider__thumb',
+  scale: 'simpleSlider__scale'
 };
 
 export default sliderClassNames
