@@ -4,9 +4,9 @@ interface IModelOptions {
   min: number,
   max: number,
   orientation?: 'horizontal' | 'vertical',
-  withDoubleHandle?: boolean,
+  type?: 'from-start' | 'from-end' | 'range',
   withThumb?: boolean,
-  withRuler?: boolean,
+  withScale?: boolean,
   currentValue?: number | ICurrentValue,
   step?: number
 }
