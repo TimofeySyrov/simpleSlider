@@ -3,19 +3,23 @@ import Observer from "../observer/Observer";
 import IModelOptions from "../interfaces/IModelOptions";
 import sliderClassNames from "./components/utils/sliderClassNames";
 
-import Bar from "./components/bar/bar";
-import Ruler from "./components/ruler/ruler";
-import Thumb from "./components/thumb/thumb";
+import Range from "./components/range/range";
 import Toggle from "./components/toggle/toggle";
+import Thumb from "./components/thumb/thumb";
+import Scale from "./components/scale/scale";
+import Bar from "./components/bar/bar";
 
 class View extends Observer {
+
   private modelOptions: IModelOptions;
   private domParent: HTMLDivElement;
 
   private bar: Bar;
-  private toggle: Toggle;
+  private range: Range;
+  private from: Toggle;
+  private to: Toggle;
   private thumb: Thumb;
-  private ruler: Ruler;
+  private scale: Scale;
 
   constructor (domParent: HTMLDivElement, modelOptions: IModelOptions) {
     super();
@@ -31,138 +35,98 @@ class View extends Observer {
 
   private render () {
     this.initViewComponents();
-    this.createDOMSlider();
+    this.createDomSlider();
   }
 
   private initViewComponents () {
-    const { withThumb, withRuler } = this.modelOptions;
+    const { type, withThumb, withScale } = this.modelOptions;
 
     this.bar = new Bar();
-    this.toggle = new Toggle();
-
+    this.range = new Range();
+    this.from = new Toggle();
+    if(type === 'range') {
+      this.to = new Toggle();
+    }
     if(withThumb) {
       this.thumb = new Thumb();
     }
-    if(withRuler) {
-      this.ruler = new Ruler();
+    if(withScale) {
+      this.scale = new Scale();
     }
   }
 
-  private getToggles () {
-    const { currentValue, withThumb } = this.modelOptions;
-
-    if(typeof currentValue === 'object') {
-
+  private createDomSlider () {
+    const domSlider = document.createElement('div');
+    domSlider.classList.add(`${sliderClassNames.slider}`);
+    
+    const domBar = this.bar.getDom();
+    const domRange = this.range.getDom();
+    const domFrom = this.from.createDom();
+    const domScale = this.scale.getDom();
+    
+    domBar.appendChild(domRange);
+    domBar.appendChild(domFrom).appendChild(this.thumb.createDom());
+    if(this.to)  {
+      const domTo = this.to.createDom();
+      domBar.appendChild(domTo).appendChild(this.thumb.createDom());
     }
+    domSlider.appendChild(domBar);
+    domSlider.appendChild(domScale);
+
+    this.domParent.appendChild(domSlider);
+    this.bar.getDom().addEventListener("click", this.getClickPercentPosition.bind(this));
   }
 
-  private createDOMSlider () {
-    const { orientation, withDoubleHandle } = this.modelOptions;
-    const templateHtmlSlider = document.createElement('div');
-    templateHtmlSlider.classList.add(`${sliderClassNames.slider}`);
-
-    const templateBar = templateHtmlSlider.appendChild(this.bar.getHtml());
-    const templateToggle = templateHtmlSlider.appendChild(this.toggle.getHtml());
-
-    if(this.thumb) {
-      templateToggle.appendChild(this.thumb.getHtml());
-    }
-
-    if(this.ruler) {
-      templateHtmlSlider.appendChild(this.ruler.getHtml());
-    }
-
-    if(orientation === 'vertical') {
-      this.bar.getDom().classList.add(`${sliderClassNames.barVertical}`);
-      this.toggle.getDom().classList.add(`${sliderClassNames.toggleVertical}`);
-      this.thumb.getDom().classList.add(`${sliderClassNames.thumbVertical}`);
-    }
-
-    this.domParent.appendChild(templateHtmlSlider);
-    this.bar.getDom().addEventListener("click", this.setClickPosition.bind(this));
-  }
-
-  private getCurrentValuePosition (currentValue: number): number {
-    const { min, max } = this.modelOptions;
-    const percentPosition = (currentValue - min) / (max - min);
-    return percentPosition;
-  }
-
-  private getBarLength (): number {
-    const { orientation } = this.modelOptions;
-
-    if(orientation == 'horizontal') {
-      return this.bar.getDom().offsetWidth;
-    }
-    if(orientation == 'vertical') {
-      return this.bar.getDom().offsetHeight;
-    }
-  }
-
-  private getBarPositionStart (): number {
-    const { orientation } = this.modelOptions;
-
-    if(orientation == 'horizontal') {
-      return this.bar.getDom().getBoundingClientRect().x;
-    }
-    if(orientation == 'vertical') {
-      return this.bar.getDom().getBoundingClientRect().y;
-    }
-  }
-
-  private getClickCurrentValue (percent: number) {
-    const { min, max, step } = this.modelOptions;
-    const currentValue = step * Math.round(percent * (max - min) / step) + min;
-
-    return currentValue;
-  }
-
-  private getClickPercentPosition (event: MouseEvent): number {
-    const { orientation } = this.modelOptions;
-    const barLength = this.getBarLength();
-    const barPositionStart = this.getBarPositionStart();
-    const clickPosition = orientation == 'horizontal' ? event.pageX : event.pageY;
-    const pixelPosition = clickPosition - barPositionStart;
-    const percentPosition = pixelPosition / barLength;
-
-    return percentPosition;
-  }
-
-  private setScalePercentPosition (percent: number) {
-    const { orientation } = this.modelOptions; 
-    const scale = this.bar.getDom().querySelector(`.${sliderClassNames.barScale}`);
+  private getBarInfo(): {length: number, offset: number} {
+    const { orientation, type } = this.modelOptions;
+    let length;
+    let offset;
 
     if(orientation === 'horizontal') {
-      scale.setAttribute("style", `transform: scale(${percent}, 1);`);
+      length = this.bar.getDom().offsetWidth;
+      offset = this.bar.getDom().getBoundingClientRect().left;
+      
+      if(type === 'from-end') {
+        offset = this.bar.getDom().getBoundingClientRect().right;
+      }
     }
     if(orientation === 'vertical') {
-      scale.setAttribute("style", `transform: scale(1, ${percent});`);
+      length = this.bar.getDom().offsetHeight;
+      offset = this.bar.getDom().getBoundingClientRect().bottom;
+      
+      if(type === 'from-start') {
+        offset = this.bar.getDom().getBoundingClientRect().top;
+      }
     }
-    
+
+    return {length, offset};
   }
 
-  private setTogglePercentPosition (percent: number) {
-    const { orientation } = this.modelOptions;
-    const transformOrientation = orientation == 'horizontal' ? 'X' : 'Y';
-    const transformPercent = percent * 1000;
-    const toggle = this.toggle.getDom();
-    
-    toggle.setAttribute("style", `transform: translate${transformOrientation}(${transformPercent}%);`);
+  private getClickPercentPosition (event: MouseEvent) {
+    const { orientation, type } = this.modelOptions;
+    const barInfo = this.getBarInfo();
+    const horizontal = orientation === 'horizontal';
+    const clickPosition = horizontal ? event.pageX : event.pageY;
+    const pixelPosition = type === 'from-end' ? (barInfo.offset - clickPosition) : (clickPosition - barInfo.offset);
+    const percentPosition = (pixelPosition / barInfo.length) * 100;
+
+    // return percentPosition;
+    console.log(percentPosition)
+    this.setClickRangePosition(percentPosition);  
   }
 
-  private setThumbCurrentValue (currentValue: number) {
-    const thumb = this.thumb.getDom().innerHTML = `${currentValue}`;
-  }
+  private setClickRangePosition (percent: number) {
+    const { orientation, type } = this.modelOptions;
+    const horizontal = orientation === 'horizontal';
+    const stylePercent = horizontal ? 100-percent : 100-(percent * (-1)); //разберись че почему при вертикальном отрицательный процент идет (-1) убери
+    const typeStyle = horizontal 
+    ? type === 'from-end' 
+    ? `left` : `right` 
+    : type === 'from-start' 
+    ? `bottom` : `top`;
 
-  private setClickPosition (event: MouseEvent) {
-    const percentPosition = this.getClickPercentPosition(event);
-    const currentValue = this.getClickCurrentValue(percentPosition);
-
-    this.setTogglePercentPosition(percentPosition);
-    this.setScalePercentPosition(percentPosition);
-    this.setThumbCurrentValue(currentValue);
+    this.range.getDom().style[typeStyle] = `${stylePercent}%`;
   }
-  
 }
 
 export default View;
