@@ -55,6 +55,18 @@ class View extends Observer {
     }
   }
 
+  private setClassesFromOrientation () {
+    const { orientation } = this.modelOptions;
+    const vertical = orientation === 'vertical';
+
+    if(vertical) {
+      this.bar.getDom().classList.add(`${sliderClassNames.barVertical}`);
+      this.range.getDom().classList.add(`${sliderClassNames.rangeVertical}`);
+      this.from.getDom().classList.add(`${sliderClassNames.toggleVertical}`);
+      this.to.getDom().classList.add(`${sliderClassNames.toggleVertical}`);
+    }
+  }
+
   private createDomSlider () {
     const domSlider = document.createElement('div');
     domSlider.classList.add(`${sliderClassNames.slider}`);
@@ -73,59 +85,94 @@ class View extends Observer {
     domSlider.appendChild(domBar);
     domSlider.appendChild(domScale);
 
+    this.setClassesFromOrientation();
     this.domParent.appendChild(domSlider);
-    this.bar.getDom().addEventListener("click", this.getClickPercentPosition.bind(this));
+    this.bar.getDom().addEventListener("click", this.eventMouseClick.bind(this));
   }
 
-  private getBarInfo(): {length: number, offset: number} {
+  private eventMouseClick (event: MouseEvent) {
+    const element = (event.target as Element);
+    const bar = element.classList.contains(`${sliderClassNames.bar}`);
+    const range = element.classList.contains(`${sliderClassNames.range}`);
+    const toggle = element.classList.contains(`${sliderClassNames.toggle}`);
+    const thumb = element.classList.contains(`${sliderClassNames.thumb}`);
+    const percent = this.getClickPercentPosition(event);
+    const { type } = this.modelOptions;
+
+    this.setClickRangePosition(percent)
+    this.setTogglePosition(this.from.getDom(), percent);
+  }
+
+  private setLastToggle (toggle: HTMLDivElement) {
+    if(!toggle.classList.contains(`last-active`)) {
+      this.from.getDom().classList.remove(`last-active`);
+      this.to.getDom().classList.remove(`last-active`);
+      toggle.classList.add(`last-active`)
+    }
+  }
+
+  private getBarLength ():number {
+    const { orientation } = this.modelOptions;
+    const lengthType = orientation === 'vertical' ? `offsetHeight` : `offsetWidth`;
+    const length = this.bar.getDom()[lengthType];
+
+    return length;
+  }
+
+  private getBarOffset():number {
     const { orientation, type } = this.modelOptions;
-    let length;
-    let offset;
+    const horizontal = orientation === 'horizontal';
+    const fromEnd = type === 'from-end';
+    const fromStart = type === 'from-start';
+    const offsetSide = horizontal ? fromEnd ? `right` : `left` : fromStart ? `top` : `bottom`;
+    const offset = this.bar.getDom().getBoundingClientRect()[offsetSide];
 
-    if(orientation === 'horizontal') {
-      length = this.bar.getDom().offsetWidth;
-      offset = this.bar.getDom().getBoundingClientRect().left;
-      
-      if(type === 'from-end') {
-        offset = this.bar.getDom().getBoundingClientRect().right;
-      }
-    }
-    if(orientation === 'vertical') {
-      length = this.bar.getDom().offsetHeight;
-      offset = this.bar.getDom().getBoundingClientRect().bottom;
-      
-      if(type === 'from-start') {
-        offset = this.bar.getDom().getBoundingClientRect().top;
-      }
-    }
-
-    return {length, offset};
+    return offset;
   }
 
   private getClickPercentPosition (event: MouseEvent) {
     const { orientation, type } = this.modelOptions;
-    const barInfo = this.getBarInfo();
     const horizontal = orientation === 'horizontal';
+    const fromEnd = type === 'from-end';
+    const fromStart = type === 'from-start';
     const clickPosition = horizontal ? event.pageX : event.pageY;
-    const pixelPosition = type === 'from-end' ? (barInfo.offset - clickPosition) : (clickPosition - barInfo.offset);
-    const percentPosition = (pixelPosition / barInfo.length) * 100;
+    const barLength = this.getBarLength();
+    const barOffset = this.getBarOffset();
+    let pixelPosition: number;
 
-    // return percentPosition;
-    console.log(percentPosition)
-    this.setClickRangePosition(percentPosition);  
+    if(horizontal) {
+      pixelPosition = fromEnd ? (barOffset - clickPosition) : (clickPosition - barOffset);
+    }
+    if(!horizontal) {
+      pixelPosition = fromStart ? (clickPosition - barOffset) : (barOffset - clickPosition);
+    }
+    
+    const percentPosition = (pixelPosition / barLength) * 100;
+
+    return percentPosition;
   }
 
   private setClickRangePosition (percent: number) {
     const { orientation, type } = this.modelOptions;
     const horizontal = orientation === 'horizontal';
-    const stylePercent = horizontal ? 100-percent : 100-(percent * (-1)); //разберись че почему при вертикальном отрицательный процент идет (-1) убери
-    const typeStyle = horizontal 
-    ? type === 'from-end' 
-    ? `left` : `right` 
-    : type === 'from-start' 
-    ? `bottom` : `top`;
+    const fromEnd = type === 'from-end';
+    const fromStart = type === 'from-start';
+    const range = type === 'range';
+    const typeStyle = horizontal ? fromEnd ? `left` : `right` : fromStart ? `bottom` : `top`;
+    const stylePercent = 100 - percent;
 
     this.range.getDom().style[typeStyle] = `${stylePercent}%`;
+
+    if(range) {
+
+    }
+  }
+
+  private setTogglePosition (toggle: HTMLElement, percent: number) {
+    const { orientation, type } = this.modelOptions;
+    const side = orientation === 'vertical' ? 'bottom' : 'left';
+
+    toggle.style[side] = `${percent}%`;
   }
 }
 
