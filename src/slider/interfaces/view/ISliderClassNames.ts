@@ -4,7 +4,10 @@ interface ISliderClassNames {
   range: string,
   toggle: string,
   thumb: string,
-  scale: string
+  scale: string,
+  barVertical: string,
+  rangeVertical: string,
+  toggleVertical: string
 }
 
 export default ISliderClassNames
