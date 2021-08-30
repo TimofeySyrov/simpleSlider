@@ -9,7 +9,8 @@ const sliderClassNames: ISliderClassNames = {
   scale: 'simpleSlider__scale',
   barVertical: 'simpleSlider__bar_vertical',
   rangeVertical: 'simpleSlider__range_vertical',
-  toggleVertical: 'simpleSlider__toggle_vertical'
+  toggleVertical: 'simpleSlider__toggle_vertical',
+  thumbVertical: 'simpleSlider__thumb_vertical'
 };
 
 export default sliderClassNames
