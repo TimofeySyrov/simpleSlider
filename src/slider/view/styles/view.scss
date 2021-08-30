@@ -37,24 +37,31 @@ $sliderWidth: 5px;
     position: absolute;
     width: 15px;
     height: 15px;
-    background-color: teal;
+    background-color: rgb(129, 46, 46);
     transform: translate(-46%, -33%);
-    opacity: 0.3;
+    left: 10%;
 
     &_vertical {
       bottom: 0%;
-      top: 0%;
-      transform: translate(-33%, -43%);
+      transform: translate(-33%, 44%);
     }
   }
 
   &__thumb {
     position: absolute;
-    width: 30px;
-    height: 15px;
-    background-color: rgb(0, 225, 255);
+    padding: 4px 6px;
+    background-color: rgb(197, 138, 138);
     left: 50%;
-    bottom: 100%;
+    bottom: 50%;
     transform: translate(-50%, -50%);
+
+    &_vertical {
+      transform: translate(50%, 50%);
+    }
   }
+}
+
+.last-active {
+  z-index: 3;
+  background-color: rgb(0, 255, 76);
 }
