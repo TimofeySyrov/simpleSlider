@@ -1,7 +1,6 @@
 import Observer from "../observer/Observer";
 
 import IModelOptions from "../interfaces/IModelOptions";
-import ISliderNodes from "../interfaces/view/ISliderNodes";
 import sliderClassNames from "./components/utils/sliderClassNames";
 
 import Range from "./components/range/range";
@@ -14,7 +13,6 @@ class View extends Observer {
 
   private modelOptions: IModelOptions;
   private domParent: HTMLDivElement;
-  private nodes: ISliderNodes;
 
   private bar: Bar;
   private range: Range;
@@ -34,6 +32,7 @@ class View extends Observer {
 
   public updateModelOptions (newModelOptions: IModelOptions) {
     this.modelOptions = newModelOptions;
+    this.render();
   }
 
   private render () {
@@ -75,12 +74,10 @@ class View extends Observer {
     domBar.appendChild(domRange);
     domBar.appendChild(domFrom).appendChild(this.thumb.createDom());
     this.from.getDom().setAttribute("data-index", '0');
-    this.from.getDom().style.bottom = '25%' /* Надо получать курент валью и ставить его в стили, иначе checktoggles не будет работать. В модели по умолчанию будет если нет курент валью то при одиночном это середина слайдера, при диапазоне minCurrentValue = min maxCurrentValue = max */
     if(this.to)  {
       const domTo = this.to.createDom();
       domBar.appendChild(domTo).appendChild(this.thumb.createDom());
       this.to.getDom().setAttribute("data-index", '1');
-      this.to.getDom().style.bottom = '75%' /* Тут такая же ситуация как и в комменте выше ^^^, короче метод надо который курент валюшку будет ставить при инициализации слайдера */
     }
     domSlider.appendChild(domBar);
     domSlider.appendChild(domScale);
@@ -88,18 +85,33 @@ class View extends Observer {
 
     this.setClassesFromOrientation();
     this.setLastToggle(this.from.getDom())
+    this.setModelOptions();
 
     this.domParent.appendChild(domSlider);
   }
 
+  private setModelOptions () {
+    const { currentValue, type } = this.modelOptions;
+
+    if(typeof currentValue == 'object') {
+      this.setTogglePosition(this.from.getDom(), this.getPercentFromValue(currentValue.min));
+      if(type === 'range') {
+        this.setTogglePosition(this.to.getDom(), this.getPercentFromValue(currentValue.max));
+      }
+      this.setRangePosition();
+    }
+    if(typeof currentValue == 'number') {
+      this.setTogglePosition(this.from.getDom(), this.getPercentFromValue(currentValue));
+      if(type === 'range') {
+        this.setTogglePosition(this.to.getDom(), this.getPercentFromValue(currentValue));
+      }
+      this.setRangePosition();
+    }
+  }
+
   private eventMouseClick (event: MouseEvent) {
     const percent = this.getClickPercentPosition(event);
-    const element = event.target as HTMLElement;
-    const isToggle = element.classList.contains(`${sliderClassNames.toggle}`) ? element : null;
-    this.setTogglePosition(percent);
-    this.setRangePosition();
-    
-    
+    this.setClickPosition(percent);
   }
 
   private setClassesFromOrientation () {
@@ -151,7 +163,7 @@ class View extends Observer {
   }
 
   private getClickPercentPosition (event: MouseEvent) {
-    const { orientation, type } = this.modelOptions;
+    const { orientation, type, max } = this.modelOptions;
     const horizontal = orientation === 'horizontal';
     const fromEnd = type === 'from-end';
     const fromStart = type === 'from-start';
@@ -172,23 +184,46 @@ class View extends Observer {
     return percentPosition;
   }
 
+  private getPercentFromValue (value: number): number {
+    const { max } = this.modelOptions;
+    const valuePercent = (value / max) * 100;
+
+    return valuePercent;
+  }
+
+  private getTogglePosition (toggle: HTMLElement): number {
+    const { orientation, type, max } = this.modelOptions;
+    const horizontal = orientation === 'horizontal';
+    const offsetType = horizontal ? 'offsetLeft' : 'offsetTop';
+    const toggleSize = horizontal ? 'offsetWidth' : 'offsetHeight';
+    const barLength = this.getBarLength();
+    const pixelPosition = toggle[offsetType] + (toggle[toggleSize] / 2);
+    const percentPosition = (pixelPosition / barLength) * 100;
+    const final = horizontal ? percentPosition : 100 - percentPosition;
+
+    return final;
+  }
+
   private setRangePosition () {
     const { orientation, type } = this.modelOptions;
     const horizontal = orientation === 'horizontal';
     const fromEnd = type === 'from-end';
     const fromStart = type === 'from-start';
     const range = type === 'range';
+    
     const typeFromStyle = horizontal ? `left` : `bottom`;
     const typeToStyle = horizontal ? `right` : `top`;
 
     const fromPercent = this.from.getDom().style[typeFromStyle];
+    const percent = 100 - parseFloat(fromPercent.replace(/[^0-9,.]/g, ' '));
 
     if(fromStart) {
-      const percent = 100 - parseFloat(fromPercent.replace(/[^0-9,.]/g, ' '));
+      this.range.getDom().style[typeFromStyle] = '0';
       this.range.getDom().style[typeToStyle] = `${percent}%`;
     }
 
     if(fromEnd) {
+      this.range.getDom().style[typeToStyle] = '0';
       this.range.getDom().style[typeFromStyle] = fromPercent;
     }
 
@@ -200,45 +235,57 @@ class View extends Observer {
   }
 
   private setThumbValue (toggle: HTMLElement, percent: number) {
-    toggle.querySelector(`.${sliderClassNames.thumb}`).innerHTML = percent.toFixed(2);
+    const { orientation, type, max } = this.modelOptions;
+    const finalPercent = orientation === 'horizontal' ? percent : type === 'from-end' ? 100-percent : percent;
+    const currentValue = max * (finalPercent/100);
+    toggle.querySelector(`.${sliderClassNames.thumb}`).innerHTML = currentValue.toFixed(2);
   }
 
-  private setTogglePosition (percent: number) {
+  private setTogglePosition (toggle: HTMLElement, percent: number) {
+    const { orientation, type } = this.modelOptions;
+    const typeStyle = orientation === 'horizontal' ? `left` : `bottom`;
+
+    toggle.style[typeStyle] = `${percent}%`;
+    this.setThumbValue(toggle, percent);
+  }
+
+  private setClickPosition (percent: number) {
     const { orientation, type } = this.modelOptions;
     const horizontal = orientation === 'horizontal';
-    const side = horizontal ? 'left' : 'bottom';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
     const isRange = type === 'range';
-    const finalToggle = this.checkRangeToggles(percent);
-    console.log(finalToggle)
+    const finalToggle = this.checkClickPosition(percent);
 
     if(isFromStart) {
       const stylePercent = horizontal ? percent : 100 - percent;
-      finalToggle.style[side] = `${stylePercent}%`;
+      this.setTogglePosition(finalToggle, stylePercent);
       this.setThumbValue(finalToggle, stylePercent);
+      this.setRangePosition();
     }
     if(isFromEnd) {
       const stylePercent = horizontal ? 100 - percent : percent;
-      finalToggle.style[side] = `${stylePercent}%`;
-      this.setThumbValue(finalToggle, 100 - percent);
+      this.setTogglePosition(finalToggle, stylePercent);
+      this.setThumbValue(finalToggle, percent);
+      this.setRangePosition();
     }
     if(isRange) {
-      finalToggle.style[side] = `${percent}%`;
+      const stylePercent = horizontal ? 100 - percent : percent;
+      this.setTogglePosition(finalToggle, percent);
       this.setThumbValue(finalToggle, percent);
+      this.setRangePosition();
     }
   }
 
-  private checkRangeToggles (percent: number): HTMLElement {
-    const { orientation, type } = this.modelOptions;
-    const styleType = orientation === 'horizontal' ? `left` : `bottom`;
+  private checkClickPosition (percent: number): HTMLElement {
+    const { type } = this.modelOptions;
     const fromToggle = this.from.getDom();
-    const fromTogglePercent = parseFloat(fromToggle.style[styleType].replace(/[^0-9,.]/g, ' '));
+    const fromTogglePercent = this.getTogglePosition(fromToggle);
 
     if(type === 'range') {
 
       const toToggle = this.to.getDom();
-      const toTogglePercent = parseFloat(toToggle.style[styleType].replace(/[^0-9,.]/g, ' '));
+      const toTogglePercent = this.getTogglePosition(toToggle);
       const toggleRangeMiddle = (toTogglePercent - fromTogglePercent) / 2;
       const percentFromToggleRange = (percent - fromTogglePercent);
 
@@ -251,15 +298,17 @@ class View extends Observer {
         return toToggle as HTMLElement;
       }
       if(percentFromToggleRange <= toggleRangeMiddle) {
+        console.log('from ret')
         this.setLastToggle(fromToggle)
         return fromToggle as HTMLElement;
       }
       if(percentFromToggleRange > toggleRangeMiddle) {
+        console.log('to ret')
         this.setLastToggle(toToggle)
         return toToggle as HTMLElement;
       }
     }
-  
+    
     return fromToggle;
   }
 }
