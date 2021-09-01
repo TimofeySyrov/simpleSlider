@@ -185,10 +185,11 @@ class View extends Observer {
   }
 
   private getPercentFromValue (value: number): number {
-    const { max } = this.modelOptions;
+    const { orientation, max, type } = this.modelOptions;
     const valuePercent = (value / max) * 100;
+    const final = orientation === 'horizontal' ? valuePercent : type === 'from-end' ? 100 - valuePercent : valuePercent;
 
-    return valuePercent;
+    return final;
   }
 
   private getTogglePosition (toggle: HTMLElement): number {
@@ -199,7 +200,7 @@ class View extends Observer {
     const barLength = this.getBarLength();
     const pixelPosition = toggle[offsetType] + (toggle[toggleSize] / 2);
     const percentPosition = (pixelPosition / barLength) * 100;
-    const final = horizontal ? percentPosition : 100 - percentPosition;
+    const final = horizontal ? percentPosition : type === 'from-end' ? percentPosition : 100 - percentPosition;
 
     return final;
   }
@@ -236,8 +237,8 @@ class View extends Observer {
 
   private setThumbValue (toggle: HTMLElement, percent: number) {
     const { orientation, type, max } = this.modelOptions;
-    const finalPercent = orientation === 'horizontal' ? percent : type === 'from-end' ? 100-percent : percent;
-    const currentValue = max * (finalPercent/100);
+    const final = orientation === 'horizontal' ? percent : type === 'from-end' ? 100 - percent : percent;
+    const currentValue = max * (final/100);
     toggle.querySelector(`.${sliderClassNames.thumb}`).innerHTML = currentValue.toFixed(2);
   }
 
