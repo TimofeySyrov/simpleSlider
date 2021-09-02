@@ -2,7 +2,7 @@ import sliderClassNames from '../utils/sliderClassNames'
 
 class Range {
   
-  private dom: HTMLElement;
+  private dom: HTMLDivElement;
   
   constructor () {
     
@@ -11,16 +11,16 @@ class Range {
 
   private createDom () {
     const rangeDom = document.createElement('div');
-    rangeDom.classList.add(`${sliderClassNames.range}`);
+    rangeDom.classList.add(`${sliderClassNames.range.main}`);
 
     this.saveDom(rangeDom);
   }
 
-  public saveDom (el: HTMLElement) {
+  public saveDom (el: HTMLDivElement) {
     this.dom = el;
   }
 
-  public getDom (): HTMLElement {
+  public getDom (): HTMLDivElement {
     return this.dom;
   }
 }

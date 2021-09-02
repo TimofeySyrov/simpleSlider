@@ -2,7 +2,7 @@ import sliderClassNames from '../utils/sliderClassNames'
 
 class Bar {
   
-  private dom: HTMLElement;
+  private dom: HTMLDivElement;
   
   constructor () {
     
@@ -11,16 +11,16 @@ class Bar {
 
   private createDom () {
     const barDom = document.createElement('div');
-    barDom.classList.add(`${sliderClassNames.bar}`);
+    barDom.classList.add(`${sliderClassNames.bar.main}`);
 
     this.saveDom(barDom);
   }
 
-  public saveDom (el: HTMLElement) {
+  public saveDom (el: HTMLDivElement) {
     this.dom = el;
   }
 
-  public getDom (): HTMLElement {
+  public getDom (): HTMLDivElement {
     return this.dom;
   }
 }

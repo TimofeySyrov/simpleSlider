@@ -1,7 +1,7 @@
 import sliderClassNames from '../utils/sliderClassNames'
 
 class Scale {
-  private dom: HTMLElement;
+  private dom: HTMLDivElement;
   constructor () {
 
     this.createDom();
@@ -9,16 +9,16 @@ class Scale {
 
   private createDom () {
     const domScale = document.createElement('div');
-    domScale.classList.add(`${sliderClassNames.scale}`);
+    domScale.classList.add(`${sliderClassNames.scale.main}`);
 
     this.saveDom(domScale);
   }
 
-  public saveDom (el: HTMLElement) {
+  public saveDom (el: HTMLDivElement) {
     this.dom = el;
   }
 
-  public getDom (): HTMLElement {
+  public getDom (): HTMLDivElement {
     return this.dom;
   }
 }
