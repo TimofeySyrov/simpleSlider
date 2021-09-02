@@ -8,26 +8,19 @@ import Toggle from "./components/toggle/toggle";
 import Thumb from "./components/thumb/thumb";
 import Scale from "./components/scale/scale";
 import Bar from "./components/bar/bar";
+import ISliderNodes, { TDomParent } from "../interfaces/view/ISliderNodes";
 
 class View extends Observer {
 
   private modelOptions: IModelOptions;
   private domParent: HTMLDivElement;
-
-  private bar: Bar;
-  private range: Range;
-  private from: Toggle;
-  private to: Toggle;
-  private thumb: Thumb;
-  private scale: Scale;
-  private slider: HTMLDivElement;
+  private nodes: ISliderNodes;
 
   constructor (domParent: HTMLDivElement, modelOptions: IModelOptions) {
     super();
 
-    this.domParent = domParent;
     this.modelOptions = modelOptions;
-    this.render();
+    this.initSubView(domParent);
   }
 
   public updateModelOptions (newModelOptions: IModelOptions) {
@@ -35,75 +28,104 @@ class View extends Observer {
     this.render();
   }
 
-  private render () {
-    this.initViewComponents();
-    this.createDomSlider();
-    this.initComponentsListeners();
-  }
+  private initSubView (newDomParent: TDomParent) {
 
-  private initComponentsListeners () {
-    this.bar.getDom().addEventListener("click", this.eventMouseClick.bind(this));
-  }
-
-  private initViewComponents () {
-    const { type, withThumb, withScale } = this.modelOptions;
-
-    this.bar = new Bar();
-    this.range = new Range();
-    this.from = new Toggle();
-    if(type === 'range') {
-      this.to = new Toggle();
+    this.nodes = {
+      domParent: newDomParent,
+      slider: document.createElement('div'),
+      bar: new Bar().getDom(),
+      range: new Range().getDom(),
+      from: {
+        handle: new Toggle().createDom(),
+        thumb: new Thumb().createDom()
+      },
+      to: {
+        handle: new Toggle().createDom(),
+        thumb: new Thumb().createDom()
+      },
+      scale: new Scale().getDom()
     }
-    if(withThumb) {
-      this.thumb = new Thumb();
-    }
-    if(withScale) {
-      this.scale = new Scale();
-    }
-  }
 
-  private createDomSlider () {
-    const domSlider = document.createElement('div');
-    domSlider.classList.add(`${sliderClassNames.slider}`);
-    
-    const domBar = this.bar.getDom();
-    const domRange = this.range.getDom();
-    const domFrom = this.from.createDom();
-    const domScale = this.scale.getDom();
-    
-    domBar.appendChild(domRange);
-    domBar.appendChild(domFrom).appendChild(this.thumb.createDom());
-    this.from.getDom().setAttribute("data-index", '0');
-    if(this.to)  {
-      const domTo = this.to.createDom();
-      domBar.appendChild(domTo).appendChild(this.thumb.createDom());
-      this.to.getDom().setAttribute("data-index", '1');
-    }
-    domSlider.appendChild(domBar);
-    domSlider.appendChild(domScale);
-    this.slider = domSlider;
-
-    this.setClassesFromOrientation();
-    this.setLastToggle(this.from.getDom())
+    this.render();
     this.setModelOptions();
+    this.initSubViewListeners();
+  }
 
-    this.domParent.appendChild(domSlider);
+  private render () {
+    const { type, withRange, withThumb, withScale } = this.modelOptions;
+    const nodes = this.nodes;
+    const isRange = type === 'range';
+    const isFromStart = type === 'from-start';
+    const isFromEnd = type === 'from-end';
+
+    this.renderSubViewStyles();
+
+    nodes.domParent.appendChild(nodes.slider);
+    nodes.slider.appendChild(nodes.bar);
+
+    if(withRange) {
+      nodes.bar.appendChild(nodes.range);
+    }
+
+    if(withScale) {
+      nodes.slider.appendChild(nodes.scale)
+    }
+
+    if(withThumb) {
+      nodes.from.handle.appendChild(nodes.from.thumb);
+
+      if(isRange) {
+        nodes.to.handle.appendChild(nodes.to.thumb);
+      }
+    }
+
+    if(isFromStart || isFromEnd) {
+      nodes.bar.appendChild(nodes.from.handle)
+    }
+
+    if(isRange) {
+      nodes.bar.appendChild(nodes.from.handle)
+      nodes.bar.appendChild(nodes.to.handle)
+    }
+  }
+
+  private renderSubViewStyles () {
+    const { orientation } = this.modelOptions;
+    const nodes = this.nodes;
+
+    nodes.slider.setAttribute('class', `${sliderClassNames.slider}`);
+    nodes.from.handle.setAttribute('data-index', `0`);
+    nodes.to.handle.setAttribute('data-index', `1`);
+    
+    nodes.bar.classList.add(`${sliderClassNames.bar[orientation]}`);
+    nodes.range.classList.add(`${sliderClassNames.range[orientation]}`);
+    nodes.from.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
+    nodes.from.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
+    nodes.to.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
+    nodes.to.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
+    nodes.scale.classList.add(`${sliderClassNames.scale[orientation]}`);
+  }
+
+  private initSubViewListeners () {
+    const nodes = this.nodes;
+    nodes.bar.addEventListener("click", this.eventMouseClick.bind(this));
   }
 
   private setModelOptions () {
     const { currentValue, type } = this.modelOptions;
+    const nodes = this.nodes;
 
     if(typeof currentValue == 'object') {
-      this.setTogglePosition(this.from.getDom(), this.getPercentFromValue(currentValue.min));
+      this.setTogglePosition(nodes.from.handle, this.getPercentFromValue(currentValue.min));
       if(type === 'range') {
-        this.setTogglePosition(this.to.getDom(), this.getPercentFromValue(currentValue.max));
+        this.setTogglePosition(nodes.to.handle, this.getPercentFromValue(currentValue.max));
       }
       this.setRangePosition();
     }
     if(typeof currentValue == 'number') {
-      this.setTogglePosition(this.from.getDom(), this.getPercentFromValue(currentValue));
+      this.setTogglePosition(nodes.from.handle, this.getPercentFromValue(currentValue));
       if(type === 'range') {
-        this.setTogglePosition(this.to.getDom(), this.getPercentFromValue(currentValue));
+        this.setTogglePosition(nodes.to.handle, this.getPercentFromValue(currentValue));
       }
       this.setRangePosition();
     }
@@ -114,50 +136,40 @@ class View extends Observer {
     this.setClickPosition(percent);
   }
 
-  private setClassesFromOrientation () {
-    const { orientation, type } = this.modelOptions;
-    const vertical = orientation === 'vertical';
-
-    if(vertical) {
-      this.bar.getDom().classList.add(`${sliderClassNames.barVertical}`);
-      this.range.getDom().classList.add(`${sliderClassNames.rangeVertical}`);
-      this.from.getDom().classList.add(`${sliderClassNames.toggleVertical}`);
-      this.from.getDom().querySelector(`.${sliderClassNames.thumb}`).classList.add(`${sliderClassNames.thumbVertical}`);
-      if(type === 'range') {
-        this.to.getDom().classList.add(`${sliderClassNames.toggleVertical}`);
-        this.to.getDom().querySelector(`.${sliderClassNames.thumb}`).classList.add(`${sliderClassNames.thumbVertical}`);
-      }
-    }
-  }
-
   private setLastToggle (toggle: HTMLElement) {
-    if(!toggle.classList.contains(`last-active`)) {
+    const { type } = this.modelOptions;
+    const nodes = this.nodes;
+    const isRange = type === 'range';
+    const lastActiveClassName = `${sliderClassNames.toggle.main}` + `_last-active`;
 
-      this.from.getDom().classList.remove(`last-active`);
+    if(!toggle.classList.contains(`${lastActiveClassName}`)) {
+      nodes.from.handle.classList.remove(`${lastActiveClassName}`);
 
-      if(this.to) {
-        this.to.getDom().classList.remove(`last-active`);
+      if(isRange) {
+        nodes.to.handle.classList.remove(`${lastActiveClassName}`);
       }
 
-      toggle.classList.add(`last-active`)
+      toggle.classList.add(`${lastActiveClassName}`)
     }
   }
 
   private getBarLength ():number {
     const { orientation } = this.modelOptions;
+    const nodes = this.nodes;
     const lengthType = orientation === 'vertical' ? `offsetHeight` : `offsetWidth`;
-    const length = this.bar.getDom()[lengthType];
+    const length = nodes.bar[lengthType];
 
     return length;
   }
 
   private getBarOffset():number {
     const { orientation, type } = this.modelOptions;
+    const nodes = this.nodes;
     const horizontal = orientation === 'horizontal';
     const fromEnd = type === 'from-end';
     const fromStart = type === 'from-start';
     const offsetSide = horizontal ? fromEnd ? `right` : `left` : fromStart ? `top` : `bottom`;
-    const offset = this.bar.getDom().getBoundingClientRect()[offsetSide];
+    const offset = nodes.bar.getBoundingClientRect()[offsetSide];
 
     return offset;
   }
@@ -207,6 +219,7 @@ class View extends Observer {
 
   private setRangePosition () {
     const { orientation, type } = this.modelOptions;
+    const nodes = this.nodes;
     const horizontal = orientation === 'horizontal';
     const fromEnd = type === 'from-end';
     const fromStart = type === 'from-start';
@@ -215,23 +228,23 @@ class View extends Observer {
     const typeFromStyle = horizontal ? `left` : `bottom`;
     const typeToStyle = horizontal ? `right` : `top`;
 
-    const fromPercent = this.from.getDom().style[typeFromStyle];
+    const fromPercent = nodes.from.handle.style[typeFromStyle];
     const percent = 100 - parseFloat(fromPercent.replace(/[^0-9,.]/g, ' '));
 
     if(fromStart) {
-      this.range.getDom().style[typeFromStyle] = '0';
-      this.range.getDom().style[typeToStyle] = `${percent}%`;
+      nodes.range.style[typeFromStyle] = '0';
+      nodes.range.style[typeToStyle] = `${percent}%`;
     }
 
     if(fromEnd) {
-      this.range.getDom().style[typeToStyle] = '0';
-      this.range.getDom().style[typeFromStyle] = fromPercent;
+      nodes.range.style[typeToStyle] = '0';
+      nodes.range.style[typeFromStyle] = fromPercent;
     }
 
     if(range){
-      const toPercent = 100 - parseFloat(this.to.getDom().style[typeFromStyle].replace(/[^0-9,.]/g, ' '));
-      this.range.getDom().style[typeFromStyle] = fromPercent;
-      this.range.getDom().style[typeToStyle] = `${toPercent}%`;
+      const toPercent = 100 - parseFloat(nodes.to.handle.style[typeFromStyle].replace(/[^0-9,.]/g, ' '));
+      nodes.range.style[typeFromStyle] = fromPercent;
+      nodes.range.style[typeToStyle] = `${toPercent}%`;
     }
   }
 
@@ -239,10 +252,11 @@ class View extends Observer {
     const { orientation, type, max } = this.modelOptions;
     const final = orientation === 'horizontal' ? percent : type === 'from-end' ? 100 - percent : percent;
     const currentValue = max * (final/100);
-    toggle.querySelector(`.${sliderClassNames.thumb}`).innerHTML = currentValue.toFixed(2);
+
+    toggle.querySelector(`.${sliderClassNames.thumb[orientation]}`).innerHTML = currentValue.toFixed(2);
   }
 
-  private setTogglePosition (toggle: HTMLElement, percent: number) {
+  private setTogglePosition (toggle: HTMLDivElement, percent: number) {
     const { orientation, type } = this.modelOptions;
     const typeStyle = orientation === 'horizontal' ? `left` : `bottom`;
 
@@ -278,35 +292,36 @@ class View extends Observer {
     }
   }
 
-  private checkClickPosition (percent: number): HTMLElement {
+  private checkClickPosition (percent: number): HTMLDivElement {
     const { type } = this.modelOptions;
-    const fromToggle = this.from.getDom();
+    const nodes = this.nodes;
+    const fromToggle = nodes.from.handle;
     const fromTogglePercent = this.getTogglePosition(fromToggle);
 
     if(type === 'range') {
 
-      const toToggle = this.to.getDom();
+      const toToggle = nodes.to.handle;
       const toTogglePercent = this.getTogglePosition(toToggle);
       const toggleRangeMiddle = (toTogglePercent - fromTogglePercent) / 2;
       const percentFromToggleRange = (percent - fromTogglePercent);
 
       if(percent <= fromTogglePercent) {
         this.setLastToggle(fromToggle)
-        return fromToggle as HTMLElement;
+        return fromToggle;
       }
       if(percent >= toTogglePercent) {
         this.setLastToggle(toToggle)
-        return toToggle as HTMLElement;
+        return toToggle;
       }
       if(percentFromToggleRange <= toggleRangeMiddle) {
         console.log('from ret')
         this.setLastToggle(fromToggle)
-        return fromToggle as HTMLElement;
+        return fromToggle;
       }
       if(percentFromToggleRange > toggleRangeMiddle) {
         console.log('to ret')
         this.setLastToggle(toToggle)
-        return toToggle as HTMLElement;
+        return toToggle;
       }
     }
     
