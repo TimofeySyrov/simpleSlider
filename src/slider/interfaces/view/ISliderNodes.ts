@@ -1,13 +1,17 @@
+import { TDomParent } from "./namespace";
+
 interface ISliderNodes {
   domParent: TDomParent,
   slider: HTMLDivElement,
   bar: HTMLDivElement,
   range: HTMLDivElement,
-  from: TToggle,
-  to: TToggle,
+  from: IToggle,
+  to: IToggle,
   scale: HTMLDivElement
-}
+};
 
-type TToggle = { handle: HTMLDivElement, thumb: HTMLDivElement };
-export type TDomParent = HTMLDivElement | HTMLSpanElement;
+interface IToggle {
+  handle: HTMLDivElement,
+  thumb: HTMLDivElement
+};
 export default ISliderNodes;
