@@ -6,8 +6,9 @@ const defaultModelOptions: IModelOptions = {
   step: 1,
   orientation: 'horizontal',
   currentValue: 1,
+  withRange: true,
   withThumb: true,
-  withRuler: true
+  withScale: true
 }
 
 export default defaultModelOptions;
