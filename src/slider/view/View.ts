@@ -1,22 +1,22 @@
 import Observer from "../observer/Observer";
 
 import IModelOptions from "../interfaces/IModelOptions";
+import ISliderNodes from "../interfaces/view/ISliderNodes";
 import sliderClassNames from "./components/utils/sliderClassNames";
+import { TDomParent, TToggle } from "../interfaces/view/namespace";
 
 import Range from "./components/range/range";
 import Toggle from "./components/toggle/toggle";
 import Thumb from "./components/thumb/thumb";
 import Scale from "./components/scale/scale";
 import Bar from "./components/bar/bar";
-import ISliderNodes, { TDomParent } from "../interfaces/view/ISliderNodes";
 
 class View extends Observer {
 
   private modelOptions: IModelOptions;
-  private domParent: HTMLDivElement;
   private nodes: ISliderNodes;
 
-  constructor (domParent: HTMLDivElement, modelOptions: IModelOptions) {
+  constructor (domParent: TDomParent, modelOptions: IModelOptions) {
     super();
 
     this.modelOptions = modelOptions;
@@ -113,50 +113,45 @@ class View extends Observer {
 
   private setModelOptions () {
     const { currentValue, type } = this.modelOptions;
-    const nodes = this.nodes;
+    const isRange = type === 'range';
 
     if(typeof currentValue == 'object') {
-      this.setTogglePosition(nodes.from.handle, this.getPercentFromValue(currentValue.min));
-      if(type === 'range') {
-        this.setTogglePosition(nodes.to.handle, this.getPercentFromValue(currentValue.max));
+      this.setToggleValue('from', currentValue.min);
+      if(isRange) {
+        this.setToggleValue('to', currentValue.max);
       }
-      this.setRangePosition();
     }
+
     if(typeof currentValue == 'number') {
-      this.setTogglePosition(nodes.from.handle, this.getPercentFromValue(currentValue));
-      if(type === 'range') {
-        this.setTogglePosition(nodes.to.handle, this.getPercentFromValue(currentValue));
+      this.setToggleValue('from', currentValue);
+      if(isRange) {
+        this.setToggleValue('to', currentValue);
       }
-      this.setRangePosition();
     }
   }
 
   private eventMouseClick (event: MouseEvent) {
-    const percent = this.getClickPercentPosition(event);
-    this.setClickPosition(percent);
+    const value = this.convertCoordsToValue(event);
+    this.setClickPosition(value);
   }
 
-  private setLastToggle (toggle: HTMLElement) {
-    const { type } = this.modelOptions;
+  private setLastToggle (toggle: TToggle) {
     const nodes = this.nodes;
-    const isRange = type === 'range';
     const lastActiveClassName = `${sliderClassNames.toggle.main}` + `_last-active`;
 
-    if(!toggle.classList.contains(`${lastActiveClassName}`)) {
+    if(!nodes[toggle].handle.classList.contains(`${lastActiveClassName}`)) {
       nodes.from.handle.classList.remove(`${lastActiveClassName}`);
-
-      if(isRange) {
-        nodes.to.handle.classList.remove(`${lastActiveClassName}`);
-      }
-
-      toggle.classList.add(`${lastActiveClassName}`)
+      nodes.to.handle.classList.remove(`${lastActiveClassName}`);
+    
+      nodes[toggle].handle.classList.add(`${lastActiveClassName}`)
     }
   }
 
   private getBarLength ():number {
     const { orientation } = this.modelOptions;
     const nodes = this.nodes;
-    const lengthType = orientation === 'vertical' ? `offsetHeight` : `offsetWidth`;
+    const isVertical = orientation === 'vertical';
+    const lengthType = isVertical ? `offsetHeight` : `offsetWidth`;
     const length = nodes.bar[lengthType];
 
     return length;
@@ -165,167 +160,136 @@ class View extends Observer {
   private getBarOffset():number {
     const { orientation, type } = this.modelOptions;
     const nodes = this.nodes;
-    const horizontal = orientation === 'horizontal';
-    const fromEnd = type === 'from-end';
-    const fromStart = type === 'from-start';
-    const offsetSide = horizontal ? fromEnd ? `right` : `left` : fromStart ? `top` : `bottom`;
+    const isVertical = orientation === 'vertical';
+    const offsetSide = isVertical ? `top` : `left`;
     const offset = nodes.bar.getBoundingClientRect()[offsetSide];
 
     return offset;
   }
 
-  private getClickPercentPosition (event: MouseEvent) {
-    const { orientation, type, max } = this.modelOptions;
-    const horizontal = orientation === 'horizontal';
-    const fromEnd = type === 'from-end';
-    const fromStart = type === 'from-start';
-    const clickPosition = horizontal ? event.pageX : event.pageY;
+  private convertCoordsToValue (event: MouseEvent): number {
+    const { orientation, type, max, min } = this.modelOptions;
+    const isVertical = orientation === 'vertical';
+    const isFromEnd = type === 'from-end';
+
+    const coords = isVertical ? event.pageY : event.pageX;
     const barLength = this.getBarLength();
     const barOffset = this.getBarOffset();
-    let pixelPosition: number;
 
-    if(horizontal) {
-      pixelPosition = fromEnd ? (barOffset - clickPosition) : (clickPosition - barOffset);
-    }
-    if(!horizontal) {
-      pixelPosition = fromStart ? (clickPosition - barOffset) : (barOffset - clickPosition);
-    }
-    
-    const percentPosition = (pixelPosition / barLength) * 100;
+    const value = ((coords - barOffset) / barLength) * max;
+    const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
 
-    return percentPosition;
+    return confirmedValue;
   }
 
-  private getPercentFromValue (value: number): number {
+  private convertValueToPercent (value: number): number {
     const { orientation, max, type } = this.modelOptions;
-    const valuePercent = (value / max) * 100;
-    const final = orientation === 'horizontal' ? valuePercent : type === 'from-end' ? 100 - valuePercent : valuePercent;
+    const isVertical = orientation === 'vertical';
+    const isFromEnd = type === 'from-end';
 
-    return final;
+    const percent = (value / max) * 100;
+    const confirmedPercent = isVertical ? isFromEnd ? 100-percent : percent : isFromEnd ? 100-percent : percent;
+
+    return confirmedPercent;
   }
 
-  private getTogglePosition (toggle: HTMLElement): number {
+  private getToggleValue (toggle: TToggle): number {
     const { orientation, type, max } = this.modelOptions;
-    const horizontal = orientation === 'horizontal';
-    const offsetType = horizontal ? 'offsetLeft' : 'offsetTop';
-    const toggleSize = horizontal ? 'offsetWidth' : 'offsetHeight';
-    const barLength = this.getBarLength();
-    const pixelPosition = toggle[offsetType] + (toggle[toggleSize] / 2);
-    const percentPosition = (pixelPosition / barLength) * 100;
-    const final = horizontal ? percentPosition : type === 'from-end' ? percentPosition : 100 - percentPosition;
+    const nodes = this.nodes;
 
-    return final;
+    const isVertical = orientation === 'vertical';
+    const isFromEnd = type === 'from-end';
+    const offsetType = isVertical ? 'offsetTop' : 'offsetLeft';
+    const toggleSize = isVertical ? 'offsetHeight' : 'offsetWidth';
+    const barLength = this.getBarLength();
+
+    const pixelPosition = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
+    const value = (pixelPosition / barLength) * max;
+    const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
+
+    return confirmedValue;
   }
 
   private setRangePosition () {
+    const { orientation, type, withRange } = this.modelOptions;
+
+    if(withRange) {
+      const nodes = this.nodes;
+      const isVertical = orientation === 'vertical';
+      const isFromEnd = type === 'from-end';
+      const isFromStart = type === 'from-start';
+      const isRange = type === 'range';
+
+      const sideStart = isVertical ? `bottom` : `left`;
+      const sideEnd = isVertical ? `top` : `right`;
+
+      const fromPercent = parseFloat(nodes.from.handle.style[sideStart].replace(/[^0-9,.]/g, ' '));
+      const toPercent = 100 - parseFloat(nodes.to.handle.style[sideStart].replace(/[^0-9,.]/g, ' '));
+
+
+      if(isFromStart) {
+        nodes.range.style[sideStart] = '0';
+        nodes.range.style[sideEnd] = `${100-fromPercent}%`;
+      }
+
+      if(isFromEnd) {
+        nodes.range.style[sideEnd] = '0';
+        nodes.range.style[sideStart] = `${fromPercent}%`;
+      }
+
+      if(isRange){
+        nodes.range.style[sideStart] = `${fromPercent}%`;
+        nodes.range.style[sideEnd] = `${toPercent}%`;
+      }
+    }
+  }
+
+  private setThumbValue (toggle: TToggle, value: number) {
+    const { withThumb } = this.modelOptions;
+
+    if(withThumb) {
+      const nodes = this.nodes;
+      nodes[toggle].thumb.innerHTML = value.toFixed(2);
+    }
+  }
+
+  private setToggleValue (toggle: TToggle, value: number) {
     const { orientation, type } = this.modelOptions;
     const nodes = this.nodes;
-    const horizontal = orientation === 'horizontal';
-    const fromEnd = type === 'from-end';
-    const fromStart = type === 'from-start';
-    const range = type === 'range';
-    
-    const typeFromStyle = horizontal ? `left` : `bottom`;
-    const typeToStyle = horizontal ? `right` : `top`;
+    const isVertical = orientation === 'vertical';
+    const typeStyleSide = isVertical ? `bottom` : `left`;
+    const percent = this.convertValueToPercent(value);
 
-    const fromPercent = nodes.from.handle.style[typeFromStyle];
-    const percent = 100 - parseFloat(fromPercent.replace(/[^0-9,.]/g, ' '));
-
-    if(fromStart) {
-      nodes.range.style[typeFromStyle] = '0';
-      nodes.range.style[typeToStyle] = `${percent}%`;
-    }
-
-    if(fromEnd) {
-      nodes.range.style[typeToStyle] = '0';
-      nodes.range.style[typeFromStyle] = fromPercent;
-    }
-
-    if(range){
-      const toPercent = 100 - parseFloat(nodes.to.handle.style[typeFromStyle].replace(/[^0-9,.]/g, ' '));
-      nodes.range.style[typeFromStyle] = fromPercent;
-      nodes.range.style[typeToStyle] = `${toPercent}%`;
-    }
+    nodes[toggle].handle.style[typeStyleSide] = `${percent}%`;
+    this.setThumbValue(toggle, value);
+    this.setLastToggle(toggle);
+    this.setRangePosition();
   }
 
-  private setThumbValue (toggle: HTMLElement, percent: number) {
-    const { orientation, type, max } = this.modelOptions;
-    const final = orientation === 'horizontal' ? percent : type === 'from-end' ? 100 - percent : percent;
-    const currentValue = max * (final/100);
+  private setClickPosition (value: number) {
+    const confirmedToggle = this.chooseToggleFromValue(value);
 
-    toggle.querySelector(`.${sliderClassNames.thumb[orientation]}`).innerHTML = currentValue.toFixed(2);
+    this.setToggleValue(confirmedToggle, value);
   }
 
-  private setTogglePosition (toggle: HTMLDivElement, percent: number) {
-    const { orientation, type } = this.modelOptions;
-    const typeStyle = orientation === 'horizontal' ? `left` : `bottom`;
-
-    toggle.style[typeStyle] = `${percent}%`;
-    this.setThumbValue(toggle, percent);
-  }
-
-  private setClickPosition (percent: number) {
-    const { orientation, type } = this.modelOptions;
-    const horizontal = orientation === 'horizontal';
-    const isFromStart = type === 'from-start';
-    const isFromEnd = type === 'from-end';
-    const isRange = type === 'range';
-    const finalToggle = this.checkClickPosition(percent);
-
-    if(isFromStart) {
-      const stylePercent = horizontal ? percent : 100 - percent;
-      this.setTogglePosition(finalToggle, stylePercent);
-      this.setThumbValue(finalToggle, stylePercent);
-      this.setRangePosition();
-    }
-    if(isFromEnd) {
-      const stylePercent = horizontal ? 100 - percent : percent;
-      this.setTogglePosition(finalToggle, stylePercent);
-      this.setThumbValue(finalToggle, percent);
-      this.setRangePosition();
-    }
-    if(isRange) {
-      const stylePercent = horizontal ? 100 - percent : percent;
-      this.setTogglePosition(finalToggle, percent);
-      this.setThumbValue(finalToggle, percent);
-      this.setRangePosition();
-    }
-  }
-
-  private checkClickPosition (percent: number): HTMLDivElement {
+  private chooseToggleFromValue (value: number): TToggle {
     const { type } = this.modelOptions;
-    const nodes = this.nodes;
-    const fromToggle = nodes.from.handle;
-    const fromTogglePercent = this.getTogglePosition(fromToggle);
+    const isRange = type === 'range';
+    const fromToggleValue = this.getToggleValue('from');
 
-    if(type === 'range') {
+    if(isRange) {
+      const toToggleValue = this.getToggleValue('to');
+      const rangeMiddle = (toToggleValue - fromToggleValue) / 2;
+      const valueFromRangeMiddle = (value - fromToggleValue);
+      console.log(`value: ${value}, fromValue: ${fromToggleValue}, toValue: ${toToggleValue}`)
 
-      const toToggle = nodes.to.handle;
-      const toTogglePercent = this.getTogglePosition(toToggle);
-      const toggleRangeMiddle = (toTogglePercent - fromTogglePercent) / 2;
-      const percentFromToggleRange = (percent - fromTogglePercent);
-
-      if(percent <= fromTogglePercent) {
-        this.setLastToggle(fromToggle)
-        return fromToggle;
-      }
-      if(percent >= toTogglePercent) {
-        this.setLastToggle(toToggle)
-        return toToggle;
-      }
-      if(percentFromToggleRange <= toggleRangeMiddle) {
-        console.log('from ret')
-        this.setLastToggle(fromToggle)
-        return fromToggle;
-      }
-      if(percentFromToggleRange > toggleRangeMiddle) {
-        console.log('to ret')
-        this.setLastToggle(toToggle)
-        return toToggle;
-      }
+      if(value <= fromToggleValue) return 'from';
+      if(value >= toToggleValue) return 'to';
+      if(valueFromRangeMiddle <= rangeMiddle) return 'from';
+      if(valueFromRangeMiddle > rangeMiddle) return 'to';
     }
     
-    return fromToggle;
+    return 'from';
   }
 }
 
