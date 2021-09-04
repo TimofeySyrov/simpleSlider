@@ -1,0 +1,15 @@
+.simpleSlider__thumb {
+  position: absolute;
+  padding: 4px 6px;
+  background-color: rgb(197, 138, 138);
+  left: 50%;
+  bottom: 50%;
+
+  &_horizontal {
+    transform: translate(-50%, -50%);
+  }
+
+  &_vertical {
+    transform: translate(50%, 50%);
+  }
+}

@@ -1,0 +1,20 @@
+.simpleSlider__toggle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background-color: rgb(129, 46, 46);
+
+  &_horizontal {
+    transform: translate(-46%, -33%);
+  }
+
+  &_vertical {
+    bottom: 0%;
+    transform: translate(-33%, 44%);
+  }
+
+  &_last-active {
+    z-index: 3;
+    background-color: rgb(0, 255, 76);
+  }
+}

@@ -1,0 +1,17 @@
+.simpleSlider__range {
+  position: absolute;
+  background-color: tomato;
+
+  &_horizontal {
+    height: 100%;
+    left: 0%;
+    right: 0%;
+  }
+
+  &_vertical {
+    height: auto;
+    width: 100%;
+    bottom: 0%;
+    top: 0%;
+  }
+}
