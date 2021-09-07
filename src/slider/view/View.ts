@@ -1,3 +1,4 @@
+import { bind } from 'decko';
 import Observer from "../observer/Observer";
 
 import IModelOptions from "../interfaces/IModelOptions";
@@ -15,6 +16,7 @@ class View extends Observer {
 
   private modelOptions: IModelOptions;
   private nodes: ISliderNodes;
+  private draggingToggle: TToggle | null;
 
   constructor (domParent: TDomParent, modelOptions: IModelOptions) {
     super();
@@ -47,8 +49,7 @@ class View extends Observer {
     }
 
     this.render();
-    this.setModelOptions();
-    this.initSubViewListeners();
+    this.initTogglesListeners();
   }
 
   private render () {
@@ -87,6 +88,8 @@ class View extends Observer {
       nodes.bar.appendChild(nodes.from.handle)
       nodes.bar.appendChild(nodes.to.handle)
     }
+
+    this.setModelOptions();
   }
 
   private renderSubViewStyles () {
@@ -106,9 +109,44 @@ class View extends Observer {
     nodes.scale.classList.add(`${sliderClassNames.scale[orientation]}`);
   }
 
-  private initSubViewListeners () {
+  private initTogglesListeners () {
     const nodes = this.nodes;
-    nodes.bar.addEventListener("click", this.eventMouseClick.bind(this));
+
+    window.removeEventListener('mousemove', this.drag);
+    window.removeEventListener('mouseup', this.finishDragging);
+    nodes.bar.addEventListener('mousedown', this.startDragging);
+  }
+
+  @bind
+  private startDragging(event: MouseEvent) {
+    const nodes = this.nodes;
+    this.draggingToggle = this.chooseToggleByCoords(event);
+
+    if(this.draggingToggle) {
+      this.setLastToggle(this.draggingToggle);
+      this.drag(event);
+      window.addEventListener('mousemove', this.drag);
+      window.addEventListener('mouseup', this.finishDragging);
+    }
+  }
+
+  @bind
+  private drag(event: MouseEvent) {
+    if (this.draggingToggle) {
+      const coords = this.getRelativeCoords(event);
+      const value = this.convertCoordsToValue(coords);
+      
+      this.setToggleValue(this.draggingToggle, value);
+    }
+  }
+
+  @bind
+  private finishDragging() {
+    if (this.draggingToggle) {
+      window.removeEventListener('mousemove', this.drag);
+      window.removeEventListener('mouseup', this.finishDragging);
+      this.draggingToggle = null;
+    }
   }
 
   private setModelOptions () {
@@ -128,11 +166,6 @@ class View extends Observer {
         this.setToggleValue('to', currentValue);
       }
     }
-  }
-
-  private eventMouseClick (event: MouseEvent) {
-    const value = this.convertCoordsToValue(event);
-    this.setClickPosition(value);
   }
 
   private setLastToggle (toggle: TToggle) {
@@ -167,16 +200,13 @@ class View extends Observer {
     return offset;
   }
 
-  private convertCoordsToValue (event: MouseEvent): number {
+  private convertCoordsToValue (coords: number): number {
     const { orientation, type, max, min } = this.modelOptions;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
-
-    const coords = isVertical ? event.pageY : event.pageX;
     const barLength = this.getBarLength();
-    const barOffset = this.getBarOffset();
 
-    const value = ((coords - barOffset) / barLength) * max;
+    const value = (coords / barLength) * max;
     const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
 
     return confirmedValue;
@@ -193,7 +223,7 @@ class View extends Observer {
     return confirmedPercent;
   }
 
-  private getToggleValue (toggle: TToggle): number {
+  private getToggleCoords (toggle: TToggle): number {
     const { orientation, type, max } = this.modelOptions;
     const nodes = this.nodes;
 
@@ -204,10 +234,10 @@ class View extends Observer {
     const barLength = this.getBarLength();
 
     const pixelPosition = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
-    const value = (pixelPosition / barLength) * max;
-    const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
+    // const value = (pixelPosition / barLength) * max;
+    // const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
 
-    return confirmedValue;
+    return pixelPosition;
   }
 
   private setRangePosition () {
@@ -233,8 +263,8 @@ class View extends Observer {
       }
 
       if(isFromEnd) {
-        nodes.range.style[sideEnd] = '0';
         nodes.range.style[sideStart] = `${fromPercent}%`;
+        nodes.range.style[sideEnd] = '0';
       }
 
       if(isRange){
@@ -266,25 +296,27 @@ class View extends Observer {
     this.setRangePosition();
   }
 
-  private setClickPosition (value: number) {
-    const confirmedToggle = this.chooseToggleFromValue(value);
-
-    this.setToggleValue(confirmedToggle, value);
+  private getRelativeCoords(event: MouseEvent): number {
+    const { orientation } = this.modelOptions;
+    const isVertical = orientation === 'vertical';
+    const axis = isVertical ? 'pageY' : 'pageX';
+    const barOffset = this.getBarOffset();
+    return event[axis] - barOffset;
   }
 
-  private chooseToggleFromValue (value: number): TToggle {
+  private chooseToggleByCoords (event: MouseEvent): TToggle | null {
     const { type } = this.modelOptions;
     const isRange = type === 'range';
-    const fromToggleValue = this.getToggleValue('from');
+    const fromToggleValue = this.getToggleCoords('from');
+    const mouseCoords = this.getRelativeCoords(event);
 
     if(isRange) {
-      const toToggleValue = this.getToggleValue('to');
+      const toToggleValue = this.getToggleCoords('to');
       const rangeMiddle = (toToggleValue - fromToggleValue) / 2;
-      const valueFromRangeMiddle = (value - fromToggleValue);
-      console.log(`value: ${value}, fromValue: ${fromToggleValue}, toValue: ${toToggleValue}`)
+      const valueFromRangeMiddle = (mouseCoords - fromToggleValue);
 
-      if(value <= fromToggleValue) return 'from';
-      if(value >= toToggleValue) return 'to';
+      if(mouseCoords <= fromToggleValue) return 'from';
+      if(mouseCoords >= toToggleValue) return 'to';
       if(valueFromRangeMiddle <= rangeMiddle) return 'from';
       if(valueFromRangeMiddle > rangeMiddle) return 'to';
     }
