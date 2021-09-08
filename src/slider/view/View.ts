@@ -11,12 +11,20 @@ import Toggle from "./components/toggle/toggle";
 import Thumb from "./components/thumb/thumb";
 import Scale from "./components/scale/scale";
 import Bar from "./components/bar/bar";
+import IEvents from '../interfaces/view/IEvents';
 
 class View extends Observer {
 
   private modelOptions: IModelOptions;
   private nodes: ISliderNodes;
   private draggingToggle: TToggle | null;
+  private _events: IEvents = {
+    slide: new Observer
+  }
+
+  get events(): IEvents {
+    return this._events;
+  };
 
   constructor (domParent: TDomParent, modelOptions: IModelOptions) {
     super();
@@ -28,6 +36,10 @@ class View extends Observer {
   public updateModelOptions (newModelOptions: IModelOptions) {
     this.modelOptions = newModelOptions;
     this.render();
+  }
+
+  public updateCurrentValue (obj: { handle: TToggle, value: number }) {
+    this.setToggleValue(obj.handle, obj.value);
   }
 
   private initSubView (newDomParent: TDomParent) {
@@ -119,7 +131,6 @@ class View extends Observer {
 
   @bind
   private startDragging(event: MouseEvent) {
-    const nodes = this.nodes;
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if(this.draggingToggle) {
@@ -135,8 +146,10 @@ class View extends Observer {
     if (this.draggingToggle) {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
+      // this.notify(this.modelOptions)
+      // this.setToggleValue(this.draggingToggle, value);
       
-      this.setToggleValue(this.draggingToggle, value);
+      this._events.slide.notify({ handle: this.draggingToggle, value: value});
     }
   }
 
