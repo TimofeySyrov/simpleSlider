@@ -1,9 +1,19 @@
-import IModelOptions from "../interfaces/IModelOptions";
 import Observer from "../observer/Observer";
+import IModelOptions from "../interfaces/IModelOptions";
+import { TToggle } from "../interfaces/view/namespace";
+import IModelEvents from "../interfaces/model/IModelEvents";
+import TCurrentValue from "../interfaces/TCurrentValue";
 
 class Model extends Observer {
   
   private modelOptions: IModelOptions;
+  private _events: IModelEvents = {
+    currentValueChanged: new Observer
+  }
+
+  get events(): IModelEvents {
+    return this._events;
+  };
 
   constructor(modelOptions: IModelOptions) {
     super();
@@ -11,9 +21,14 @@ class Model extends Observer {
     this.modelOptions = this.checkModelOptions(modelOptions);
   }
 
-  public updateModelOptions(newModelOptions: IModelOptions) {
+  public updateModelOptions(newModelOptions: IModelOptions): void {
     this.modelOptions = this.checkModelOptions(newModelOptions);
     this.notify(this.modelOptions);
+  }
+
+  public updateCurrentValueOption(obj: { handle: TToggle, value: number }) {
+
+    this._events.currentValueChanged.notify(obj);
   }
 
   public getModelOptions () {
@@ -21,59 +36,36 @@ class Model extends Observer {
   }
 
   private checkModelOptions (checkModelOptions: IModelOptions): IModelOptions {
-    let confirmedOptions = checkModelOptions;
-    const { min, max, currentValue, step } = confirmedOptions;
+    
+    return checkModelOptions;
+  }
 
-    /* Если минимальное значение слайдера больше максимального, то 
-    минимальному значению присваивается максимальное */
-    if(min > max) {
-      confirmedOptions.min = max;
+  private checkCurrentValue (currentValue: TCurrentValue, max: number, min: number) {
+    if(typeof currentValue === 'object') {
+      
+      if(currentValue.min > currentValue.max) {
+        currentValue.min = currentValue.max;
+      }
+
+      if(currentValue.min < min) {
+        currentValue.min = min;
+      }
+
+      if(currentValue.max > max) {
+        currentValue.max = max;
+      }
     }
 
-    /* Шаг не может быть отрицательным числом или равным нулю.
-    Если шаг меньше нуля или равен ему, то шагу присваивается 
-    максимально допустимый шаг, относительно значений слайдера */
-    if(step <= 0) { 
-      confirmedOptions.step = max - min;
+    if(typeof currentValue === 'number') {
+      if(currentValue < min) {
+        currentValue = min;
+      }
+
+      if(currentValue > max) {
+        currentValue = max;
+      }
     }
-
-    /* Если шаг больше максимального значения слайдера, то шагу 
-    присваивается максимально допустимый шаг, относительно значений слайдера */
-    if(step > max) {
-      confirmedOptions.step = max - min;
-    }
-
-    switch (typeof currentValue) {
-
-      case 'number':
-        if(currentValue > max) { 
-          confirmedOptions.currentValue = max;
-        }
-        if(currentValue < min) {
-          confirmedOptions.currentValue = min;
-        }
-        break;
-
-      case 'object':
-        if(currentValue.min > currentValue.max) {
-          confirmedOptions.currentValue = { min: currentValue.max, max: currentValue.max }
-        }
-        
-        break;
-
-      case 'string':
-        if(currentValue == 'middle') {
-          confirmedOptions.currentValue = (max - min) / 2;
-        }
-        break;
-
-      default:
-        confirmedOptions.currentValue = (max - min) / 2;
-        break;
-    }
-
-    return confirmedOptions;
   }
 }
 
-export default Model
+export default Model;
