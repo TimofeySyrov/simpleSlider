@@ -1,4 +1,4 @@
-import ICurrentValue from "./ICurrentValue";
+import TCurrentValue from "./TCurrentValue";
 
 interface IModelOptions {
   min: number,
@@ -8,7 +8,7 @@ interface IModelOptions {
   withRange?: boolean,
   withThumb?: boolean,
   withScale?: boolean,
-  currentValue?: number | ICurrentValue,
+  currentValue?: TCurrentValue,
   step?: number
 }
 
