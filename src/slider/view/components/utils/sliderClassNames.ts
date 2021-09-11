@@ -1,7 +1,11 @@
 import ISliderClassNames from '../../../interfaces/view/ISliderClassNames'
 
 const sliderClassNames: ISliderClassNames = {
-  slider: 'simpleSlider',
+  slider: {
+    main: 'simpleSlider',
+    horizontal: 'simpleSlider_horizontal',
+    vertical: 'simpleSlider_vertical'
+  },
   bar: {
     main: 'simpleSlider__bar',
     horizontal: 'simpleSlider__bar_horizontal',
@@ -26,6 +30,11 @@ const sliderClassNames: ISliderClassNames = {
     main: 'simpleSlider__scale',
     horizontal: 'simpleSlider__scale_horizontal',
     vertical: 'simpleSlider__scale_vertical'
+  },
+  scaleItem: {
+    main: 'simpleSlider__scale-item',
+    horizontal: 'simpleSlider__scale-item_horizontal',
+    vertical: 'simpleSlider__scale-item_vertical'
   }
 };
 
