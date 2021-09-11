@@ -1,6 +1,7 @@
 .simpleSlider__bar {
   position: relative;
   background-color: rgb(206, 206, 206);
+  cursor: pointer;
 
   &_horizontal {
     width: 100%;

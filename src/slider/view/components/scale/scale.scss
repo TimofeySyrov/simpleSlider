@@ -1,0 +1,29 @@
+.simpleSlider__scale {
+  list-style: none;
+  display: flex;
+  position: relative;
+  margin: 15px 0 0 0;
+  cursor: pointer;
+  font-size: 14px;
+
+  &_vertical {
+    margin: 0 0 0 15px;
+    flex-direction: column;
+  }
+}
+
+.simpleSlider__scale-item {
+  position: absolute;
+  padding: 3px 6px;
+  z-index: 1;
+  transform: translate(-50%, 0);
+
+  &_vertical {
+    transform: translate(0, 50%);
+  }
+
+  &:hover {
+    background-color: rgb(236, 236, 236);
+    border-radius: 3px;
+  }
+}
