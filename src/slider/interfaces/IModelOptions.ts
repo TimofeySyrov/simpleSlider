@@ -1,10 +1,10 @@
-import TCurrentValue from "./TCurrentValue";
+import { TType, TCurrentValue } from "./namespace";
 
 interface IModelOptions {
   min: number,
   max: number,
   orientation?: 'horizontal' | 'vertical',
-  type?: 'from-start' | 'from-end' | 'range',
+  type?: TType,
   withRange?: boolean,
   withThumb?: boolean,
   withScale?: boolean,
