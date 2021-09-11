@@ -57,11 +57,11 @@ class View extends Observer {
         handle: new Toggle().createDom(),
         thumb: new Thumb().createDom()
       },
-      scale: new Scale().getDom()
+      scale: new Scale()
     }
 
     this.render();
-    this.initTogglesListeners();
+    this.initSubViewListeners();
   }
 
   private render () {
@@ -71,8 +71,6 @@ class View extends Observer {
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
 
-    this.renderSubViewStyles();
-
     nodes.domParent.appendChild(nodes.slider);
     nodes.slider.appendChild(nodes.bar);
 
@@ -81,7 +79,7 @@ class View extends Observer {
     }
 
     if(withScale) {
-      nodes.slider.appendChild(nodes.scale)
+      nodes.slider.appendChild(nodes.scale.getDom())
     }
 
     if(withThumb) {
@@ -102,31 +100,38 @@ class View extends Observer {
     }
 
     this.setCurrentValue();
+    this.renderScale();
+    this.renderSubViewStyles();
   }
 
   private renderSubViewStyles () {
     const { orientation } = this.modelOptions;
     const nodes = this.nodes;
 
-    nodes.slider.setAttribute('class', `${sliderClassNames.slider}`);
+    nodes.slider.setAttribute('class', `${sliderClassNames.slider.main}`);
     nodes.from.handle.setAttribute('data-index', `0`);
     nodes.to.handle.setAttribute('data-index', `1`);
     
+    nodes.slider.classList.add(`${sliderClassNames.slider[orientation]}`);
     nodes.bar.classList.add(`${sliderClassNames.bar[orientation]}`);
     nodes.range.classList.add(`${sliderClassNames.range[orientation]}`);
     nodes.from.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
     nodes.from.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
     nodes.to.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
     nodes.to.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
-    nodes.scale.classList.add(`${sliderClassNames.scale[orientation]}`);
+    nodes.scale.getDom().classList.add(`${sliderClassNames.scale[orientation]}`);
+    nodes.scale.getItems().forEach((item) => {
+      item.classList.add(`${sliderClassNames.scaleItem[orientation]}`);
+    });
   }
 
-  private initTogglesListeners () {
+  private initSubViewListeners () {
     const nodes = this.nodes;
 
     window.removeEventListener('mousemove', this.drag);
     window.removeEventListener('mouseup', this.finishDragging);
     nodes.bar.addEventListener('mousedown', this.startDragging);
+    nodes.scale.getDom().addEventListener('click', this.setScaleItemCoords);
   }
 
   @bind
@@ -158,6 +163,20 @@ class View extends Observer {
       window.removeEventListener('mouseup', this.finishDragging);
       this.draggingToggle = null;
     }
+  }
+
+  @bind
+  private setScaleItemCoords(event: MouseEvent) {
+    const target = event.target;
+    const nodes = this.nodes;
+    nodes.scale.getItems().forEach((item) => {
+      if (target == item) {
+        const value = Number(item.getAttribute(`data-value`));
+        const toggle = this.chooseToggleByCoords(event);
+
+        this.setToggleValue(toggle, value);
+      }
+    })
   }
 
   private setCurrentValue () {
@@ -328,6 +347,37 @@ class View extends Observer {
     }
     
     return 'from';
+  }
+
+  private getScaleValues(): number[] {
+    const { max, min, step } = this.modelOptions;
+    const midQuantity = Math.ceil((max - min) / step);
+    const viewStep = Math.ceil(midQuantity / 6) * step;
+    const midArr = [];
+    let value = min;
+    
+    for (let i = 0; value < max; i += 1) {
+      value += viewStep;
+      if(value < max) {
+        midArr.push(value);
+      }
+    }
+      
+    return [min, ...midArr, max];
+  }
+
+  private renderScale() {
+    const { orientation } = this.modelOptions;
+    const nodes = this.nodes;
+    const values = this.getScaleValues();
+    const isVertical = orientation === 'vertical';
+    const typeStyleSide = isVertical ? `bottom` : `left`;
+
+    values.map((item) => {
+      const domItem = nodes.scale.addItem(Number(item.toFixed(2)));
+      const percent = this.convertValueToPercent(item);
+      domItem.style[typeStyleSide] = `${percent}%`;
+    });
   }
 }
 
