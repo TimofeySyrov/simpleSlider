@@ -4,24 +4,24 @@ import Observer from "../observer/Observer";
 import Model from "../model/Model";
 import View from "../view/View";
 import { bind } from "decko";
-import { TToggle } from "../interfaces/view/namespace";
+import { TDomParent, TToggle } from "../interfaces/namespace";
 
 class Controller extends Observer {
 
   private sliderOptions: IModelOptions;
-  private domParent: HTMLDivElement;
+  private domParent: TDomParent;
 
   private model: Model;
   private view: View;
 
-  constructor(domParent: HTMLDivElement, sliderOptions: IModelOptions) {
+  constructor(domParent: TDomParent, sliderOptions: IModelOptions) {
     super();
 
     this.domParent = domParent;
     this.sliderOptions = sliderOptions;
 
     this.model = new Model(this.sliderOptions);
-    this.view = new View(this.domParent, this.model.getModelOptions());
+    this.view = new View(this.domParent, this.model.options);
 
     this.init();
   }
@@ -36,7 +36,6 @@ class Controller extends Observer {
     this.view.subscribe(this.onViewUpdate); // подписываемся на Отображение
   }
 
-  @bind
   private subscribeToEvents () {
     this.model.events.currentValueChanged.subscribe(this.updateViewFromModelEvents);
     this.view.events.slide.subscribe(this.updateModelFromViewEvents);
