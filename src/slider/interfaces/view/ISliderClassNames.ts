@@ -1,10 +1,11 @@
 interface ISliderClassNames {
-  slider: string,
+  slider: TOrientationKeys,
   bar: TOrientationKeys,
   range: TOrientationKeys,
   toggle: TOrientationKeys,
   thumb: TOrientationKeys,
-  scale: TOrientationKeys
+  scale: TOrientationKeys,
+  scaleItem: TOrientationKeys
 }
 
 type TOrientationKeys = {
