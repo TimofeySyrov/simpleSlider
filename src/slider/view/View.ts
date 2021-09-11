@@ -4,7 +4,7 @@ import Observer from "../observer/Observer";
 import IModelOptions from "../interfaces/IModelOptions";
 import ISliderNodes from "../interfaces/view/ISliderNodes";
 import sliderClassNames from "./components/utils/sliderClassNames";
-import { TDomParent, TToggle } from "../interfaces/view/namespace";
+import { TDomParent, TToggle } from '../interfaces/namespace';
 
 import Range from "./components/range/range";
 import Toggle from "./components/toggle/toggle";
@@ -38,8 +38,8 @@ class View extends Observer {
     this.render();
   }
 
-  public updateCurrentValue (obj: { handle: TToggle, value: number }) {
-    this.setToggleValue(obj.handle, obj.value);
+  public updateCurrentValue (toggle: { handle: TToggle, value: number }) {
+    this.setToggleValue(toggle.handle, toggle.value);
   }
 
   private initSubView (newDomParent: TDomParent) {
@@ -101,7 +101,7 @@ class View extends Observer {
       nodes.bar.appendChild(nodes.to.handle)
     }
 
-    this.setModelOptions();
+    this.setCurrentValue();
   }
 
   private renderSubViewStyles () {
@@ -146,8 +146,6 @@ class View extends Observer {
     if (this.draggingToggle) {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
-      // this.notify(this.modelOptions)
-      // this.setToggleValue(this.draggingToggle, value);
       
       this._events.slide.notify({ handle: this.draggingToggle, value: value});
     }
@@ -162,7 +160,7 @@ class View extends Observer {
     }
   }
 
-  private setModelOptions () {
+  private setCurrentValue () {
     const { currentValue, type } = this.modelOptions;
     const isRange = type === 'range';
 
@@ -207,37 +205,34 @@ class View extends Observer {
     const { orientation, type } = this.modelOptions;
     const nodes = this.nodes;
     const isVertical = orientation === 'vertical';
-    const offsetSide = isVertical ? `top` : `left`;
+    const isFromEnd = type === 'from-end';
+    const offsetSide = isVertical ? isFromEnd ? `top` : `bottom` : isFromEnd ? `right` : `left`;
     const offset = nodes.bar.getBoundingClientRect()[offsetSide];
 
     return offset;
   }
 
   private convertCoordsToValue (coords: number): number {
-    const { orientation, type, max, min } = this.modelOptions;
-    const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
+    const { max, min } = this.modelOptions;
     const barLength = this.getBarLength();
+    const value = Number((coords * (max - min) / barLength + min).toFixed(10));
 
-    const value = (coords / barLength) * max;
-    const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
-
-    return confirmedValue;
+    return value;
   }
 
   private convertValueToPercent (value: number): number {
-    const { orientation, max, type } = this.modelOptions;
+    const { orientation, min, max, type } = this.modelOptions;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
 
-    const percent = (value / max) * 100;
+    const percent = Number(((value - min) * 100 / (max-min)).toFixed(10))
     const confirmedPercent = isVertical ? isFromEnd ? 100-percent : percent : isFromEnd ? 100-percent : percent;
 
     return confirmedPercent;
   }
 
   private getToggleCoords (toggle: TToggle): number {
-    const { orientation, type, max } = this.modelOptions;
+    const { orientation, type } = this.modelOptions;
     const nodes = this.nodes;
 
     const isVertical = orientation === 'vertical';
@@ -247,10 +242,9 @@ class View extends Observer {
     const barLength = this.getBarLength();
 
     const pixelPosition = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
-    // const value = (pixelPosition / barLength) * max;
-    // const confirmedValue = isVertical ? isFromEnd ? value : max-value : isFromEnd ? max-value : value;
+    const result = isVertical ? isFromEnd ? pixelPosition : barLength - pixelPosition : isFromEnd ? barLength - pixelPosition : pixelPosition;
 
-    return pixelPosition;
+    return result;
   }
 
   private setRangePosition () {
@@ -288,33 +282,32 @@ class View extends Observer {
   }
 
   private setThumbValue (toggle: TToggle, value: number) {
-    const { withThumb } = this.modelOptions;
-
-    if(withThumb) {
-      const nodes = this.nodes;
-      nodes[toggle].thumb.innerHTML = value.toFixed(2);
-    }
+    const nodes = this.nodes;
+    nodes[toggle].thumb.innerHTML = value.toFixed(2);
   }
 
   private setToggleValue (toggle: TToggle, value: number) {
-    const { orientation, type } = this.modelOptions;
+    const { orientation, withThumb } = this.modelOptions;
     const nodes = this.nodes;
     const isVertical = orientation === 'vertical';
     const typeStyleSide = isVertical ? `bottom` : `left`;
     const percent = this.convertValueToPercent(value);
 
     nodes[toggle].handle.style[typeStyleSide] = `${percent}%`;
-    this.setThumbValue(toggle, value);
+    if (withThumb) this.setThumbValue(toggle, value);
     this.setLastToggle(toggle);
     this.setRangePosition();
   }
 
   private getRelativeCoords(event: MouseEvent): number {
-    const { orientation } = this.modelOptions;
+    const { orientation, type } = this.modelOptions;
     const isVertical = orientation === 'vertical';
+    const isFromEnd = type === 'from-end';
     const axis = isVertical ? 'pageY' : 'pageX';
     const barOffset = this.getBarOffset();
-    return event[axis] - barOffset;
+
+    const result = isVertical ? isFromEnd ? event[axis] - barOffset : barOffset - event[axis] : isFromEnd ? barOffset - event[axis] : event[axis] - barOffset;
+    return result;
   }
 
   private chooseToggleByCoords (event: MouseEvent): TToggle | null {
