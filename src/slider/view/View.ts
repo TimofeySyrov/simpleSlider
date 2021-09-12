@@ -4,7 +4,7 @@ import Observer from "../observer/Observer";
 import IModelOptions from "../interfaces/IModelOptions";
 import ISliderNodes from "../interfaces/view/ISliderNodes";
 import sliderClassNames from "./components/utils/sliderClassNames";
-import { TDomParent, TToggle } from '../interfaces/namespace';
+import { TDomParent, TToggle, TUpdateToggle } from '../interfaces/namespace';
 
 import Range from "./components/range/range";
 import Toggle from "./components/toggle/toggle";
@@ -38,7 +38,7 @@ class View extends Observer {
     this.render();
   }
 
-  public updateCurrentValue (toggle: { handle: TToggle, value: number }) {
+  public updateCurrentValue (toggle: TUpdateToggle) {
     this.setToggleValue(toggle.handle, toggle.value);
   }
 
