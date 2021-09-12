@@ -174,7 +174,7 @@ class View extends Observer {
         const value = Number(item.getAttribute(`data-value`));
         const toggle = this.chooseToggleByCoords(event);
 
-        this.setToggleValue(toggle, value);
+        this._events.slide.notify({ handle: toggle, value: value, valueFromScale: true });
       }
     })
   }

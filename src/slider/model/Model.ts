@@ -36,7 +36,7 @@ class Model extends Observer {
     const isHandleFrom = toggle.handle === 'from';
     const isHandleTo = toggle.handle === 'to';
 
-    const valueWithStep = this.getValueWithStep(toggle.value, min, step);
+    const valueWithStep = toggle.valueFromScale ? toggle.value : this.getValueWithStep(toggle.value, min, step);
     const correctValueWithStep = this.getCorrectDiapason(valueWithStep, min, max);
 
     if(isRange) {
