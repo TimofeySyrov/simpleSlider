@@ -4,7 +4,7 @@ import Observer from "../observer/Observer";
 import Model from "../model/Model";
 import View from "../view/View";
 import { bind } from "decko";
-import { TDomParent, TToggle } from "../interfaces/namespace";
+import { TDomParent, TToggle, TUpdateToggle } from "../interfaces/namespace";
 
 class Controller extends Observer {
 
@@ -13,6 +13,10 @@ class Controller extends Observer {
 
   private model: Model;
   private view: View;
+
+  get options(): IModelOptions {
+    return this.sliderOptions;
+  }
 
   constructor(domParent: TDomParent, sliderOptions: IModelOptions) {
     super();
@@ -24,6 +28,10 @@ class Controller extends Observer {
     this.view = new View(this.domParent, this.model.options);
 
     this.init();
+  }
+
+  public updateOptions(option: Partial<IModelOptions>) {
+    this.model.updateModelOptions(option);
   }
 
   private init () {
@@ -42,28 +50,28 @@ class Controller extends Observer {
   }
 
   @bind
-  private updateViewFromModelEvents (obj: { handle: TToggle, value: number }) {
-    this.view.updateCurrentValue(obj);
+  private updateViewFromModelEvents (toggle: TUpdateToggle) {
+    this.view.updateCurrentValue(toggle);
   }
 
   @bind
-  private updateModelFromViewEvents (obj: { handle: TToggle, value: number }) {
-    this.model.updateCurrentValueOption(obj);
+  private updateModelFromViewEvents (toggle: TUpdateToggle) {
+    this.model.updateCurrentValueOption(toggle);
   }
 
   @bind
-  public updateModelOptions (newModelOptions: IModelOptions) { // метод обновления Контроллера
+  private updateOptionsForController (newModelOptions: IModelOptions) { // метод обновления Контроллера
     this.sliderOptions = newModelOptions;
   }
 
   @bind
   private onModelUpdate (newModelOptions: IModelOptions) { // наблюдатель Модели
     this.view.updateModelOptions(newModelOptions); // передаем изменения для обновления Отображения
-    this.updateModelOptions(newModelOptions); // передаем изменения для обновления Контроллера
+    this.updateOptionsForController(newModelOptions); // передаем изменения для обновления Контроллера
   }
 
   @bind
-  private onViewUpdate (newModelOptions?: IModelOptions) { // наблюдатель Отображения
+  private onViewUpdate (newModelOptions: IModelOptions) { // наблюдатель Отображения
     this.model.updateModelOptions(newModelOptions)
   }
 
