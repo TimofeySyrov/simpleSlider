@@ -24,9 +24,10 @@ class Model extends Observer {
     this.checkModelOptions(options);
   }
 
-  public updateModelOptions(options: IModelOptions): void {
-    this.modelOptions = options;
-    this.checkModelOptions(options);
+  public updateModelOptions(option: Partial<IModelOptions>): void {
+    const newOptions = { ...this.modelOptions, ...option };
+    this.modelOptions = newOptions;
+    this.checkModelOptions(newOptions);
     this.notify(this.modelOptions);
   }
 
