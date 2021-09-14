@@ -26,7 +26,7 @@ describe('Model:', () => {
       model.updateModelOptions(newOptions);
   
       //@ts-ignore
-      expect(model.options).toBe(newOptions);
+      expect(model.options).toStrictEqual(newOptions);
     });
   });
 
