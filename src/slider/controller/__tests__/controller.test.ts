@@ -13,7 +13,7 @@ describe('Controller:', () => {
 
       const someNewOptions: Partial<IModelOptions> = {
         step: 2,
-        withScale: false
+        withScale: false,
       };
       
       const mockParent = document.createElement('div');
