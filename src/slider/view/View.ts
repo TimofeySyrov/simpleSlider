@@ -130,8 +130,19 @@ class View extends Observer {
 
     window.removeEventListener('mousemove', this.drag);
     window.removeEventListener('mouseup', this.finishDragging);
+    nodes.bar.addEventListener('click', this.click);
     nodes.bar.addEventListener('mousedown', this.startDragging);
     nodes.scale.getDom().addEventListener('click', this.setScaleItemCoords);
+  }
+
+  @bind
+  private click(event: MouseEvent) {
+    this.draggingToggle = this.chooseToggleByCoords(event);
+
+    if(this.draggingToggle) {
+      this.setLastToggle(this.draggingToggle);
+      this.drag(event);
+    }
   }
 
   @bind
