@@ -161,7 +161,7 @@ describe('View:', () => {
   });
 
   describe('startDragging, drag, finishDragging:', () => {
-    test('должен уведомлять о взаимодействии со слайдером', () => {
+    test('должны уведомлять при взаимодействии со шкалой и баром слайдера', () => {
 
       const newOptions: IModelOptions = {
         min: 0,
@@ -184,11 +184,10 @@ describe('View:', () => {
       const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`);
       const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`);
 
-      $(bar).trigger("mousedown");
-      $(bar).trigger("mousemove");
       $(scaleItem).trigger("click");
+      $(bar).trigger("click");
 
-      expect(sb).toHaveBeenCalledTimes(2);
+      expect(sb).toBeCalledTimes(2);
     });
   });
 });
