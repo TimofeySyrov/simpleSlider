@@ -1,8 +1,8 @@
-import { TType, TCurrentValue } from "./namespace";
+import { TType, TCurrentValue, TUpdateToggle } from "./namespace";
 
-interface IModelOptions {
-  min: number,
-  max: number,
+interface IModelOptions extends API {
+  min?: number,
+  max?: number,
   orientation?: 'horizontal' | 'vertical',
   type?: TType,
   withRange?: boolean,
@@ -12,4 +12,14 @@ interface IModelOptions {
   step?: number
 }
 
+export interface API {
+  onSlide?: (callback: TUpdateToggle) => void;
+  updateOptions?: (optionsToUpdate: Partial<IModelOptions>) => void;
+}
+
+interface TargetElement extends HTMLElement {
+  simpleSlider?: API;
+}
+
+export { TargetElement as target };
 export default IModelOptions
