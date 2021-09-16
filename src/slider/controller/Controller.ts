@@ -4,6 +4,7 @@ import Observer from "../observer/Observer";
 import Model from "../model/Model";
 import View from "../view/View";
 import { TDomParent, TUpdateToggle } from "../interfaces/namespace";
+import IEvents from "../interfaces/model/IModelEvents";
 
 class Controller extends Observer {
 
@@ -12,6 +13,13 @@ class Controller extends Observer {
 
   private model: Model;
   private view: View;
+
+  get events (): IEvents {
+    return { 
+      ...this.model.events, 
+      ...this.view.events 
+    };
+  }
 
   get options (): IModelOptions {
     return this.sliderOptions;
