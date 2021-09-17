@@ -1,9 +1,9 @@
-import IModelOptions from "./interfaces/IModelOptions";
+import IModelOptions, { API } from "./interfaces/IModelOptions";
 import Controller from "./controller/Controller";
 import './view/styles/view.scss';
 import { TDomParent } from "./interfaces/namespace";
 
-class SimpleSlider {
+class SimpleSlider implements API {
 
   private options: IModelOptions;
   private domParent: TDomParent;
@@ -16,14 +16,17 @@ class SimpleSlider {
     this.initUserCallbackEvents();
   }
 
+  public updateOptions (options: Partial<IModelOptions>): void {
+    this.controller.updateOptions(options);
+  }
+
   private initUserCallbackEvents() {
-    const onSlide = this.options.onSlide;
+    const { onSlide } = this.options;
 
     if(onSlide) {
       this.controller.events.currentValueChanged.subscribe(onSlide)
     }
   }
-  
 }
 
 export default SimpleSlider;
