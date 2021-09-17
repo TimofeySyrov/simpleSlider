@@ -17,9 +17,4 @@ export interface API {
   updateOptions?: (optionsToUpdate: Partial<IModelOptions>) => void;
 }
 
-interface TargetElement extends HTMLElement {
-  simpleSlider?: API;
-}
-
-export { TargetElement as target };
-export default IModelOptions
+export default IModelOptions;
