@@ -10,18 +10,17 @@ class SimpleSlider implements API {
   private controller: Controller;
 
   constructor (domParent: TDomParent, options: IModelOptions) {
-    this.domParent = domParent
-    this.options = options;
-    this.controller = new Controller(this.domParent, this.options);
-    this.initUserCallbackEvents();
+    this.controller = new Controller(domParent, options);
+    this.initUserCallbackEvents(options);
   }
 
   public updateOptions (options: Partial<IModelOptions>): void {
     this.controller.updateOptions(options);
+    this.initUserCallbackEvents(options);
   }
 
-  private initUserCallbackEvents() {
-    const { onSlide } = this.options;
+  private initUserCallbackEvents(options: IModelOptions) {
+    const { onSlide } = options;
 
     if(onSlide) {
       this.controller.events.currentValueChanged.subscribe(onSlide)
