@@ -76,7 +76,7 @@ class Model extends Observer {
     const maxStep = max - min;
 
     if (step <= 0) return maxStep;
-    if (step >= max && max > 0) return maxStep;
+    if (step > maxStep) return maxStep;
 
     return step;
   }
