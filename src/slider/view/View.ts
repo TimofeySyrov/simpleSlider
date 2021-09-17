@@ -383,6 +383,7 @@ class View extends Observer {
     const values = this.getScaleValues();
     const isVertical = orientation === 'vertical';
     const typeStyleSide = isVertical ? `bottom` : `left`;
+    nodes.scale.getDom().innerHTML = '';
 
     values.map((item) => {
       const domItem = nodes.scale.addItem(Number(item.toFixed(2)));
