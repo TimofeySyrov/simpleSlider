@@ -7,12 +7,12 @@ import SimpleSlider from "./simpleSlider";
 
 (function ( $ ) {
   $.fn.simpleSlider = function (options?: IModelOptions) {
-
+    
     const domParent: TDomParent = this[0];
-    const finalOptions = $.extend(defaultModelOptions, options);
+    let finalOptions = $.extend({}, defaultModelOptions, options);
 
-    const simpleSlider = new SimpleSlider(domParent, finalOptions);
+    const slider = new SimpleSlider(domParent, finalOptions);
 
-    return simpleSlider;
+    return slider;
   }
 }(jQuery));
