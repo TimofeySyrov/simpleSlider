@@ -8,7 +8,6 @@ import IEvents from "../interfaces/model/IModelEvents";
 
 class Controller extends Observer {
 
-  private sliderOptions: IModelOptions;
   private domParent: TDomParent;
 
   private model: Model;
@@ -22,16 +21,14 @@ class Controller extends Observer {
   }
 
   get options (): IModelOptions {
-    return this.sliderOptions;
+    return this.model.options;
   }
 
   constructor (domParent: TDomParent, sliderOptions: IModelOptions) {
     super();
 
     this.domParent = domParent;
-    this.sliderOptions = sliderOptions;
-
-    this.model = new Model(this.sliderOptions);
+    this.model = new Model(sliderOptions);
     this.view = new View(this.domParent, this.model.options);
 
     this.init();
@@ -66,17 +63,10 @@ class Controller extends Observer {
     this.model.updateCurrentValueOption(toggle);
   }
 
-  // метод обновления Контроллера
-  @bind
-  private updateOptionsForController (newModelOptions: IModelOptions) {
-    this.sliderOptions = newModelOptions;
-  }
-
   // наблюдатель Модели
   @bind
   private onModelUpdate (newModelOptions: IModelOptions) {
     this.view.updateModelOptions(newModelOptions);
-    this.updateOptionsForController(newModelOptions);
   }
 
   // наблюдатель Отображения
