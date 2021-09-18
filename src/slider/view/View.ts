@@ -338,7 +338,7 @@ class View extends Observer {
     const { orientation, type } = this.modelOptions;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
-    const axis = isVertical ? 'pageY' : 'pageX';
+    const axis = isVertical ? 'clientY' : 'clientX';
     const barOffset = this.getBarOffset();
 
     const result = isVertical ? isFromEnd ? event[axis] - barOffset : barOffset - event[axis] : isFromEnd ? barOffset - event[axis] : event[axis] - barOffset;
