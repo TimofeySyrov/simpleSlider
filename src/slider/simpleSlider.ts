@@ -1,12 +1,9 @@
-import IModelOptions, { API } from "./interfaces/IModelOptions";
 import Controller from "./controller/Controller";
-import './view/styles/view.scss';
+import IModelOptions from "./interfaces/IModelOptions";
 import { TDomParent } from "./interfaces/namespace";
 
-class SimpleSlider implements API {
+class SimpleSlider {
 
-  private options: IModelOptions;
-  private domParent: TDomParent;
   private controller: Controller;
 
   constructor (domParent: TDomParent, options: IModelOptions) {
