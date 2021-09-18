@@ -58,7 +58,7 @@ class View extends Observer {
         thumb: new Thumb().createDom()
       },
       scale: new Scale()
-    }
+    };
 
     this.render();
     this.initSubViewListeners();
@@ -71,8 +71,13 @@ class View extends Observer {
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
 
-    nodes.domParent.appendChild(nodes.slider);
-    nodes.slider.appendChild(nodes.bar);
+    if(!nodes.domParent.contains(nodes.slider)) {
+      nodes.domParent.appendChild(nodes.slider);
+    }
+
+    if(!nodes.slider.contains(nodes.bar)) {
+      nodes.slider.appendChild(nodes.bar);
+    }
 
     if(withRange) {
       nodes.bar.appendChild(nodes.range);
