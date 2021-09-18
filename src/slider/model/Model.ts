@@ -1,6 +1,6 @@
 import Observer from "../observer/Observer";
 import IModelOptions from "../interfaces/IModelOptions";
-import { TToggle, TType, TCurrentValue, TUpdateToggle } from "../interfaces/namespace";
+import { TType, TCurrentValue, TUpdateToggle } from "../interfaces/namespace";
 import IModelEvents from "../interfaces/model/IModelEvents";
 
 class Model extends Observer {
@@ -55,7 +55,7 @@ class Model extends Observer {
     }
 
     if(!isRange) {
-      toggle.value = valueWithStep;
+      toggle.value = correctValueWithStep;
       this.modelOptions.currentValue = toggle.value;
     }
     
