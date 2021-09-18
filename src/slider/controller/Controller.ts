@@ -24,18 +24,18 @@ class Controller extends Observer {
     return this.model.options;
   }
 
-  constructor (domParent: TDomParent, sliderOptions: IModelOptions) {
+  constructor (domParent: TDomParent, options: IModelOptions) {
     super();
 
     this.domParent = domParent;
-    this.model = new Model(sliderOptions);
+    this.model = new Model(options);
     this.view = new View(this.domParent, this.model.options);
 
     this.init();
   }
 
-  public updateOptions (option: Partial<IModelOptions>) {
-    this.model.updateModelOptions(option);
+  public updateOptions (options: Partial<IModelOptions>) {
+    this.model.updateModelOptions(options);
   }
 
   private init () {
