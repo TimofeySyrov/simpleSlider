@@ -6,7 +6,7 @@ const defaultModelOptions: IModelOptions = {
   step: 1,
   orientation: 'horizontal',
   type: 'from-start',
-  currentValue: 1,
+  currentValue: 50,
   withRange: true,
   withThumb: true,
   withScale: true
