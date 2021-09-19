@@ -1,9 +1,9 @@
-import { TType, TCurrentValue, TUpdateToggle } from "./namespace";
+import { TType, TCurrentValue, TUpdateToggle, TOrientation } from "./namespace";
 
 interface IModelOptions extends API {
   min?: number,
   max?: number,
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: TOrientation,
   type?: TType,
   withRange?: boolean,
   withThumb?: boolean,
