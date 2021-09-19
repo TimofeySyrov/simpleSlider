@@ -12,10 +12,14 @@ class Controller extends Observer {
 
   private model: Model;
   private view: View;
+  private _events: IEvents = {
+    modelOptionsChanged: new Observer
+  }
 
   get events (): IEvents {
     return { 
-      ...this.model.events, 
+      ...this.model.events,
+      ...this._events, 
       ...this.view.events 
     };
   }
@@ -34,8 +38,12 @@ class Controller extends Observer {
     this.init();
   }
 
-  public updateOptions (options: Partial<IModelOptions>) {
+  public updateOptions (options: Partial<IModelOptions>): void {
     this.model.updateModelOptions(options);
+  }
+
+  public updateCurrentValue (toggle: TUpdateToggle): void {
+    this.model.updateCurrentValueOption(toggle);
   }
 
   private init () {
@@ -67,6 +75,7 @@ class Controller extends Observer {
   @bind
   private onModelUpdate (newModelOptions: IModelOptions) {
     this.view.updateModelOptions(newModelOptions);
+    this._events.modelOptionsChanged.notify(newModelOptions);
   }
 
   // наблюдатель Отображения
