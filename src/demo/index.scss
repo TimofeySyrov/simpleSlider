@@ -4,95 +4,44 @@
   padding: 0;
 }
 
-body {
+.wrapper {
+  width: fit-content;
+  height: 100%;
+  margin: 0 auto;
   display: flex;
+}
+
+.preview {
+  width: fit-content;
+  height: 100%;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview__title {
+  width: fit-content;
+  font-size: 20px;
+  padding: 5px;
+  border: 1px solid rgb(153, 153, 153);
+  border-top-left-radius: 5px;
+  border-bottom: 0;
+  border-right: 0;
+}
+
+.preview__slider-box {
+  width: 100%;
+  height: 350px;
+  padding: 15px 30px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.some-block {
-  width: 320px;
-  margin-top: 300px;
-}
-
-.simpleSlider {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.bar {
-  position: relative;
-  height: 5px;
-  border-radius: 5px;
-  background-color: rgb(206, 206, 206);
-  cursor: pointer;
-
-  &__scale {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    background-color: rgb(255, 109, 109);
-    transform-origin: 0 0;
-    transform: scale(0, 1);
-  }
-}
-
-.thumb {
-  position: absolute;
-  top: -35px;
-  background-color: rgb(255, 109, 109);
-  padding: 4px 6px;
-  border-radius: 5px;
-  text-align: center;
-  color: #fafafa;
-  cursor: pointer;
-  user-select: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    border: 4px solid transparent;
-    border-top-color: rgb(255, 109, 109);
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%) translateY(100%);
-  }
-}
-
-.toggle {
-  position: absolute;
-  top: -5px;
-  left: -6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform: translateX(0px);
-
-  &__handle {
-    width: 15px;
-    height: 15px;
-    border: none;
-    border-radius: 50%;
-    background-color: rgb(109, 172, 255);
-    cursor: pointer;
-  }
-}
-
-.ruler {
-  position: relative;
-  list-style: none;
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-
-  &__item {
-    position: absolute;
-    top: 0;
-    cursor: pointer;
+@media screen and (max-width: 1380px) {
+  .wrapper {
+    flex-direction: column;
+    align-items: center;
   }
 }
