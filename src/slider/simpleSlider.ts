@@ -1,10 +1,19 @@
 import Controller from "./controller/Controller";
 import IModelOptions from "./interfaces/IModelOptions";
-import { TDomParent } from "./interfaces/namespace";
+import IEvents from "./interfaces/model/IModelEvents";
+import { TDomParent, TUpdateToggle } from "./interfaces/namespace";
 
 class SimpleSlider {
 
   private controller: Controller;
+
+  get events (): IEvents {
+    return this.controller.events;
+  }
+
+  get options (): IModelOptions {
+    return this.controller.options;
+  }
 
   constructor (domParent: TDomParent, options: IModelOptions) {
     this.controller = new Controller(domParent, options);
@@ -14,6 +23,10 @@ class SimpleSlider {
   public updateOptions (options: Partial<IModelOptions>): void {
     this.controller.updateOptions(options);
     this.initUserCallbackEvents(options);
+  }
+
+  public updateCurrentValue (toggle: TUpdateToggle) {
+    this.controller.updateCurrentValue(toggle);
   }
 
   private initUserCallbackEvents(options: IModelOptions) {
