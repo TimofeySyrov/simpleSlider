@@ -6,7 +6,7 @@ class Toggle {
   constructor () {
   }
 
-  public createDom () {
+  public createDom (): HTMLDivElement {
     const domToggle = document.createElement('div');
     domToggle.classList.add(`${sliderClassNames.toggle.main}`);
 
