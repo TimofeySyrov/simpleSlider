@@ -70,38 +70,71 @@ class View extends Observer {
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
+    const isSliderHave = nodes.domParent.contains(nodes.slider);
+    const isBarHave = nodes.slider.contains(nodes.bar);
+    const isFromHave = nodes.bar.contains(nodes.from.handle);
+    const isToHave = nodes.bar.contains(nodes.to.handle);
+    const isThumbHave = nodes.from.handle.contains(nodes.from.thumb) && nodes.to.handle.contains(nodes.to.thumb);
+    const isRangeHave = nodes.bar.contains(nodes.range);
+    const isScaleHave = nodes.slider.contains(nodes.scale.getDom());
 
-    if(!nodes.domParent.contains(nodes.slider)) {
+    /* Slider */
+    if(!isSliderHave) {
       nodes.domParent.appendChild(nodes.slider);
     }
 
-    if(!nodes.slider.contains(nodes.bar)) {
+    /* Bar */
+    if(!isBarHave) {
       nodes.slider.appendChild(nodes.bar);
     }
 
-    if(withRange) {
-      nodes.bar.appendChild(nodes.range);
-    }
-
-    if(withScale) {
-      nodes.slider.appendChild(nodes.scale.getDom())
-    }
-
-    if(withThumb) {
-      nodes.from.handle.appendChild(nodes.from.thumb);
-
-      if(isRange) {
-        nodes.to.handle.appendChild(nodes.to.thumb);
+    /* From-start || From-end */
+    if(isFromStart || isFromEnd) {
+      if(!isFromHave){
+        nodes.bar.appendChild(nodes.from.handle);
+      }
+      if(isToHave) {
+        nodes.bar.removeChild(nodes.to.handle);
       }
     }
 
-    if(isFromStart || isFromEnd) {
-      nodes.bar.appendChild(nodes.from.handle)
+    /* Range */
+    if(isRange) {
+      if(!isFromHave){
+        nodes.bar.appendChild(nodes.from.handle);
+      }
+      if(!isToHave){
+        nodes.bar.appendChild(nodes.to.handle);
+      }
     }
 
-    if(isRange) {
-      nodes.bar.appendChild(nodes.from.handle)
-      nodes.bar.appendChild(nodes.to.handle)
+    /* withRange */
+    if(withRange && !isRangeHave) {
+      nodes.bar.appendChild(nodes.range);
+    }
+
+    if(!withRange && isRangeHave) {
+      nodes.bar.removeChild(nodes.range)
+    }
+
+    /* withScale */
+    if(withScale && !isScaleHave) {
+      nodes.slider.appendChild(nodes.scale.getDom())
+    }
+
+    if(!withScale && isScaleHave) {
+      nodes.slider.removeChild(nodes.scale.getDom())
+    }
+
+    /* withThumb */
+    if(withThumb && !isThumbHave) {
+      nodes.from.handle.appendChild(nodes.from.thumb);
+      nodes.to.handle.appendChild(nodes.to.thumb);
+    }
+
+    if(!withThumb && isThumbHave) {
+      nodes.from.handle.removeChild(nodes.from.thumb);
+      nodes.to.handle.removeChild(nodes.to.thumb);
     }
 
     this.setCurrentValue();
@@ -112,10 +145,31 @@ class View extends Observer {
   private renderSubViewStyles () {
     const { orientation } = this.modelOptions;
     const nodes = this.nodes;
+    const isVertical = orientation === 'vertical';
+    const orientClear = isVertical ? `horizontal` : `vertical`;
+    const startSideClear = isVertical ? `left` : `bottom`;
+    const endSideClear = isVertical ? `right` : `top`;
 
     nodes.slider.setAttribute('class', `${sliderClassNames.slider.main}`);
     nodes.from.handle.setAttribute('data-index', `0`);
     nodes.to.handle.setAttribute('data-index', `1`);
+
+    nodes.bar.classList.remove(`${sliderClassNames.bar[orientClear]}`);
+    nodes.range.classList.remove(`${sliderClassNames.range[orientClear]}`);
+    nodes.from.handle.classList.remove(`${sliderClassNames.toggle[orientClear]}`);
+    nodes.from.thumb.classList.remove(`${sliderClassNames.thumb[orientClear]}`);
+    nodes.to.handle.classList.remove(`${sliderClassNames.toggle[orientClear]}`);
+    nodes.to.thumb.classList.remove(`${sliderClassNames.thumb[orientClear]}`);
+    nodes.scale.getDom().classList.remove(`${sliderClassNames.scale[orientClear]}`);
+    nodes.scale.getItems().forEach((item) => {
+      item.classList.remove(`${sliderClassNames.scaleItem[orientClear]}`);
+    });
+    
+    nodes.range.style[startSideClear] = '0';
+    nodes.range.style[endSideClear] = '0';
+
+    nodes.from.handle.style.removeProperty(startSideClear);
+    nodes.to.handle.style.removeProperty(startSideClear);
     
     nodes.slider.classList.add(`${sliderClassNames.slider[orientation]}`);
     nodes.bar.classList.add(`${sliderClassNames.bar[orientation]}`);
