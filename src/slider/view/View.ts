@@ -222,7 +222,7 @@ class View extends Observer {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
       
-      this._events.slide.notify({ handle: this.draggingToggle, value: value});
+      this._events.slide.notify({ handle: this.draggingToggle, value: value, checkStep: true } as TUpdateToggle);
     }
   }
 
@@ -244,7 +244,7 @@ class View extends Observer {
         const value = Number(item.getAttribute(`data-value`));
         const toggle = this.chooseToggleByCoords(event);
 
-        this._events.slide.notify({ handle: toggle, value: value, valueFromScale: true });
+        this._events.slide.notify({ handle: toggle, value: value });
       }
     })
   }
