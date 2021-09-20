@@ -4,6 +4,7 @@ import { TCurrentValue, TDomParent, TUpdateToggle } from "../../slider/interface
 import SimpleSlider from "../../slider/simpleSlider";
 import template from "./utils/template";
 import INodes from "./interfaces/INodes";
+import debounce from "./utils/debounce";
 
 class SimpleSliderPanel {
 
@@ -44,96 +45,69 @@ class SimpleSliderPanel {
     
     this.nodes.to.disabled = true;
     this.domParent.appendChild(panel);
-    this.changeOptions(this.modelOptions);
+    this.onUpdateOptions(this.modelOptions);
   }
 
   private subscribeToSliderEvents(): void {
-    this.slider.events.modelOptionsChanged.subscribe(this.changeOptions);
+    this.slider.events.modelOptionsChanged.subscribe(this.onUpdateOptions);
     this.slider.events.currentValueChanged.subscribe(this.onSlideUpdate);
   }
 
   private initPanelListeners(): void {
     const nodes = this.nodes;
 
-    nodes.min.addEventListener('input', (e) => {
-      this.slider.updateOptions({
-        min: parseInt((e.target as HTMLInputElement).value)
-      })
-    })
+    /* Input type of NUMBER */
+    nodes.min.addEventListener('input', this.onNumberInputChange);
+    nodes.max.addEventListener('input', this.onNumberInputChange);
+    nodes.from.addEventListener('input', this.onNumberInputChange);
+    nodes.to.addEventListener('input', this.onNumberInputChange);
+    nodes.step.addEventListener('input', this.onNumberInputChange);
 
-    nodes.max.addEventListener('input', (e) => {
-      this.slider.updateOptions({
-        max: parseInt((e.target as HTMLInputElement).value)
-      })
-    })
+    /* Input type of RADIO */
+    nodes.horizontal.addEventListener('change', this.onInputChange);
+    nodes.vertical.addEventListener('change', this.onInputChange);
+    nodes["from-start"].addEventListener('change', this.onInputChange);
+    nodes["from-end"].addEventListener('change', this.onInputChange);
+    nodes.range.addEventListener('change', this.onInputChange);
 
-    nodes.from.addEventListener('input', (e) => {
-      this.slider.updateCurrentValue({
-        handle: 'from',
-        value: parseInt((e.target as HTMLInputElement).value)
-      })
-    })
+    /* Input type of CHECKBOX */
+    nodes.withRange.addEventListener('change', this.onInputChange);
+    nodes.withThumb.addEventListener('change', this.onInputChange)
+    nodes.withScale.addEventListener('change', this.onInputChange);
+  }
 
-    nodes.to.addEventListener('input', (e) => {
-      this.slider.updateCurrentValue({
-        handle: 'to',
-        value: parseInt((e.target as HTMLInputElement).value)
-      })
-    })
+  private updateSliderOptions (): void {
+    const newOptions: IModelOptions = {};
+    const nodes = this.nodes;
+    const optionOrientation = nodes.horizontal.checked ? 'horizontal' : 'vertical';
+    const optionType = nodes.range.checked ? 'range' : nodes["from-start"].checked ? 'from-start' : 'from-end';
 
-    nodes.step.addEventListener('input', (e) => {
-      this.slider.updateOptions({
-        step: parseInt((e.target as HTMLInputElement).value)
-      })
-    })
+    newOptions.min = nodes.min.value ? parseFloat(nodes.min.value) : this.modelOptions.min;
+    newOptions.max = nodes.max.value ? parseFloat(nodes.max.value) : this.modelOptions.max;
+    newOptions.step = nodes.step.value ? parseFloat(nodes.step.value) : this.modelOptions.step;
 
-    nodes.horizontal.addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        orientation: 'horizontal'
-      })
-    })
+    newOptions.currentValue = {
+      min: nodes.from.value ? parseFloat(nodes.from.value) : this.modelOptions.min,
+      max: nodes.to.value ? parseFloat(nodes.to.value) : this.modelOptions.min
+    };
 
-    nodes.vertical.addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        orientation: 'vertical'
-      })
-    })
+    newOptions.orientation = optionOrientation;
+    newOptions.type = optionType;
+    newOptions.withRange = nodes.withRange.checked;
+    newOptions.withThumb = nodes.withThumb.checked;
+    newOptions.withScale = nodes.withScale.checked;
+    
+    this.slider.updateOptions(newOptions);
+  }
 
-    nodes['from-start'].addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        type: 'from-start'
-      })
-    })
 
-    nodes['from-end'].addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        type: 'from-end'
-      })
-    })
+  private onNumberInputChange = debounce(() => {
+    this.updateSliderOptions();
+  });
 
-    nodes['range'].addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        type: 'range'
-      })
-    })
-
-    nodes.withRange.addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        withRange: Boolean((e.target as HTMLInputElement).checked)
-      })
-    })
-
-    nodes.withThumb.addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        withThumb: Boolean((e.target as HTMLInputElement).checked)
-      })
-    })
-
-    nodes.withScale.addEventListener('change', (e) => {
-      this.slider.updateOptions({
-        withScale: Boolean((e.target as HTMLInputElement).checked)
-      })
-    })
+  @bind
+  private onInputChange (): void {
+    this.updateSliderOptions();
   }
 
   @bind
@@ -157,16 +131,16 @@ class SimpleSliderPanel {
   }
 
   @bind
-  private changeOptions (options: IModelOptions): void {
+  private onUpdateOptions (options: IModelOptions): void {
     const { min, max, currentValue, step, type, orientation,
       withRange, withScale, withThumb } = options;
     const nodes = this.nodes;
-    const isNotRange = type !== 'range';
+    const isRange = type === 'range';
 
     nodes.min.value = `${min}`;
     nodes.max.value = `${max}`;
 
-    nodes.to.disabled = isNotRange;
+    nodes.to.disabled = !isRange;
     this.changeCurrentValue(currentValue);
 
     nodes.step.value = `${step}`;
