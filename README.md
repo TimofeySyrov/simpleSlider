@@ -22,7 +22,7 @@ $ npm i && npm test
 | currentValue     | number или { min: number, max: number } | currentValue: 50 | Задает текущее значение слайдера. При одиночном интервале использует тип number или ключ min опции currentValue. При диапазоне использует тип { min: number, max: number } или тип number (в таком случае ключи min и max опции currentValue будут равны number)  |
 | step | number | 1 | Задает шаг для значений слайдера |
 | orientation | string | "horizontal" | Задает горизонтальный или вертикальный вид слайдера. Для горизонтального значение - "horizontal", для вертикального - "vertical" |
-| type | string | "from-start" | Задает сторону начала для значений слайдера  |
+| type | string | "from-start" | Задает тип и сторону старта слайдера. Одиночный интервал: "from-start" - сторона старта с начала, "from-end" - сторона старта с конца. Диапазон: "range" - сторона старта с начала |
 | withRange | boolean | true | Задает отображение полоски интервала слайдера |
 | withThumb | boolean | true | Задает отображение подсказки у ползунков слайдера |
 | withScale | boolean | true | Задает отображение шкалы значений слайдера |
