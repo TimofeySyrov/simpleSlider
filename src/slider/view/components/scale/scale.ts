@@ -1,8 +1,8 @@
-import sliderClassNames from '../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames'
 
 class Scale {
   
-  private dom: HTMLElement;
+  private dom!: HTMLElement;
 
   constructor() {
 

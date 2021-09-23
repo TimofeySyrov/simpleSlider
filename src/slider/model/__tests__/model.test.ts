@@ -1,7 +1,7 @@
-import IModelOptions from '../../interfaces/IModelOptions';
-import { TUpdateToggle } from '../../interfaces/namespace';
+import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
+import { TUpdateToggle } from '../../utils/types/namespace';
 import Model from '../Model';
-import defaultModelOptions from '../utils/defaultModelOptions';
+import defaultModelOptions from '../../utils/defaultModelOptions';
 
 describe('Model:', () => {
 
@@ -11,7 +11,7 @@ describe('Model:', () => {
   describe('updateModelOptions:', () => {
 
     test('должен обновить опции слайдера на входящие', () => {
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 10,
         max: 50,
         step: 2,

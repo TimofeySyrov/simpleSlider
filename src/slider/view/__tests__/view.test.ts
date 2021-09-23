@@ -4,17 +4,17 @@
 
 import $ from 'jquery';
 import View from '../View';
-import defaultModelOptions from '../../model/utils/defaultModelOptions';
-import IModelOptions from '../../interfaces/IModelOptions';
-import sliderClassNames from '../components/utils/sliderClassNames';
-import { TUpdateToggle } from '../../interfaces/namespace';
+import defaultModelOptions from '../../utils/defaultModelOptions';
+import sliderClassNames from '../../utils/sliderClassNames';
+import { TUpdateToggle } from '../../utils/types/namespace';
+import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 
 describe('View:', () => {
 
   describe('updateModelOptions:', () => {
     test('должен обновлять опции', () => {
 
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 10,
         max: 50,
         step: 2,
@@ -29,7 +29,7 @@ describe('View:', () => {
       const mockParent = document.createElement('div');
       const view = new class mockView extends View {
 
-        get options(): IModelOptions {
+        get options(): ICorrectOptions {
           //@ts-ignore
           return this.modelOptions;
         }
@@ -47,7 +47,7 @@ describe('View:', () => {
   describe('updateCurrentValue:', () => {
     test('должен обновлять значения позлунков слайдера', () => {
 
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
         step: 1,
@@ -75,18 +75,18 @@ describe('View:', () => {
       view.updateCurrentValue(newToValue);
       view.updateCurrentValue(newFromValue);
 
-      const valueTo = mockParent.querySelector(`[data-index="1"]`).querySelector(`.${sliderClassNames.thumb.main}`).innerHTML;
-      const valueFrom = mockParent.querySelector(`[data-index="0"]`).querySelector(`.${sliderClassNames.thumb.main}`).innerHTML;
+      const valueTo = (mockParent.querySelector(`[data-index="1"]`) as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
+      const valueFrom = (mockParent.querySelector(`[data-index="0"]`) as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
 
-      expect(valueTo).toBe(`76.00`);
-      expect(valueFrom).toBe(`1.00`);
+      expect(valueTo.innerHTML).toBe(`76.00`);
+      expect(valueFrom.innerHTML).toBe(`1.00`);
     });
   });
 
   describe('initSubView, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
 
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
         step: 1,
@@ -115,7 +115,7 @@ describe('View:', () => {
   describe('renderSubViewStyles:', () => {
     test('должен корректно задавать классы и дата-атрибуты для subView', () => {
 
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
         step: 1,
@@ -130,13 +130,13 @@ describe('View:', () => {
       const mockParent = document.createElement('div');
       const view = new View(mockParent, newOptions);
 
-      const slider = mockParent.querySelector(`.${sliderClassNames.slider.main}`);
-      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`);
-      const range = mockParent.querySelector(`.${sliderClassNames.range.main}`);
-      const toggles = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`);
-      const thumbs = mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`);
-      const scale = mockParent.querySelector(`.${sliderClassNames.scale.main}`);
-      const scaleItems = mockParent.querySelectorAll(`.${sliderClassNames.scaleItem.main}`);
+      const slider = mockParent.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement;
+      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
+      const range = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement;
+      const toggles = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`) as NodeListOf<HTMLElement>;
+      const thumbs = mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`) as NodeListOf<HTMLElement>;
+      const scale = mockParent.querySelector(`.${sliderClassNames.scale.main}`) as HTMLElement;
+      const scaleItems = mockParent.querySelectorAll(`.${sliderClassNames.scaleItem.main}`) as NodeListOf<HTMLElement>;
 
       expect(slider.classList.contains(`${sliderClassNames.slider[newOptions.orientation]}`)).toBeTruthy();
       expect(bar.classList.contains(`${sliderClassNames.bar[newOptions.orientation]}`)).toBeTruthy();
@@ -163,7 +163,7 @@ describe('View:', () => {
   describe('startDragging, drag, finishDragging:', () => {
     test('должны уведомлять при взаимодействии со шкалой и баром слайдера', () => {
 
-      const newOptions: IModelOptions = {
+      const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
         step: 1,
@@ -179,10 +179,10 @@ describe('View:', () => {
       const view = new View(mockParent, newOptions);
 
       const sb = jest.fn();
-      view.events.slide.subscribe(sb);
+      view.events.onSlide.subscribe(sb);
 
-      const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`);
-      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`);
+      const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`) as HTMLElement;
+      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
 
       $(scaleItem).trigger("click");
       $(bar).trigger("click");

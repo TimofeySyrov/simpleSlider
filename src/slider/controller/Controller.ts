@@ -1,45 +1,46 @@
 import { bind } from "decko";
-import IModelOptions from "../interfaces/IModelOptions";
+
+import IEvents from "../utils/interfaces/model/IModelEvents";
+import IModelEvents from "../utils/interfaces/model/IModelEvents";
+import IUserOptions from "../utils/interfaces/IUserOptions";
+import { TDomParent, TUpdateToggle } from "../utils/types/namespace";
 import Observer from "../observer/Observer";
 import Model from "../model/Model";
 import View from "../view/View";
-import { TDomParent, TUpdateToggle } from "../interfaces/namespace";
-import IEvents from "../interfaces/model/IModelEvents";
+import ICorrectOptions from "../utils/interfaces/ICorrectOptions";
 
 class Controller extends Observer {
 
   private domParent: TDomParent;
-
   private model: Model;
   private view: View;
-  private _events: IEvents = {
-    modelOptionsChanged: new Observer
-  }
+  private _events: IModelEvents;
 
   get events (): IEvents {
-    return { 
-      ...this.model.events,
-      ...this._events, 
-      ...this.view.events 
-    };
+    return this._events;
   }
 
-  get options (): IModelOptions {
+  get options (): ICorrectOptions {
     return this.model.options;
   }
 
-  constructor (domParent: TDomParent, options: IModelOptions) {
+  constructor (domParent: TDomParent, options: ICorrectOptions) {
     super();
 
     this.domParent = domParent;
     this.model = new Model(options);
     this.view = new View(this.domParent, this.model.options);
+    this._events = {
+      ...this.model.events,
+      ...this.view.events
+    };
 
     this.init();
   }
 
-  public updateOptions (options: Partial<IModelOptions>): void {
-    this.model.updateModelOptions(options);
+  public updateOptions (options: IUserOptions): void {
+    const newOptions = { ...this.model.options, ...options } as ICorrectOptions;
+    this.model.updateModelOptions(newOptions);
   }
 
   public updateCurrentValue (toggle: TUpdateToggle): void {
@@ -58,7 +59,7 @@ class Controller extends Observer {
 
   private subscribeToEvents () {
     this.model.events.currentValueChanged.subscribe(this.updateViewFromModelEvents);
-    this.view.events.slide.subscribe(this.updateModelFromViewEvents);
+    this.view.events.onSlide.subscribe(this.updateModelFromViewEvents);
   }
 
   @bind
@@ -73,15 +74,15 @@ class Controller extends Observer {
 
   // наблюдатель Модели
   @bind
-  private onModelUpdate (newModelOptions: IModelOptions) {
+  private onModelUpdate (newModelOptions: ICorrectOptions) {
     this.view.updateModelOptions(newModelOptions);
     this._events.modelOptionsChanged.notify(newModelOptions);
   }
 
   // наблюдатель Отображения
   @bind
-  private onViewUpdate (newModelOptions: IModelOptions) {
-    this.model.updateModelOptions(newModelOptions)
+  private onViewUpdate (newModelOptions: IUserOptions) {
+    this.model.updateModelOptions(newModelOptions as ICorrectOptions)
   }
 
 }

@@ -1,39 +1,39 @@
 import { bind } from 'decko';
 
-import sliderClassNames from "./components/utils/sliderClassNames";
+import sliderClassNames from "../utils/sliderClassNames";
 import Range from "./components/range/range";
 import Toggle from "./components/toggle/toggle";
 import Thumb from "./components/thumb/thumb";
 import Scale from "./components/scale/scale";
 import Bar from "./components/bar/bar";
 
-import IModelOptions from "../interfaces/IModelOptions";
-import ISliderNodes from "../interfaces/view/ISliderNodes";
-import IEvents from '../interfaces/view/IEvents';
-import { TDomParent, TToggle, TUpdateToggle } from '../interfaces/namespace';
+import ISliderNodes from "../utils/interfaces/view/ISliderNodes";
+import IEvents from '../utils/interfaces/view/IViewEvents';
+import { TDomParent, TToggle, TUpdateToggle } from '../utils/types/namespace';
 import Observer from "../observer/Observer";
+import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 
 class View extends Observer {
 
-  private modelOptions: IModelOptions;
-  private nodes: ISliderNodes;
-  private draggingToggle: TToggle | null;
+  private modelOptions: ICorrectOptions;
+  private nodes!: ISliderNodes;
+  private draggingToggle!: TToggle | null;
   private _events: IEvents = {
-    slide: new Observer
+    onSlide: new Observer
   }
 
   get events(): IEvents {
     return this._events;
   };
 
-  constructor (domParent: TDomParent, modelOptions: IModelOptions) {
+  constructor (domParent: TDomParent, modelOptions: ICorrectOptions) {
     super();
 
     this.modelOptions = modelOptions;
     this.initSubView(domParent);
   }
 
-  public updateModelOptions (newModelOptions: IModelOptions) {
+  public updateModelOptions (newModelOptions: ICorrectOptions) {
     this.modelOptions = newModelOptions;
     this.render();
   }
@@ -240,7 +240,7 @@ class View extends Observer {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
       
-      this._events.slide.notify({ handle: this.draggingToggle, value: value, checkStep: true } as TUpdateToggle);
+      this._events.onSlide.notify({ handle: this.draggingToggle, value: value, checkStep: true } as TUpdateToggle);
     }
   }
 
@@ -263,7 +263,7 @@ class View extends Observer {
         const value = Number(item.getAttribute(`data-value`));
         const toggle = this.chooseToggleByCoords(event);
 
-        this._events.slide.notify({ handle: toggle, value: value });
+        this._events.onSlide.notify({ handle: toggle, value: value });
       }
     })
   }
@@ -443,16 +443,17 @@ class View extends Observer {
   }
 
   private setToggleValue (toggle: TToggle, value: number) {
-    const { orientation, withThumb } = this.modelOptions;
+    const { orientation, withThumb, withRange } = this.modelOptions;
     const nodes = this.nodes;
     const isVertical = orientation === 'vertical';
     const typeStyleSide = isVertical ? `bottom` : `left`;
     const percent = this.convertValueToPercent(value);
 
     nodes[toggle].handle.style[typeStyleSide] = `${percent}%`;
-    if (withThumb) this.setThumbValue(toggle, value);
+    
     this.setLastToggle(toggle);
-    this.setRangePosition();
+    if (withThumb) this.setThumbValue(toggle, value);
+    if (withRange) this.setRangePosition();
   }
 }
 

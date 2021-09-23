@@ -1,8 +1,8 @@
-import sliderClassNames from '../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames'
 
 class Bar {
   
-  private dom: HTMLDivElement;
+  private dom!: HTMLDivElement;
   
   constructor () {
     

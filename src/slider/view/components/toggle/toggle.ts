@@ -1,7 +1,7 @@
-import sliderClassNames from '../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames'
 
 class Toggle {
-  private dom: HTMLDivElement;
+  private dom!: HTMLDivElement;
 
   constructor () {
   }

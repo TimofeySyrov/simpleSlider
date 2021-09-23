@@ -1,7 +1,7 @@
-import sliderClassNames from '../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames'
 
 class Thumb {
-  private dom: HTMLDivElement;
+  private dom!: HTMLDivElement;
 
   constructor () {
   }

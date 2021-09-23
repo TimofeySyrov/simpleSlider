@@ -3,15 +3,15 @@
  */
 
 import Controller from '../Controller';
-import defaultModelOptions from '../../model/utils/defaultModelOptions';
-import IModelOptions from '../../interfaces/IModelOptions';
+import defaultModelOptions from '../../utils/defaultModelOptions';
+import IModelOptions from '../../utils/interfaces/IUserOptions';
 
 describe('Controller:', () => {
 
   describe('updateOptions:', () => {
     test('должен обновлять опции слайдера', () => {
 
-      const someNewOptions: Partial<IModelOptions> = {
+      const someNewOptions: IModelOptions = {
         step: 2,
         withScale: false,
       };

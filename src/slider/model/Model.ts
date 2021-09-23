@@ -1,33 +1,33 @@
+import IModelEvents from "../utils/interfaces/model/IModelEvents";
+import ICorrectOptions from "../utils/interfaces/ICorrectOptions";
+import { TType, TCurrentValue, TUpdateToggle } from "../utils/types/namespace";
 import Observer from "../observer/Observer";
-import IModelOptions from "../interfaces/IModelOptions";
-import { TType, TCurrentValue, TUpdateToggle } from "../interfaces/namespace";
-import IModelEvents from "../interfaces/model/IModelEvents";
 
 class Model extends Observer {
   
-  private modelOptions: IModelOptions;
+  private modelOptions: ICorrectOptions;
   private _events: IModelEvents = {
-    currentValueChanged: new Observer
+    currentValueChanged: new Observer,
+    modelOptionsChanged: new Observer
   }
 
-  get options(): IModelOptions {
+  get options(): ICorrectOptions {
     return this.modelOptions
   }
   get events(): IModelEvents {
     return this._events;
   };
 
-  constructor(options: IModelOptions) {
+  constructor(options: ICorrectOptions) {
     super();
 
     this.modelOptions = options;
     this.checkModelOptions(options);
   }
 
-  public updateModelOptions(option: Partial<IModelOptions>): void {
-    const newOptions = { ...this.modelOptions, ...option };
-    this.modelOptions = newOptions;
-    this.checkModelOptions(newOptions);
+  public updateModelOptions(options: ICorrectOptions): void {
+    this.modelOptions = options;
+    this.checkModelOptions(options);
     this.notify(this.modelOptions);
   }
 
@@ -62,7 +62,7 @@ class Model extends Observer {
     this._events.currentValueChanged.notify(toggle);
   }
 
-  private checkModelOptions (options: IModelOptions) {
+  private checkModelOptions (options: ICorrectOptions) {
     const { min, max, currentValue, step, type } = options;
     const confirmedMinMax = this.getCorrectMinMax(min, max);
 
