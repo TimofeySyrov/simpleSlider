@@ -1,4 +1,4 @@
-import ICorrectOptions from "./interfaces/ICorrectOptions";
+import ICorrectOptions from './interfaces/ICorrectOptions';
 
 const defaultModelOptions: ICorrectOptions = {
   min: 0,
@@ -9,7 +9,7 @@ const defaultModelOptions: ICorrectOptions = {
   currentValue: 50,
   withRange: true,
   withThumb: true,
-  withScale: true
-}
+  withScale: true,
+};
 
 export default defaultModelOptions;

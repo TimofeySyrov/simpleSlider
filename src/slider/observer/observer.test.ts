@@ -1,8 +1,8 @@
-import Observer from "./Observer";
+import Observer from './Observer';
 
 describe('Observable:', () => {
   const observable = new Observer();
-  const data = { text: 'some data' }
+  const data = { text: 'some data' };
 
   test('should add subscriber to observers and send them data', () => {
     const subscriber = jest.fn();
@@ -22,4 +22,4 @@ describe('Observable:', () => {
 
     expect(subscriber).not.toHaveBeenCalledWith();
   });
-})
+});

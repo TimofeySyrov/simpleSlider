@@ -1,4 +1,4 @@
-import sliderClassNames from '../../../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Thumb {
   private dom!: HTMLDivElement;
@@ -10,7 +10,7 @@ class Thumb {
     const domThumb = document.createElement('div');
     domThumb.classList.add(`${sliderClassNames.thumb.main}`);
 
-    this.saveDom(domThumb)
+    this.saveDom(domThumb);
 
     return domThumb;
   }
@@ -24,4 +24,4 @@ class Thumb {
   }
 }
 
-export default Thumb
+export default Thumb;

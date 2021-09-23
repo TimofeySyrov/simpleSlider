@@ -1,11 +1,9 @@
-import sliderClassNames from '../../../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Range {
-  
   private dom!: HTMLDivElement;
-  
+
   constructor () {
-    
     this.createDom();
   }
 

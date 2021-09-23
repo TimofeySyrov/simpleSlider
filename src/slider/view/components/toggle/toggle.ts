@@ -1,4 +1,4 @@
-import sliderClassNames from '../../../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Toggle {
   private dom!: HTMLDivElement;
@@ -10,7 +10,7 @@ class Toggle {
     const domToggle = document.createElement('div');
     domToggle.classList.add(`${sliderClassNames.toggle.main}`);
 
-    this.saveDom(domToggle)
+    this.saveDom(domToggle);
 
     return domToggle;
   }
@@ -24,4 +24,4 @@ class Toggle {
   }
 }
 
-export default Toggle
+export default Toggle;

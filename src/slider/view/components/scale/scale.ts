@@ -1,11 +1,9 @@
-import sliderClassNames from '../../../utils/sliderClassNames'
+import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Scale {
-  
   private dom!: HTMLElement;
 
-  constructor() {
-
+  constructor () {
     this.createDom();
   }
 
@@ -20,7 +18,7 @@ class Scale {
     const domScaleItem = document.createElement('li');
     domScaleItem.classList.add(`${sliderClassNames.scaleItem.main}`);
 
-    domScaleItem.setAttribute(`data-value`, `${value}`);
+    domScaleItem.setAttribute('data-value', `${value}`);
     domScaleItem.innerHTML = `${value}`;
     this.dom.appendChild(domScaleItem);
     return domScaleItem;

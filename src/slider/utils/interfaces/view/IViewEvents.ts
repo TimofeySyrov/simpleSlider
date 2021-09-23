@@ -1,4 +1,4 @@
-import IObserver from "../../../observer/IObserver";
+import IObserver from '../../../observer/IObserver';
 
 interface IViewEvents {
   onSlide: IObserver

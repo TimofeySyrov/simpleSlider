@@ -1,4 +1,4 @@
-import { TCurrentValue, TOrientation, TType } from "../types/namespace";
+import { TCurrentValue, TOrientation, TType } from '../types/namespace';
 
 interface ICorrectOptions {
   min: number,

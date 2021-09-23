@@ -1,5 +1,5 @@
-import ICallbackAPI from "./ICallbackAPI";
-import { TType, TCurrentValue, TOrientation } from "../types/namespace";
+import ICallbackAPI from './ICallbackAPI';
+import { TType, TCurrentValue, TOrientation } from '../types/namespace';
 
 interface IUserOptions extends ICallbackAPI {
   min?: number,

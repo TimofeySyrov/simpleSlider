@@ -10,10 +10,8 @@ import { TUpdateToggle } from '../../utils/types/namespace';
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 
 describe('View:', () => {
-
   describe('updateModelOptions:', () => {
     test('должен обновлять опции', () => {
-
       const newOptions: ICorrectOptions = {
         min: 10,
         max: 50,
@@ -23,30 +21,28 @@ describe('View:', () => {
         currentValue: 10,
         withRange: false,
         withThumb: false,
-        withScale: false
+        withScale: false,
       };
-      
+
       const mockParent = document.createElement('div');
       const view = new class mockView extends View {
-
-        get options(): ICorrectOptions {
-          //@ts-ignore
+        get options (): ICorrectOptions {
+          // @ts-ignore
           return this.modelOptions;
         }
 
-        constructor(){
+        constructor () {
           super(mockParent, defaultModelOptions);
         }
-      };
+      }();
       view.updateModelOptions(newOptions);
-  
+
       expect(view.options).toStrictEqual(newOptions);
     });
   });
 
   describe('updateCurrentValue:', () => {
     test('должен обновлять значения позлунков слайдера', () => {
-
       const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
@@ -56,18 +52,18 @@ describe('View:', () => {
         currentValue: { min: 25, max: 50 },
         withRange: true,
         withThumb: true,
-        withScale: true
+        withScale: true,
       };
 
       const newToValue: TUpdateToggle = {
         handle: 'to',
-        value: 76
-      }
+        value: 76,
+      };
 
       const newFromValue: TUpdateToggle = {
         handle: 'from',
-        value: 1
-      }
+        value: 1,
+      };
 
       const mockParent = document.createElement('div');
       const view = new View(mockParent, newOptions);
@@ -75,17 +71,16 @@ describe('View:', () => {
       view.updateCurrentValue(newToValue);
       view.updateCurrentValue(newFromValue);
 
-      const valueTo = (mockParent.querySelector(`[data-index="1"]`) as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
-      const valueFrom = (mockParent.querySelector(`[data-index="0"]`) as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
+      const valueTo = (mockParent.querySelector('[data-index="1"]') as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
+      const valueFrom = (mockParent.querySelector('[data-index="0"]') as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
 
-      expect(valueTo.innerHTML).toBe(`76.00`);
-      expect(valueFrom.innerHTML).toBe(`1.00`);
+      expect(valueTo.innerHTML).toBe('76.00');
+      expect(valueFrom.innerHTML).toBe('1.00');
     });
   });
 
   describe('initSubView, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
-
       const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
@@ -95,7 +90,7 @@ describe('View:', () => {
         currentValue: { min: 25, max: 50 },
         withRange: true,
         withThumb: true,
-        withScale: true
+        withScale: true,
       };
 
       const mockParent = document.createElement('div');
@@ -114,7 +109,6 @@ describe('View:', () => {
 
   describe('renderSubViewStyles:', () => {
     test('должен корректно задавать классы и дата-атрибуты для subView', () => {
-
       const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
@@ -124,7 +118,7 @@ describe('View:', () => {
         currentValue: { min: 25, max: 50 },
         withRange: true,
         withThumb: true,
-        withScale: true
+        withScale: true,
       };
 
       const mockParent = document.createElement('div');
@@ -144,12 +138,12 @@ describe('View:', () => {
 
       /* From toggle */
       expect(toggles[0].classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(toggles[0].getAttribute(`data-index`)).toEqual(`0`);
+      expect(toggles[0].getAttribute('data-index')).toEqual('0');
       expect(thumbs[0].classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* To toggle */
       expect(toggles[1].classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(toggles[1].getAttribute(`data-index`)).toEqual(`1`);
+      expect(toggles[1].getAttribute('data-index')).toEqual('1');
       expect(thumbs[1].classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* Scale */
@@ -162,7 +156,6 @@ describe('View:', () => {
 
   describe('startDragging, drag, finishDragging:', () => {
     test('должны уведомлять при взаимодействии со шкалой и баром слайдера', () => {
-
       const newOptions: ICorrectOptions = {
         min: 0,
         max: 100,
@@ -172,7 +165,7 @@ describe('View:', () => {
         currentValue: { min: 25, max: 50 },
         withRange: true,
         withThumb: true,
-        withScale: true
+        withScale: true,
       };
 
       const mockParent = document.createElement('div');
@@ -184,8 +177,8 @@ describe('View:', () => {
       const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`) as HTMLElement;
       const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
 
-      $(scaleItem).trigger("click");
-      $(bar).trigger("click");
+      $(scaleItem).trigger('click');
+      $(bar).trigger('click');
 
       expect(sb).toBeCalledTimes(2);
     });

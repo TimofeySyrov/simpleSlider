@@ -1,23 +1,25 @@
-import { bind } from "decko";
+import { bind } from 'decko';
 
-import IEvents from "../utils/interfaces/model/IModelEvents";
-import IModelEvents from "../utils/interfaces/model/IModelEvents";
-import IUserOptions from "../utils/interfaces/IUserOptions";
-import { TDomParent, TUpdateToggle } from "../utils/types/namespace";
-import Observer from "../observer/Observer";
-import Model from "../model/Model";
-import View from "../view/View";
-import ICorrectOptions from "../utils/interfaces/ICorrectOptions";
+import IUserOptions from '../utils/interfaces/IUserOptions';
+import { TDomParent, TUpdateToggle } from '../utils/types/namespace';
+import Observer from '../observer/Observer';
+import Model from '../model/Model';
+import View from '../view/View';
+import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
+import ISliderEvents from '../utils/interfaces/ISliderEvents';
 
 class Controller extends Observer {
-
   private domParent: TDomParent;
-  private model: Model;
-  private view: View;
-  private _events: IModelEvents;
 
-  get events (): IEvents {
-    return this._events;
+  private model: Model;
+
+  private view: View;
+
+  get events (): ISliderEvents {
+    return {
+      ...this.model.events,
+      ...this.view.events,
+    };
   }
 
   get options (): ICorrectOptions {
@@ -30,10 +32,6 @@ class Controller extends Observer {
     this.domParent = domParent;
     this.model = new Model(options);
     this.view = new View(this.domParent, this.model.options);
-    this._events = {
-      ...this.model.events,
-      ...this.view.events
-    };
 
     this.init();
   }
@@ -76,15 +74,14 @@ class Controller extends Observer {
   @bind
   private onModelUpdate (newModelOptions: ICorrectOptions) {
     this.view.updateModelOptions(newModelOptions);
-    this._events.modelOptionsChanged.notify(newModelOptions);
+    this.model.events.modelOptionsChanged.notify(newModelOptions);
   }
 
   // наблюдатель Отображения
   @bind
   private onViewUpdate (newModelOptions: IUserOptions) {
-    this.model.updateModelOptions(newModelOptions as ICorrectOptions)
+    this.model.updateModelOptions(newModelOptions as ICorrectOptions);
   }
-
 }
 
-export default Controller
+export default Controller;

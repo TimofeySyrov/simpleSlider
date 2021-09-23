@@ -1,5 +1,5 @@
-import Scale from "../../../view/components/scale/scale";
-import { TDomParent } from "../../types/namespace";
+import Scale from '../../../view/components/scale/scale';
+import { TDomParent } from '../../types/namespace';
 
 interface ISliderNodes {
   domParent: TDomParent,
@@ -9,10 +9,10 @@ interface ISliderNodes {
   from: IToggle,
   to: IToggle,
   scale: Scale
-};
+}
 
 interface IToggle {
   handle: HTMLDivElement,
   thumb: HTMLDivElement
-};
+}
 export default ISliderNodes;

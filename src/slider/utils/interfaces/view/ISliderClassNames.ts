@@ -12,6 +12,6 @@ type TOrientationKeys = {
   main: string,
   horizontal: string,
   vertical: string
-}
+};
 
-export default ISliderClassNames
+export default ISliderClassNames;
