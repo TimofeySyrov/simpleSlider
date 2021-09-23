@@ -1,17 +1,18 @@
 import { bind } from "decko";
-import IModelOptions from "../../slider/interfaces/IModelOptions";
-import { TCurrentValue, TDomParent, TUpdateToggle } from "../../slider/interfaces/namespace";
+import IUserOptions from "../../slider/utils/interfaces/IUserOptions";
+import { TCurrentValue, TDomParent, TUpdateToggle } from "../../slider/utils/types/namespace";
 import SimpleSlider from "../../slider/simpleSlider";
 import template from "./utils/template";
-import INodes from "./interfaces/INodes";
+import INodes from "./utils/interfaces/INodes";
 import debounce from "./utils/debounce";
+import ICorrectOptions from "../../slider/utils/interfaces/ICorrectOptions";
 
 class SimpleSliderPanel {
 
   private domParent: TDomParent;
   private slider: SimpleSlider;
-  private nodes: INodes;
-  private modelOptions: IModelOptions;
+  private nodes!: INodes;
+  private modelOptions: ICorrectOptions;
 
   constructor (domParent: TDomParent, slider: SimpleSlider) {
     this.domParent = domParent;
@@ -28,19 +29,19 @@ class SimpleSliderPanel {
     panel.innerHTML = template;
 
     this.nodes = {
-      min: panel.querySelector(`.js-panel__min-input`),
-      max: panel.querySelector(`.js-panel__max-input`),
-      from: panel.querySelector(`.js-panel__from-input`),
-      to: panel.querySelector(`.js-panel__to-input`),
-      step: panel.querySelector(`.js-panel__step-input`),
-      horizontal: panel.querySelector(`.js-panel__horizontal-input`),
-      vertical: panel.querySelector(`.js-panel__vertical-input`),
-      'from-start': panel.querySelector(`.js-panel__from-start-input`),
-      'from-end': panel.querySelector(`.js-panel__from-end-input`),
-      'range': panel.querySelector(`.js-panel__range-input`),
-      withRange: panel.querySelector(`.js-panel__withRange-input`),
-      withThumb: panel.querySelector(`.js-panel__withThumb-input`),
-      withScale: panel.querySelector(`.js-panel__withScale-input`),
+      min: panel.querySelector(`.js-panel__min-input`) as HTMLInputElement,
+      max: panel.querySelector(`.js-panel__max-input`) as HTMLInputElement,
+      from: panel.querySelector(`.js-panel__from-input`) as HTMLInputElement,
+      to: panel.querySelector(`.js-panel__to-input`) as HTMLInputElement,
+      step: panel.querySelector(`.js-panel__step-input`) as HTMLInputElement,
+      horizontal: panel.querySelector(`.js-panel__horizontal-input`) as HTMLInputElement,
+      vertical: panel.querySelector(`.js-panel__vertical-input`) as HTMLInputElement,
+      'from-start': panel.querySelector(`.js-panel__from-start-input`) as HTMLInputElement,
+      'from-end': panel.querySelector(`.js-panel__from-end-input`) as HTMLInputElement,
+      'range': panel.querySelector(`.js-panel__range-input`) as HTMLInputElement,
+      withRange: panel.querySelector(`.js-panel__withRange-input`) as HTMLInputElement,
+      withThumb: panel.querySelector(`.js-panel__withThumb-input`) as HTMLInputElement,
+      withScale: panel.querySelector(`.js-panel__withScale-input`) as HTMLInputElement,
     };
     
     this.nodes.to.disabled = true;
@@ -77,7 +78,7 @@ class SimpleSliderPanel {
   }
 
   private updateSliderOptions (): void {
-    const newOptions: IModelOptions = {};
+    const newOptions: IUserOptions = {};
     const nodes = this.nodes;
     const optionOrientation = nodes.horizontal.checked ? 'horizontal' : 'vertical';
     const optionType = nodes.range.checked ? 'range' : nodes["from-start"].checked ? 'from-start' : 'from-end';
@@ -97,7 +98,7 @@ class SimpleSliderPanel {
     newOptions.withThumb = nodes.withThumb.checked;
     newOptions.withScale = nodes.withScale.checked;
     
-    this.slider.updateOptions(newOptions);
+    this.slider.updateOptions(newOptions as ICorrectOptions);
   }
 
 
@@ -131,7 +132,7 @@ class SimpleSliderPanel {
   }
 
   @bind
-  private onUpdateOptions (options: IModelOptions): void {
+  private onUpdateOptions (options: ICorrectOptions): void {
     const { min, max, currentValue, step, type, orientation,
       withRange, withScale, withThumb } = options;
     const nodes = this.nodes;

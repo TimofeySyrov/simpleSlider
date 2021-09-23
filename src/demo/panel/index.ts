@@ -1,6 +1,6 @@
-/// <reference path="./interfaces/index.d.ts" />
+/// <reference path="./utils/interfaces/IJQueryPanel.d.ts" />
 
-import { TDomParent } from "../../slider/interfaces/namespace";
+import { TDomParent } from "../../slider/utils/types/namespace";
 import SimpleSlider from "../../slider/simpleSlider";
 import SimpleSliderPanel from "./SimpleSliderPanel";
 
