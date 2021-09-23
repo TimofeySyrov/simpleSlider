@@ -1,0 +1,21 @@
+$sliderWidth: 5px;
+@import '../view/components/bar/bar.scss';
+@import '../view/components/range/range.scss';
+@import '../view/components/toggle/toggle.scss';
+@import '../view/components/thumb/thumb.scss';
+@import '../view/components/scale/scale.scss';
+
+.simpleSlider {
+  position: relative;
+  font-family: Arial, Helvetica, sans-serif;
+  
+  &_horizontal {
+    width: 100%;
+    display: block;
+  }
+
+  &_vertical {
+    height: 100%;
+    display: flex;
+  }
+}
