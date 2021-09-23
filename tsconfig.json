@@ -10,7 +10,8 @@
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true
   },
   "exclude": [
     "node_modules",
