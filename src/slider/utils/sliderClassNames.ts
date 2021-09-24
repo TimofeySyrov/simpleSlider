@@ -20,6 +20,7 @@ const sliderClassNames: ISliderClassNames = {
     main: 'simpleSlider__toggle',
     horizontal: 'simpleSlider__toggle_horizontal',
     vertical: 'simpleSlider__toggle_vertical',
+    active: 'simpleSlider__toggle_last-active',
   },
   thumb: {
     main: 'simpleSlider__thumb',

@@ -1,17 +1,21 @@
 interface ISliderClassNames {
-  slider: TOrientationKeys,
-  bar: TOrientationKeys,
-  range: TOrientationKeys,
-  toggle: TOrientationKeys,
-  thumb: TOrientationKeys,
-  scale: TOrientationKeys,
-  scaleItem: TOrientationKeys
+  slider: TClassNameKey,
+  bar: TClassNameKey,
+  range: TClassNameKey,
+  toggle: TToggleKey,
+  thumb: TClassNameKey,
+  scale: TClassNameKey,
+  scaleItem: TClassNameKey
 }
 
-type TOrientationKeys = {
+interface TClassNameKey {
   main: string,
   horizontal: string,
-  vertical: string
-};
+  vertical: string,
+}
+
+interface TToggleKey extends TClassNameKey {
+  active: string,
+}
 
 export default ISliderClassNames;
