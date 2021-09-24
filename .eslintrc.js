@@ -1,29 +1,26 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser', // Specifies the ESLint parser
+  parser: "@typescript-eslint/parser", // Specifies the ESLint parser
   extends: [
-    'airbnb-typescript/base'
+    "airbnb-typescript/base"
   ],
   parserOptions: {
-    project: './tsconfig.json',
+    project: "./tsconfig.json",
   },
   plugins: [
-    '@typescript-eslint'
+    "@typescript-eslint",
   ],
   rules: {
     "linebreak-style": 0,
+    "operator-linebreak": 0,
     "@typescript-eslint/space-before-function-paren": ["error", "always"],
-    "@typescript-eslint/lines-between-class-members": "off",
-    "no-trailing-spaces": "off",
-    "semi": "off",
-    "@typescript-eslint/semi": "off",
-    "eol-last": "off",
-    "quotes": "off",
-    "@typescript-eslint/quotes": "off",
-    "padded-blocks": "off"
+    "object-curly-newline": ["error", {
+      "consistent": true
+    }],
   },
   globals: {
     window: true,
-    document: true
-  }
+    document: true,
+    $: true,
+  },
 };
