@@ -20,12 +20,12 @@ class View extends Observer {
 
   private draggingToggle!: TToggle | null;
 
-  private _events: IEvents = {
+  private viewEvents: IEvents = {
     onSlide: new Observer(),
   };
 
   get events (): IEvents {
-    return this._events;
+    return this.viewEvents;
   }
 
   constructor (domParent: TDomParent, modelOptions: ICorrectOptions) {
@@ -87,7 +87,9 @@ class View extends Observer {
     const isBarHave = nodes.slider.contains(nodes.bar);
     const isFromHave = nodes.bar.contains(nodes.from.handle);
     const isToHave = nodes.bar.contains(nodes.to.handle);
-    const isThumbHave = nodes.from.handle.contains(nodes.from.thumb) && nodes.to.handle.contains(nodes.to.thumb);
+    const isFromThumbHave = nodes.from.handle.contains(nodes.from.thumb);
+    const isToThumbHave = nodes.to.handle.contains(nodes.to.thumb);
+    const isThumbHave = isFromThumbHave && isToThumbHave;
     const isRangeHave = nodes.bar.contains(nodes.range);
     const isScaleHave = nodes.slider.contains(nodes.scale.getDom());
 
@@ -210,7 +212,7 @@ class View extends Observer {
     const typeStyleSide = isVertical ? 'bottom' : 'left';
     scale.getDom().innerHTML = '';
 
-    values.map((item) => {
+    values.forEach((item) => {
       const domItem = scale.addItem(Number(item.toFixed(2)));
       const percent = this.convertValueToPercent(item);
       domItem.style[typeStyleSide] = `${percent}%`;
@@ -245,7 +247,11 @@ class View extends Observer {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
 
-      this._events.onSlide.notify({ handle: this.draggingToggle, value, checkStep: true } as TUpdateToggle);
+      this.viewEvents.onSlide.notify({
+        handle: this.draggingToggle,
+        value,
+        checkStep: true,
+      } as TUpdateToggle);
     }
   }
 
@@ -264,11 +270,11 @@ class View extends Observer {
     const { scale } = this.nodes;
 
     scale.getItems().forEach((item) => {
-      if (target == item) {
+      if (target === item) {
         const value = Number(item.getAttribute('data-value'));
         const toggle = this.chooseToggleByCoords(event);
 
-        this._events.onSlide.notify({ handle: toggle, value });
+        this.viewEvents.onSlide.notify({ handle: toggle, value });
       }
     });
   }
@@ -276,20 +282,18 @@ class View extends Observer {
   private convertCoordsToValue (coords: number): number {
     const { max, min } = this.modelOptions;
     const barLength = this.getBarLength();
-    const value = Number((coords * (max - min) / barLength + min).toFixed(10));
+    const value = Number(((coords * (max - min)) / barLength + min).toFixed(10));
 
     return value;
   }
 
   private convertValueToPercent (value: number): number {
-    const {
-      orientation, min, max, type,
-    } = this.modelOptions;
-    const isVertical = orientation === 'vertical';
+    const { min, max, type } = this.modelOptions;
     const isFromEnd = type === 'from-end';
 
-    const percent = Number(((value - min) * 100 / (max - min)).toFixed(10));
-    const confirmedPercent = isVertical ? isFromEnd ? 100 - percent : percent : isFromEnd ? 100 - percent : percent;
+    const percent = Number((((value - min) * 100) / (max - min)).toFixed(10));
+    const revertedPercent = 100 - percent;
+    const confirmedPercent = isFromEnd ? revertedPercent : percent;
 
     return confirmedPercent;
   }
@@ -309,8 +313,12 @@ class View extends Observer {
     const { bar } = this.nodes;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
-    const offsetSide = isVertical ? isFromEnd ? 'top' : 'bottom' : isFromEnd ? 'right' : 'left';
-    const offset = bar.getBoundingClientRect()[offsetSide];
+
+    const forVertical = isFromEnd ? 'top' : 'bottom';
+    const forHorizontal = isFromEnd ? 'right' : 'left';
+    const side = isVertical ? forVertical : forHorizontal;
+
+    const offset = bar.getBoundingClientRect()[side];
 
     return offset;
   }
@@ -322,11 +330,15 @@ class View extends Observer {
     const axis = isVertical ? 'clientY' : 'clientX';
     const barOffset = this.getBarOffset();
 
-    const result = isVertical ?
-      isFromEnd ? event[axis] - barOffset : barOffset - event[axis]
-      : isFromEnd ? barOffset - event[axis] : event[axis] - barOffset;
+    const coords = event[axis] - barOffset;
+    const reverted = barOffset - event[axis];
 
-    return result;
+    const forVertical = isFromEnd ? coords : reverted;
+    const forHorizontal = isFromEnd ? reverted : coords;
+
+    const coordsByOrientation = isVertical ? forVertical : forHorizontal;
+
+    return coordsByOrientation;
   }
 
   private getToggleCoords (toggle: TToggle): number {
@@ -339,27 +351,31 @@ class View extends Observer {
     const toggleSize = isVertical ? 'offsetHeight' : 'offsetWidth';
     const barLength = this.getBarLength();
 
-    const pixelPosition = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
-    const result = isVertical ? isFromEnd ? pixelPosition : barLength - pixelPosition : isFromEnd ? barLength - pixelPosition : pixelPosition;
+    const coords = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
+    const reverted = barLength - coords;
 
-    return result;
+    const forVertical = isFromEnd ? coords : reverted;
+    const forHorizontal = isFromEnd ? reverted : coords;
+    const coordsByOrientation = isVertical ? forVertical : forHorizontal;
+
+    return coordsByOrientation;
   }
 
   private getScaleValues (): number[] {
     const { max, min, step } = this.modelOptions;
-    const midQuantity = Math.ceil((max - min) / step);
-    const viewStep = Math.ceil(midQuantity / 6) * step;
-    const midArr = [];
+    const middleValue = Math.ceil((max - min) / step);
+    const valueWithStep = Math.ceil(middleValue / 6) * step;
+    const values = [];
     let value = min;
 
     for (let i = 0; value < max; i += 1) {
-      value += viewStep;
+      value += valueWithStep;
       if (value < max) {
-        midArr.push(value);
+        values.push(value);
       }
     }
 
-    return [min, ...midArr, max];
+    return [min, ...values, max];
   }
 
   private chooseToggleByCoords (event: MouseEvent): TToggle | null {
@@ -403,13 +419,12 @@ class View extends Observer {
 
   private setLastToggle (toggle: TToggle) {
     const { nodes } = this;
-    const lastActiveClassName = `${sliderClassNames.toggle.main}` + '_last-active';
 
-    if (!nodes[toggle].handle.classList.contains(`${lastActiveClassName}`)) {
-      nodes.from.handle.classList.remove(`${lastActiveClassName}`);
-      nodes.to.handle.classList.remove(`${lastActiveClassName}`);
+    if (!nodes[toggle].handle.classList.contains(`${sliderClassNames.toggle.active}`)) {
+      nodes.from.handle.classList.remove(`${sliderClassNames.toggle.active}`);
+      nodes.to.handle.classList.remove(`${sliderClassNames.toggle.active}`);
 
-      nodes[toggle].handle.classList.add(`${lastActiveClassName}`);
+      nodes[toggle].handle.classList.add(`${sliderClassNames.toggle.active}`);
     }
   }
 

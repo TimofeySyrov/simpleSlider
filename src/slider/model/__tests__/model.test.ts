@@ -30,7 +30,10 @@ describe('Model:', () => {
 
   describe('updateCurrentValueOption:', () => {
     test('должен обновить currentValue на корректное входящее значение', () => {
-      const toggle: TUpdateToggle = { handle: 'from', value: 30 };
+      const toggle: TUpdateToggle = {
+        handle: 'from',
+        value: 30,
+      };
 
       model.updateCurrentValueOption(toggle);
       const UpdatedOptions = model.options;
@@ -43,7 +46,10 @@ describe('Model:', () => {
       const subscriber = jest.fn();
       model.events.currentValueChanged.subscribe(subscriber);
 
-      const toggle: TUpdateToggle = { handle: 'from', value: 70 };
+      const toggle: TUpdateToggle = {
+        handle: 'from',
+        value: 70,
+      };
       model.updateCurrentValueOption(toggle);
 
       // @ts-ignore
@@ -174,9 +180,7 @@ describe('Model:', () => {
 
   describe('getCorrectCurrentValue:', () => {
     test('должен вернуть середину диапазона по умолчанию', () => {
-      const {
-        min, max, currentValue, type,
-      } = {
+      const { min, max, currentValue, type } = {
         min: 0,
         max: 100,
         currentValue: '10',
@@ -190,9 +194,7 @@ describe('Model:', () => {
     });
 
     test('должен вернуть входящее значение, если оно в диапазоне слайдера, при from-end или from-start положениях', () => {
-      const {
-        min, max, currentValue, type,
-      } = {
+      const { min, max, currentValue, type } = {
         min: 0,
         max: 100,
         currentValue: 89,
@@ -204,9 +206,7 @@ describe('Model:', () => {
     });
 
     test('должен вернуть входящие значения, если они в диапазоне слайдера, при range положении', () => {
-      const {
-        min, max, currentValue, type,
-      } = {
+      const { min, max, currentValue, type } = {
         min: 0,
         max: 100,
         currentValue: { min: 10, max: 90 },
@@ -218,9 +218,7 @@ describe('Model:', () => {
     });
 
     test('должен прировнять входящие значения, если минимальное больше максимального', () => {
-      const {
-        min, max, currentValue, type,
-      } = {
+      const { min, max, currentValue, type } = {
         min: 0,
         max: 100,
         currentValue: { min: 33, max: 10 },
