@@ -2,7 +2,7 @@ import Controller from './controller/Controller';
 import IUserOptions from './utils/interfaces/IUserOptions';
 import ICorrectOptions from './utils/interfaces/ICorrectOptions';
 import IEvents from './utils/interfaces/model/IModelEvents';
-import { TDomParent, TUpdateToggle } from './utils/types/namespace';
+import { TDomParent, TUpdateCurrentValue } from './utils/types/namespace';
 
 class SimpleSlider {
   private controller: Controller;
@@ -25,8 +25,8 @@ class SimpleSlider {
     this.initUserCallbackEvents(options);
   }
 
-  public updateCurrentValue (toggle: TUpdateToggle) {
-    this.controller.updateCurrentValue(toggle);
+  public updateCurrentValue (newValue: TUpdateCurrentValue) {
+    this.controller.updateCurrentValue(newValue);
   }
 
   private initUserCallbackEvents (options: IUserOptions) {

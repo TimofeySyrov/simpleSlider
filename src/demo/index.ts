@@ -36,8 +36,8 @@ const slider3 = sliderBoxes3.sliderBox.simpleSlider({
   max: 50,
   type: 'range',
   currentValue: {
-    min: -20,
-    max: 20,
+    from: -20,
+    to: 20,
   },
   step: 10,
   withRange: false,

@@ -1,10 +1,10 @@
-type TCurrentValue = number | { min: number, max: number };
+type TCurrentValue = number | { from: number, to: number };
 type TOrientation = 'vertical' | 'horizontal';
 type TToggle = 'from' | 'to';
 type TType = 'from-start' | 'from-end' | 'range';
 type TDomParent = HTMLDivElement | HTMLSpanElement;
-type TUpdateToggle = { handle: TToggle, value: number, checkStep?: boolean };
+type TUpdateCurrentValue = { option: TToggle, value: number };
 
 export {
-  TCurrentValue, TOrientation, TToggle, TType, TDomParent, TUpdateToggle,
+  TCurrentValue, TOrientation, TToggle, TType, TDomParent, TUpdateCurrentValue,
 };

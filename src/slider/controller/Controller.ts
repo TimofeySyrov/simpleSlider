@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 
 import IUserOptions from '../utils/interfaces/IUserOptions';
-import { TDomParent, TUpdateToggle } from '../utils/types/namespace';
+import { TDomParent, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
 import View from '../view/View';
@@ -41,8 +41,8 @@ class Controller extends Observer {
     this.model.updateModelOptions(newOptions);
   }
 
-  public updateCurrentValue (toggle: TUpdateToggle): void {
-    this.model.updateCurrentValueOption(toggle);
+  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+    this.model.updateCurrentValueOption(newValue);
   }
 
   private init () {
@@ -56,18 +56,18 @@ class Controller extends Observer {
   }
 
   private subscribeToEvents () {
-    this.model.events.currentValueChanged.subscribe(this.updateViewFromModelEvents);
-    this.view.events.onSlide.subscribe(this.updateModelFromViewEvents);
+    this.model.events.currentValueChanged.subscribe(this.updateCurrentValueFromView);
+    this.view.events.onSlide.subscribe(this.updateCurrentValueFromModel);
   }
 
   @bind
-  private updateViewFromModelEvents (toggle: TUpdateToggle) {
-    this.view.updateCurrentValue(toggle);
+  private updateCurrentValueFromView (newValue: TUpdateCurrentValue) {
+    this.view.updateCurrentValue(newValue);
   }
 
   @bind
-  private updateModelFromViewEvents (toggle: TUpdateToggle) {
-    this.model.updateCurrentValueOption(toggle);
+  private updateCurrentValueFromModel (newValue: TUpdateCurrentValue) {
+    this.model.updateCurrentValueOption(newValue);
   }
 
   // наблюдатель Модели

@@ -1,11 +1,6 @@
 import { bind } from 'decko';
 import IUserOptions from '../../slider/utils/interfaces/IUserOptions';
-import {
-  TCurrentValue,
-  TDomParent,
-  TType,
-  TUpdateToggle,
-} from '../../slider/utils/types/namespace';
+import { TCurrentValue, TDomParent, TType, TUpdateCurrentValue } from '../../slider/utils/types/namespace';
 import SimpleSlider from '../../slider/simpleSlider';
 import template from './utils/template';
 import INodes from './utils/interfaces/INodes';
@@ -109,8 +104,8 @@ class SimpleSliderPanel {
     newOptions.step = nodes.step.value ? parseFloat(nodes.step.value) : this.modelOptions.step;
 
     newOptions.currentValue = {
-      min: nodes.from.value ? parseFloat(nodes.from.value) : this.modelOptions.min,
-      max: nodes.to.value ? parseFloat(nodes.to.value) : this.modelOptions.min,
+      from: nodes.from.value ? parseFloat(nodes.from.value) : this.modelOptions.min,
+      to: nodes.to.value ? parseFloat(nodes.to.value) : this.modelOptions.min,
     };
 
     newOptions.orientation = optionOrientation;
@@ -132,18 +127,18 @@ class SimpleSliderPanel {
   }
 
   @bind
-  private onSlideUpdate (toggle: TUpdateToggle): void {
+  private onSlideUpdate (newValue: TUpdateCurrentValue): void {
     const { nodes } = this;
 
-    nodes[toggle.handle].value = `${toggle.value}`;
+    nodes[newValue.option].value = `${newValue.value}`;
   }
 
   private changeCurrentValue (currentValue: TCurrentValue): void {
     const { nodes } = this;
 
     if (typeof currentValue === 'object') {
-      nodes.from.value = `${currentValue.min}`;
-      nodes.to.value = `${currentValue.max}`;
+      nodes.from.value = `${currentValue.from}`;
+      nodes.to.value = `${currentValue.to}`;
     }
 
     if (typeof currentValue === 'number') {

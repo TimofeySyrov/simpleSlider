@@ -1,6 +1,6 @@
 import IModelEvents from '../utils/interfaces/model/IModelEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
-import { TCurrentValue, TUpdateToggle } from '../utils/types/namespace';
+import { TCurrentValue, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 
 class Model extends Observer {
@@ -32,42 +32,38 @@ class Model extends Observer {
     this.notify(this.modelOptions);
   }
 
-  public updateCurrentValueOption (toggle: TUpdateToggle): void {
-    const {
-      min, max, type, currentValue, step,
-    } = this.modelOptions;
+  public updateCurrentValueOption (newValue: TUpdateCurrentValue): void {
+    const { min, max, type, currentValue, step } = this.modelOptions;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
-    const isHandleFrom = toggle.handle === 'from';
-    const isHandleTo = toggle.handle === 'to';
-    const withStep = toggle.checkStep;
-    const correctToggle = toggle;
+    const isFrom = newValue.option === 'from';
+    const isTo = newValue.option === 'to';
+    const confirmed: TUpdateCurrentValue = { ...newValue };
 
-    const valueType = withStep ? this.getValueWithStep(toggle.value, min, step) : toggle.value;
-    const valueFromDiapason = this.getCorrectDiapason(valueType, min, max);
+    const valueFromDiapason = this.getCorrectDiapason(newValue.value, min, max);
 
     if (isRange) {
       if (typeof currentValue === 'object') {
-        if (isHandleFrom) {
-          const value = this.getCorrectDiapason(valueFromDiapason, min, currentValue.max);
-          this.modelOptions.currentValue = { min: value, max: currentValue.max };
-          correctToggle.value = value;
+        if (isFrom) {
+          const value = this.getCorrectDiapason(valueFromDiapason, min, currentValue.to);
+          this.modelOptions.currentValue = { from: value, to: currentValue.to };
+          confirmed.value = value;
         }
-        if (isHandleTo) {
-          const value = this.getCorrectDiapason(valueFromDiapason, currentValue.min, max);
-          this.modelOptions.currentValue = { min: currentValue.min, max: value };
-          correctToggle.value = value;
+        if (isTo) {
+          const value = this.getCorrectDiapason(valueFromDiapason, currentValue.from, max);
+          this.modelOptions.currentValue = { from: currentValue.from, to: value };
+          confirmed.value = value;
         }
       }
     }
 
     if (isFromStart || isFromEnd) {
       this.modelOptions.currentValue = valueFromDiapason;
-      correctToggle.value = valueFromDiapason;
+      confirmed.value = valueFromDiapason;
     }
 
-    this.modelEvents.currentValueChanged.notify(correctToggle);
+    this.modelEvents.currentValueChanged.notify(confirmed);
   }
 
   private checkModelOptions (options: ICorrectOptions) {
@@ -95,11 +91,6 @@ class Model extends Observer {
     return value;
   }
 
-  private getValueWithStep (value: number, min: number, step: number) {
-    const valueWithStep = Math.round((value - min) / step) * step + min;
-    return valueWithStep;
-  }
-
   private getCorrectMinMax (min: number, max: number): { min: number, max: number } {
     const checkMin = min > max ? max : min;
 
@@ -112,14 +103,14 @@ class Model extends Observer {
 
     if (typeof currentValue === 'object') {
       if (isRange) {
-        const diapason = this.getCorrectMinMax(currentValue.min, currentValue.max);
+        const diapason = this.getCorrectMinMax(currentValue.from, currentValue.to);
 
         return {
-          min: this.getCorrectDiapason(diapason.min, min, max),
-          max: this.getCorrectDiapason(diapason.max, min, max),
+          from: this.getCorrectDiapason(diapason.min, min, max),
+          to: this.getCorrectDiapason(diapason.max, min, max),
         };
       }
-      return this.getCorrectDiapason(currentValue.min, min, max);
+      return this.getCorrectDiapason(currentValue.from, min, max);
     }
 
     if (typeof currentValue === 'number') {
@@ -127,8 +118,8 @@ class Model extends Observer {
 
       if (isRange) {
         return {
-          min: confirmedCurrentValue,
-          max: confirmedCurrentValue,
+          from: confirmedCurrentValue,
+          to: confirmedCurrentValue,
         };
       }
       return confirmedCurrentValue;

@@ -1,7 +1,7 @@
-import { TUpdateToggle } from '../types/namespace';
+import { TUpdateCurrentValue } from '../types/namespace';
 
 interface ICallbackAPI {
-  onSlide?: (callback: TUpdateToggle) => void;
+  onSlide?: (callback: TUpdateCurrentValue) => void;
 }
 
 export default ICallbackAPI;

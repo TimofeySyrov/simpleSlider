@@ -9,7 +9,7 @@ import Bar from './components/bar/bar';
 
 import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
 import IEvents from '../utils/interfaces/view/IViewEvents';
-import { TDomParent, TToggle, TUpdateToggle } from '../utils/types/namespace';
+import { TDomParent, TToggle, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 
@@ -40,8 +40,8 @@ class View extends Observer {
     this.render();
   }
 
-  public updateCurrentValue (toggle: TUpdateToggle) {
-    this.setToggleValue(toggle.handle, toggle.value);
+  public updateCurrentValue (newValue: TUpdateCurrentValue) {
+    this.setToggleValue(newValue.option, newValue.value);
   }
 
   private initSubView (newDomParent: TDomParent) {
@@ -247,11 +247,7 @@ class View extends Observer {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
 
-      this.viewEvents.onSlide.notify({
-        handle: this.draggingToggle,
-        value,
-        checkStep: true,
-      } as TUpdateToggle);
+      this.viewEvents.onSlide.notify({ option: this.draggingToggle, value } as TUpdateCurrentValue);
     }
   }
 
@@ -274,17 +270,19 @@ class View extends Observer {
         const value = Number(item.getAttribute('data-value'));
         const toggle = this.chooseToggleByCoords(event);
 
-        this.viewEvents.onSlide.notify({ handle: toggle, value });
+        this.viewEvents.onSlide.notify({ option: toggle, value } as TUpdateCurrentValue);
       }
     });
   }
 
   private convertCoordsToValue (coords: number): number {
-    const { max, min } = this.modelOptions;
+    const { max, min, step } = this.modelOptions;
     const barLength = this.getBarLength();
-    const value = Number(((coords * (max - min)) / barLength + min).toFixed(10));
 
-    return value;
+    const value = Number(((coords * (max - min)) / barLength + min).toFixed(10));
+    const valueWithStep = Math.round((value - min) / step) * step + min;
+
+    return valueWithStep;
   }
 
   private convertValueToPercent (value: number): number {
@@ -378,7 +376,7 @@ class View extends Observer {
     return [min, ...values, max];
   }
 
-  private chooseToggleByCoords (event: MouseEvent): TToggle | null {
+  private chooseToggleByCoords (event: MouseEvent): TToggle {
     const { type } = this.modelOptions;
     const isRange = type === 'range';
     const fromValue = this.getToggleCoords('from');
@@ -403,9 +401,9 @@ class View extends Observer {
     const isRange = type === 'range';
 
     if (typeof currentValue === 'object') {
-      this.setToggleValue('from', currentValue.min);
+      this.setToggleValue('from', currentValue.from);
       if (isRange) {
-        this.setToggleValue('to', currentValue.max);
+        this.setToggleValue('to', currentValue.to);
       }
     }
 
