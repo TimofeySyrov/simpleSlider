@@ -6,7 +6,7 @@ import $ from 'jquery';
 import View from '../View';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
-import { TUpdateCurrentValue } from '../../utils/types/namespace';
+import { TToggle, TUpdateCurrentValue } from '../../utils/types/namespace';
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 
 describe('View:', () => {
@@ -34,7 +34,7 @@ describe('View:', () => {
         constructor () {
           super(mockParent, defaultModelOptions);
         }
-      }();
+      };
       view.updateOptions(newOptions);
 
       expect(view.options).toStrictEqual(newOptions);
@@ -98,6 +98,56 @@ describe('View:', () => {
       expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeInstanceOf(HTMLElement);
       expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeInstanceOf(HTMLElement);
       expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeInstanceOf(HTMLElement);
+    });
+  });
+
+  describe('render:', () => {
+    test('должен добавлять отсутствующие dom-элементы subView', () => {
+      const newOptions: ICorrectOptions = {
+        min: 0,
+        max: 100,
+        step: 1,
+        orientation: 'vertical',
+        type: 'range',
+        currentValue: { from: 25, to: 50 },
+        withRange: false,
+        withThumb: false,
+        withScale: false,
+      };
+
+      const mockParent = document.createElement('div');
+      const view = new View(mockParent, newOptions);
+
+      const fromToggle: ChildNode = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0];
+      fromToggle.remove();
+
+      view.updateOptions({
+        ...newOptions,
+        ...{ withRange: true, withScale: true, withThumb: true },
+      });
+
+      expect(mockParent.querySelector(`.${sliderClassNames.range.main}`)).toBeInstanceOf(HTMLElement);
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0]).toBeInstanceOf(HTMLElement);
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeInstanceOf(HTMLElement);
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeInstanceOf(HTMLElement);
+      expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeInstanceOf(HTMLElement);
+    });
+    test('должен удалять лишние dom-элементы subView', () => {
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ withThumb: false, withRange: false, withScale: false },
+      };
+
+      const mockParent = document.createElement('div');
+      const view = new View(mockParent, { ...defaultModelOptions, ...{ type: 'range' }});
+
+      view.updateOptions(newOptions);
+
+      expect(mockParent.querySelector(`.${sliderClassNames.range.main}`)).toBeUndefined;
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1]).toBeUndefined;
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeUndefined;
+      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeUndefined;
+      expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeUndefined;
     });
   });
 
@@ -175,6 +225,56 @@ describe('View:', () => {
       $(bar).trigger('click');
 
       expect(sb).toBeCalledTimes(2);
+    });
+  });
+
+  describe('convertValueToPercent:', () => {
+    test('должнен вернуть корректный процент', () => {
+      const newOptions: ICorrectOptions = {
+        min: 256,
+        max: 842,
+        step: 1,
+        orientation: 'horizontal',
+        type: 'from-start',
+        currentValue: 555,
+        withRange: true,
+        withThumb: true,
+        withScale: true,
+      };
+
+      const mockParent = document.createElement('div');
+      const view = new View(mockParent, newOptions);
+
+      const { min, max } = newOptions;
+      const value = 429.5;
+      const result = Number((((value - min) / (max - min)) * 100).toFixed(3));
+
+      //@ts-ignore
+      expect(view.convertValueToPercent(value)).toEqual(result);
+    });
+  });
+
+  describe('setRangePosition:', () => {
+    test('должнен задавать стили для range', () => {
+      const newOptions: ICorrectOptions = {
+        min: 0,
+        max: 100,
+        step: 1,
+        orientation: 'vertical',
+        type: 'range',
+        currentValue: { from: 25, to: 68 },
+        withRange: true,
+        withThumb: true,
+        withScale: true,
+      };
+
+      const mockParent = document.createElement('div');
+      const view = new View(mockParent, newOptions);
+
+      const bar = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
+
+      expect(bar.style.top).toEqual(`${32}%`);
+      expect(bar.style.bottom).toEqual(`${25}%`);
     });
   });
 });
