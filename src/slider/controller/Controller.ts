@@ -38,11 +38,11 @@ class Controller extends Observer {
 
   public updateOptions (options: IUserOptions): void {
     const newOptions = { ...this.model.options, ...options } as ICorrectOptions;
-    this.model.updateModelOptions(newOptions);
+    this.model.updateOptions(newOptions);
   }
 
   public updateCurrentValue (newValue: TUpdateCurrentValue): void {
-    this.model.updateCurrentValueOption(newValue);
+    this.model.updateCurrentValue(newValue);
   }
 
   private init () {
@@ -51,36 +51,35 @@ class Controller extends Observer {
   }
 
   private subscribeToLayers () {
-    this.model.subscribe(this.onModelUpdate); // подписываемся на Модель
-    this.view.subscribe(this.onViewUpdate); // подписываемся на Отображение
+    this.model.subscribe(this.updateView);
+    this.view.subscribe(this.updateModel);
   }
 
   private subscribeToEvents () {
-    this.model.events.currentValueChanged.subscribe(this.updateCurrentValueFromView);
-    this.view.events.onSlide.subscribe(this.updateCurrentValueFromModel);
+    this.model.events.currentValueChanged.subscribe(this.updateCurrentValueByView);
+    this.view.events.onSlide.subscribe(this.updateCurrentValueByModel);
   }
 
   @bind
-  private updateCurrentValueFromView (newValue: TUpdateCurrentValue) {
+  private updateCurrentValueByView (newValue: TUpdateCurrentValue) {
     this.view.updateCurrentValue(newValue);
   }
 
   @bind
-  private updateCurrentValueFromModel (newValue: TUpdateCurrentValue) {
-    this.model.updateCurrentValueOption(newValue);
+  private updateCurrentValueByModel (newValue: TUpdateCurrentValue) {
+    this.model.updateCurrentValue(newValue);
   }
 
   // наблюдатель Модели
   @bind
-  private onModelUpdate (newModelOptions: ICorrectOptions) {
-    this.view.updateModelOptions(newModelOptions);
-    this.model.events.modelOptionsChanged.notify(newModelOptions);
+  private updateView (newOptions: ICorrectOptions) {
+    this.view.updateOptions(newOptions);
   }
 
   // наблюдатель Отображения
   @bind
-  private onViewUpdate (newModelOptions: IUserOptions) {
-    this.model.updateModelOptions(newModelOptions as ICorrectOptions);
+  private updateModel (newOptions: ICorrectOptions) {
+    this.model.updateOptions(newOptions);
   }
 }
 

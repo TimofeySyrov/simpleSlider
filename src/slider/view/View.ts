@@ -35,7 +35,7 @@ class View extends Observer {
     this.initSubView(domParent);
   }
 
-  public updateModelOptions (newModelOptions: ICorrectOptions) {
+  public updateOptions (newModelOptions: ICorrectOptions) {
     this.modelOptions = newModelOptions;
     this.render();
   }
@@ -68,17 +68,15 @@ class View extends Observer {
   private initSubViewListeners () {
     const { nodes } = this;
 
-    window.removeEventListener('mousemove', this.drag);
-    window.removeEventListener('mouseup', this.finishDragging);
-    nodes.bar.addEventListener('click', this.click);
-    nodes.bar.addEventListener('mousedown', this.startDragging);
+    window.removeEventListener('mousemove', this.dragEvent);
+    window.removeEventListener('mouseup', this.finishDraggingEvent);
+    nodes.bar.addEventListener('click', this.clickEvent);
+    nodes.bar.addEventListener('mousedown', this.startDraggingEvent);
     nodes.scale.getDom().addEventListener('click', this.setScaleItemCoords);
   }
 
   private render () {
-    const {
-      type, withRange, withThumb, withScale,
-    } = this.modelOptions;
+    const { type, withRange, withThumb, withScale } = this.modelOptions;
     const { nodes } = this;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
@@ -162,9 +160,7 @@ class View extends Observer {
 
   private renderSubViewStyles () {
     const { orientation } = this.modelOptions;
-    const {
-      slider, from, to, bar, range, scale,
-    } = this.nodes;
+    const { slider, from, to, bar, range, scale } = this.nodes;
     const isVertical = orientation === 'vertical';
     const orientClear = isVertical ? 'horizontal' : 'vertical';
     const startSideClear = isVertical ? 'left' : 'bottom';
@@ -213,49 +209,50 @@ class View extends Observer {
     scale.getDom().innerHTML = '';
 
     values.forEach((item) => {
-      const domItem = scale.addItem(Number(item.toFixed(2)));
+      const domItem = scale.addItem(Number(item.toFixed(1)));
       const percent = this.convertValueToPercent(item);
       domItem.style[typeStyleSide] = `${percent}%`;
     });
   }
 
   @bind
-  private click (event: MouseEvent) {
+  private clickEvent (event: MouseEvent) {
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if (this.draggingToggle) {
       this.setLastToggle(this.draggingToggle);
-      this.drag(event);
+      this.dragEvent(event);
     }
   }
 
   @bind
-  private startDragging (event: MouseEvent) {
+  private startDraggingEvent (event: MouseEvent) {
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if (this.draggingToggle) {
       this.setLastToggle(this.draggingToggle);
-      this.drag(event);
-      window.addEventListener('mousemove', this.drag);
-      window.addEventListener('mouseup', this.finishDragging);
+      this.dragEvent(event);
+      window.addEventListener('mousemove', this.dragEvent);
+      window.addEventListener('mouseup', this.finishDraggingEvent);
     }
   }
 
   @bind
-  private drag (event: MouseEvent) {
+  private dragEvent (event: MouseEvent) {
     if (this.draggingToggle) {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
+      const toggleToUpdate: TUpdateCurrentValue = { option: this.draggingToggle, value };
 
-      this.viewEvents.onSlide.notify({ option: this.draggingToggle, value } as TUpdateCurrentValue);
+      this.viewEvents.onSlide.notify(toggleToUpdate);
     }
   }
 
   @bind
-  private finishDragging () {
+  private finishDraggingEvent () {
     if (this.draggingToggle) {
-      window.removeEventListener('mousemove', this.drag);
-      window.removeEventListener('mouseup', this.finishDragging);
+      window.removeEventListener('mousemove', this.dragEvent);
+      window.removeEventListener('mouseup', this.finishDraggingEvent);
       this.draggingToggle = null;
     }
   }
@@ -269,8 +266,9 @@ class View extends Observer {
       if (target === item) {
         const value = Number(item.getAttribute('data-value'));
         const toggle = this.chooseToggleByCoords(event);
+        const toggleToUpdate: TUpdateCurrentValue = { option: toggle, value };
 
-        this.viewEvents.onSlide.notify({ option: toggle, value } as TUpdateCurrentValue);
+        this.viewEvents.onSlide.notify(toggleToUpdate);
       }
     });
   }
@@ -279,8 +277,8 @@ class View extends Observer {
     const { max, min, step } = this.modelOptions;
     const barLength = this.getBarLength();
 
-    const value = Number(((coords * (max - min)) / barLength + min).toFixed(10));
-    const valueWithStep = Math.round((value - min) / step) * step + min;
+    const value = Number(((coords * (max - min)) / barLength + min));
+    const valueWithStep = Number((Math.round((value - min) / step) * step + min).toFixed(1));
 
     return valueWithStep;
   }
@@ -288,12 +286,18 @@ class View extends Observer {
   private convertValueToPercent (value: number): number {
     const { min, max, type } = this.modelOptions;
     const isFromEnd = type === 'from-end';
+    const start = 0; // Start percent
 
-    const percent = Number((((value - min) * 100) / (max - min)).toFixed(10));
+    const percent = Number((((value - min) * 100) / (max - min)).toFixed(3));
     const revertedPercent = 100 - percent;
-    const confirmedPercent = isFromEnd ? revertedPercent : percent;
+    const percentByType = isFromEnd ? revertedPercent : percent;
+    const percentIsNan = Number.isNaN(percentByType);
 
-    return confirmedPercent;
+    if(percentIsNan) {
+      return start;
+    }
+
+    return percentByType;
   }
 
   private getBarLength ():number {
@@ -459,7 +463,7 @@ class View extends Observer {
 
   private setThumbValue (toggle: TToggle, value: number) {
     const { nodes } = this;
-    nodes[toggle].thumb.innerHTML = value.toFixed(2);
+    nodes[toggle].thumb.innerHTML = `${value}`;
   }
 
   private setToggleValue (toggle: TToggle, value: number) {

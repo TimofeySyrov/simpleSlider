@@ -26,44 +26,51 @@ class Model extends Observer {
     this.checkModelOptions(options);
   }
 
-  public updateModelOptions (options: ICorrectOptions): void {
+  public updateOptions (options: ICorrectOptions): void {
     this.modelOptions = options;
     this.checkModelOptions(options);
     this.notify(this.modelOptions);
   }
 
-  public updateCurrentValueOption (newValue: TUpdateCurrentValue): void {
-    const { min, max, type, currentValue, step } = this.modelOptions;
+  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+    const { min, max, type, currentValue } = this.modelOptions;
+    const confirmed: TUpdateCurrentValue = { ...newValue };
+    const { option, value } = confirmed;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
-    const isFrom = newValue.option === 'from';
-    const isTo = newValue.option === 'to';
-    const confirmed: TUpdateCurrentValue = { ...newValue };
+    const isValue = !Number.isNaN(value);
+    const isFromOption = option === 'from';
+    const isToOption = option === 'to';
+    
+    if(isValue) {
+      if (isRange) {
+        if (typeof currentValue === 'object') {
+          const { from, to } = currentValue;
 
-    const valueFromDiapason = this.getCorrectDiapason(newValue.value, min, max);
-
-    if (isRange) {
-      if (typeof currentValue === 'object') {
-        if (isFrom) {
-          const value = this.getCorrectDiapason(valueFromDiapason, min, currentValue.to);
-          this.modelOptions.currentValue = { from: value, to: currentValue.to };
-          confirmed.value = value;
-        }
-        if (isTo) {
-          const value = this.getCorrectDiapason(valueFromDiapason, currentValue.from, max);
-          this.modelOptions.currentValue = { from: currentValue.from, to: value };
-          confirmed.value = value;
+          if (isFromOption) {
+            const correct = this.getCorrectDiapason(value, min, to);
+            this.modelOptions.currentValue = { from: correct, to };
+            confirmed.value = correct;
+          }
+          
+          if (isToOption) {
+            const correct = this.getCorrectDiapason(value, from, max);
+            this.modelOptions.currentValue = { from, to: correct };
+            confirmed.value = correct;
+          }
         }
       }
-    }
 
-    if (isFromStart || isFromEnd) {
-      this.modelOptions.currentValue = valueFromDiapason;
-      confirmed.value = valueFromDiapason;
-    }
+      if (isFromStart || isFromEnd) {
+        const valueFromDiapason = this.getCorrectDiapason(value, min, max);
 
-    this.modelEvents.currentValueChanged.notify(confirmed);
+        this.modelOptions.currentValue = valueFromDiapason;
+        confirmed.value = valueFromDiapason;
+      }
+
+      this.modelEvents.currentValueChanged.notify(confirmed);
+    }
   }
 
   private checkModelOptions (options: ICorrectOptions) {
@@ -73,7 +80,9 @@ class Model extends Observer {
     this.modelOptions.min = confirmedMinMax.min;
     this.modelOptions.max = confirmedMinMax.max;
     this.modelOptions.currentValue = this.getCorrectCurrentValue(currentValue);
-    this.modelOptions.step = this.getCorrectStep(step, min, max);
+    this.modelOptions.step = this.getCorrectStep(step, confirmedMinMax.min, confirmedMinMax.max);
+
+    this.modelEvents.modelOptionsChanged.notify(this.modelOptions);
   }
 
   private getCorrectStep (step: number, min: number, max: number): number {
@@ -99,33 +108,41 @@ class Model extends Observer {
 
   private getCorrectCurrentValue (currentValue: TCurrentValue): TCurrentValue {
     const { type, min, max } = this.modelOptions;
-    const isRange = type === 'range';
+    const isRangeType = type === 'range';
+    const isFromStartType = type === 'from-start';
+    const isFromEndType = type === 'from-end';
+    const isValue = !Number.isNaN(currentValue);
 
-    if (typeof currentValue === 'object') {
-      if (isRange) {
-        const diapason = this.getCorrectMinMax(currentValue.from, currentValue.to);
+    if(isValue) {
+      if(isRangeType) {
+        if(typeof currentValue === 'number') {
+          const value = this.getCorrectDiapason(currentValue, min, max);
+          return { from: value, to: value };
+        }
 
-        return {
-          from: this.getCorrectDiapason(diapason.min, min, max),
-          to: this.getCorrectDiapason(diapason.max, min, max),
-        };
+        if(typeof currentValue === 'object') {
+          const valuesDiapason = this.getCorrectMinMax(currentValue.from, currentValue.to);
+          return {
+            from: this.getCorrectDiapason(valuesDiapason.min, min, max),
+            to: this.getCorrectDiapason(valuesDiapason.max, min, max),
+          };
+        }
       }
-      return this.getCorrectDiapason(currentValue.from, min, max);
+
+      if (isFromStartType || isFromEndType) {
+        if(typeof currentValue === 'number') {
+          const value = this.getCorrectDiapason(currentValue, min, max);
+          return value;
+        }
+
+        if (typeof currentValue === 'object') {
+          const from = this.getCorrectDiapason(currentValue.from, min, max);
+          return from;
+        }
+      }
     }
 
-    if (typeof currentValue === 'number') {
-      const confirmedCurrentValue = this.getCorrectDiapason(currentValue, min, max);
-
-      if (isRange) {
-        return {
-          from: confirmedCurrentValue,
-          to: confirmedCurrentValue,
-        };
-      }
-      return confirmedCurrentValue;
-    }
-
-    return (max - min) / 2;
+    return min;
   }
 }
 
