@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=development webpack serve --open --config webpack.demo.js",
     "dev": "cross-env NODE_ENV=development webpack --mode development --config webpack.slider.js webpack.demo.js",
     "build": "cross-env NODE_ENV=production webpack --mode production --config webpack.slider.js webpack.demo.js",
-    "test": "npx jest",
+    "test": "npx jest --coverage",
     "eslint": "eslint . --ext .ts,.tsx"
   },
   "author": "",
