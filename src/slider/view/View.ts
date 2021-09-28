@@ -51,12 +51,12 @@ class View extends Observer {
       bar: new Bar().getDom(),
       range: new Range().getDom(),
       from: {
-        handle: new Toggle().createDom(),
-        thumb: new Thumb().createDom(),
+        handle: new Toggle().getDom(),
+        thumb: new Thumb().getDom(),
       },
       to: {
-        handle: new Toggle().createDom(),
-        thumb: new Thumb().createDom(),
+        handle: new Toggle().getDom(),
+        thumb: new Thumb().getDom(),
       },
       scale: new Scale(),
     };
