@@ -1,11 +1,15 @@
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
-import { TUpdateToggle } from '../../utils/types/namespace';
+import { TUpdateCurrentValue } from '../../utils/types/namespace';
 import Model from '../Model';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 
 describe('Model:', () => {
   const options = defaultModelOptions;
   const model = new Model(options);
+
+  beforeEach(() => {
+    model.updateOptions(defaultModelOptions);
+  })
 
   describe('updateModelOptions:', () => {
     test('должен обновить опции слайдера на входящие', () => {
@@ -21,21 +25,18 @@ describe('Model:', () => {
         withScale: false,
       };
 
-      model.updateModelOptions(newOptions);
+      model.updateOptions(newOptions);
 
       // @ts-ignore
       expect(model.options).toStrictEqual(newOptions);
     });
   });
 
-  describe('updateCurrentValueOption:', () => {
+  describe('updateCurrentValue', () => {
     test('должен обновить currentValue на корректное входящее значение', () => {
-      const toggle: TUpdateToggle = {
-        handle: 'from',
-        value: 30,
-      };
+      const toggle: TUpdateCurrentValue = { option: 'from', value: 30 };
 
-      model.updateCurrentValueOption(toggle);
+      model.updateCurrentValue(toggle);
       const UpdatedOptions = model.options;
 
       // @ts-ignore
@@ -46,11 +47,8 @@ describe('Model:', () => {
       const subscriber = jest.fn();
       model.events.currentValueChanged.subscribe(subscriber);
 
-      const toggle: TUpdateToggle = {
-        handle: 'from',
-        value: 70,
-      };
-      model.updateCurrentValueOption(toggle);
+      const toggle: TUpdateCurrentValue = { option: 'from', value: 70 };
+      model.updateCurrentValue(toggle);
 
       // @ts-ignore
       expect(subscriber).toHaveBeenCalledWith(toggle);
@@ -143,19 +141,6 @@ describe('Model:', () => {
     });
   });
 
-  describe('getValueWithStep:', () => {
-    test('должен вернуть корректное значение с шагом', () => {
-      const { value, min, step } = {
-        value: 50,
-        min: 25,
-        step: 4,
-      };
-
-      // @ts-ignore
-      expect(model.getValueWithStep(value, min, step)).toEqual(49);
-    });
-  });
-
   describe('getCorrectMinMax:', () => {
     test('должен прировнять минимальное значение к максимальному, если минимальное больше максимального', () => {
       const { min, max } = {
@@ -179,56 +164,44 @@ describe('Model:', () => {
   });
 
   describe('getCorrectCurrentValue:', () => {
-    test('должен вернуть середину диапазона по умолчанию', () => {
-      const { min, max, currentValue, type } = {
-        min: 0,
-        max: 100,
-        currentValue: '10',
-        type: 'from-start',
-      };
-
-      const middleDiapason = (max - min) / 2;
+    test('должен вернуть min по умолчанию', () => {
+      const { min, currentValue } = { min: 0, currentValue: NaN };
 
       // @ts-ignore
-      expect(model.getCorrectCurrentValue(currentValue, type, min, max)).toEqual(middleDiapason);
+      expect(model.getCorrectCurrentValue(currentValue)).toEqual(min);
     });
 
     test('должен вернуть входящее значение, если оно в диапазоне слайдера, при from-end или from-start положениях', () => {
-      const { min, max, currentValue, type } = {
-        min: 0,
-        max: 100,
-        currentValue: 89,
-        type: 'from-start',
-      };
+      const { currentValue } = { currentValue: 89 };
 
       // @ts-ignore
-      expect(model.getCorrectCurrentValue(currentValue, type, min, max)).toEqual(currentValue);
+      expect(model.getCorrectCurrentValue(currentValue)).toEqual(currentValue);
     });
 
     test('должен вернуть входящие значения, если они в диапазоне слайдера, при range положении', () => {
-      const { min, max, currentValue, type } = {
-        min: 0,
-        max: 100,
-        currentValue: { min: 10, max: 90 },
-        type: 'range',
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ currentValue: { from: 10, to: 90 }, type: 'range' },
       };
 
+      model.updateOptions(newOptions);
+
       // @ts-ignore
-      expect(model.getCorrectCurrentValue(currentValue, type, min, max)).toEqual(currentValue);
+      expect(model.getCorrectCurrentValue(newOptions.currentValue)).toEqual(newOptions.currentValue);
     });
 
     test('должен прировнять входящие значения, если минимальное больше максимального', () => {
-      const { min, max, currentValue, type } = {
-        min: 0,
-        max: 100,
-        currentValue: { min: 33, max: 10 },
-        type: 'range',
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ currentValue: { from: 33, to: 10 }, type: 'range' },
       };
 
-      // @ts-ignore
-      const value = model.getCorrectCurrentValue(currentValue, type, min, max);
+      model.updateOptions(newOptions);
 
-      expect(value).toEqual({ min: currentValue.max, max: currentValue.max });
+      // @ts-ignore
+      const value = model.getCorrectCurrentValue(newOptions.currentValue);
+
+      expect(value).toEqual(newOptions.currentValue);
     });
   });
 });

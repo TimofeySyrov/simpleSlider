@@ -6,7 +6,7 @@ import $ from 'jquery';
 import View from '../View';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
-import { TUpdateToggle } from '../../utils/types/namespace';
+import { TUpdateCurrentValue } from '../../utils/types/namespace';
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 
 describe('View:', () => {
@@ -35,7 +35,7 @@ describe('View:', () => {
           super(mockParent, defaultModelOptions);
         }
       }();
-      view.updateModelOptions(newOptions);
+      view.updateOptions(newOptions);
 
       expect(view.options).toStrictEqual(newOptions);
     });
@@ -49,21 +49,15 @@ describe('View:', () => {
         step: 1,
         orientation: 'horizontal',
         type: 'range',
-        currentValue: { min: 25, max: 50 },
+        currentValue: { from: 25, to: 50 },
         withRange: true,
         withThumb: true,
         withScale: true,
       };
 
-      const newToValue: TUpdateToggle = {
-        handle: 'to',
-        value: 76,
-      };
+      const newToValue: TUpdateCurrentValue = { option: 'to', value: 76 };
 
-      const newFromValue: TUpdateToggle = {
-        handle: 'from',
-        value: 1,
-      };
+      const newFromValue: TUpdateCurrentValue = { option: 'from', value: 1 };
 
       const mockParent = document.createElement('div');
       const view = new View(mockParent, newOptions);
@@ -74,8 +68,8 @@ describe('View:', () => {
       const valueTo = (mockParent.querySelector('[data-index="1"]') as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
       const valueFrom = (mockParent.querySelector('[data-index="0"]') as HTMLElement).querySelector(`.${sliderClassNames.thumb.main}`) as HTMLDivElement;
 
-      expect(valueTo.innerHTML).toBe('76.00');
-      expect(valueFrom.innerHTML).toBe('1.00');
+      expect(valueTo.innerHTML).toBe('76');
+      expect(valueFrom.innerHTML).toBe('1');
     });
   });
 
@@ -87,7 +81,7 @@ describe('View:', () => {
         step: 1,
         orientation: 'vertical',
         type: 'range',
-        currentValue: { min: 25, max: 50 },
+        currentValue: { from: 25, to: 50 },
         withRange: true,
         withThumb: true,
         withScale: true,
@@ -115,7 +109,7 @@ describe('View:', () => {
         step: 1,
         orientation: 'vertical',
         type: 'range',
-        currentValue: { min: 25, max: 50 },
+        currentValue: { from: 25, to: 50 },
         withRange: true,
         withThumb: true,
         withScale: true,
@@ -162,7 +156,7 @@ describe('View:', () => {
         step: 1,
         orientation: 'vertical',
         type: 'range',
-        currentValue: { min: 25, max: 50 },
+        currentValue: { from: 25, to: 50 },
         withRange: true,
         withThumb: true,
         withScale: true,
