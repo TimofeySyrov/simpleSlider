@@ -1,10 +1,12 @@
 .simpleSlider__thumb {
   position: absolute;
+  min-width: 40px;
   padding: 4px 6px;
   background-color: rgb(197, 138, 138);
   bottom: 50%;
   z-index: 2;
   user-select: none;
+  text-align: center;
 
   &_horizontal {
     left: 50%;
