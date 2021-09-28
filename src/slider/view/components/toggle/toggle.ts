@@ -4,15 +4,14 @@ class Toggle {
   private dom!: HTMLDivElement;
 
   constructor () {
+    this.createDom();
   }
 
-  public createDom (): HTMLDivElement {
+  public createDom (): void {
     const domToggle = document.createElement('div');
     domToggle.classList.add(`${sliderClassNames.toggle.main}`);
 
     this.saveDom(domToggle);
-
-    return domToggle;
   }
 
   public saveDom (el: HTMLDivElement) {

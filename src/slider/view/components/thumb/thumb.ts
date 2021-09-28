@@ -4,15 +4,14 @@ class Thumb {
   private dom!: HTMLDivElement;
 
   constructor () {
+    this.createDom();
   }
 
-  public createDom (): HTMLDivElement {
+  public createDom (): void {
     const domThumb = document.createElement('div');
     domThumb.classList.add(`${sliderClassNames.thumb.main}`);
 
     this.saveDom(domThumb);
-
-    return domThumb;
   }
 
   public saveDom (el: HTMLDivElement) {
