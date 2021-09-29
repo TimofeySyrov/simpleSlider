@@ -1,13 +1,13 @@
 import Controller from './controller/Controller';
 import IUserOptions from './utils/interfaces/IUserOptions';
 import ICorrectOptions from './utils/interfaces/ICorrectOptions';
-import IEvents from './utils/interfaces/model/IModelEvents';
 import { TDomParent, TUpdateCurrentValue } from './utils/types/namespace';
+import ISliderEvents from './utils/interfaces/ISliderEvents';
 
 class SimpleSlider {
   private controller: Controller;
 
-  get events (): IEvents {
+  get events (): ISliderEvents {
     return this.controller.events;
   }
 
@@ -25,11 +25,11 @@ class SimpleSlider {
     this.initUserCallbackEvents(options);
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue) {
+  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
     this.controller.updateCurrentValue(newValue);
   }
 
-  private initUserCallbackEvents (options: IUserOptions) {
+  private initUserCallbackEvents (options: IUserOptions): void {
     const { onSlide } = options;
 
     if (onSlide) {

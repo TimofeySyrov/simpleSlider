@@ -7,7 +7,7 @@ class Thumb {
     this.createDom();
   }
 
-  public createDom (): void {
+  private createDom (): void {
     const domThumb = document.createElement('div');
     domThumb.classList.add(`${sliderClassNames.thumb.main}`);
 

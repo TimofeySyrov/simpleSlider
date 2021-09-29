@@ -7,7 +7,7 @@ class Toggle {
     this.createDom();
   }
 
-  public createDom (): void {
+  private createDom (): void {
     const domToggle = document.createElement('div');
     domToggle.classList.add(`${sliderClassNames.toggle.main}`);
 

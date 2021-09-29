@@ -8,7 +8,7 @@ import Scale from './components/scale/scale';
 import Bar from './components/bar/bar';
 
 import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
-import IEvents from '../utils/interfaces/view/IViewEvents';
+import IViewEvents from '../utils/interfaces/view/IViewEvents';
 import { TDomParent, TToggle, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
@@ -20,11 +20,11 @@ class View extends Observer {
 
   private draggingToggle!: TToggle | null;
 
-  private viewEvents: IEvents = {
+  private viewEvents: IViewEvents = {
     onSlide: new Observer(),
   };
 
-  get events (): IEvents {
+  get events (): IViewEvents {
     return this.viewEvents;
   }
 
@@ -35,16 +35,18 @@ class View extends Observer {
     this.initSubView(domParent);
   }
 
-  public updateOptions (newModelOptions: ICorrectOptions) {
+  public updateOptions (newModelOptions: ICorrectOptions): void {
     this.modelOptions = newModelOptions;
     this.render();
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue) {
+  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
     this.setToggleValue(newValue.option, newValue.value);
   }
 
   private initSubView (newDomParent: TDomParent) {
+    const options = this.modelOptions;
+    
     this.nodes = {
       domParent: newDomParent,
       slider: document.createElement('div'),
@@ -343,6 +345,23 @@ class View extends Observer {
     return coordsByOrientation;
   }
 
+  public getScaleValues (): number[] {
+    const { max, min, step } = this.modelOptions;
+    const middleValue = Math.ceil((max - min) / step);
+    const valueWithStep = Math.ceil(middleValue / 6) * step;
+    const values = [];
+    let value = min;
+
+    for (let i = 0; value < max; i += 1) {
+      value += valueWithStep;
+      if (value < max) {
+        values.push(value);
+      }
+    }
+
+    return [min, ...values, max];
+  }
+
   private getToggleCoords (toggle: TToggle): number {
     const { orientation, type } = this.modelOptions;
     const { nodes } = this;
@@ -361,23 +380,6 @@ class View extends Observer {
     const coordsByOrientation = isVertical ? forVertical : forHorizontal;
 
     return coordsByOrientation;
-  }
-
-  private getScaleValues (): number[] {
-    const { max, min, step } = this.modelOptions;
-    const middleValue = Math.ceil((max - min) / step);
-    const valueWithStep = Math.ceil(middleValue / 6) * step;
-    const values = [];
-    let value = min;
-
-    for (let i = 0; value < max; i += 1) {
-      value += valueWithStep;
-      if (value < max) {
-        values.push(value);
-      }
-    }
-
-    return [min, ...values, max];
   }
 
   private chooseToggleByCoords (event: MouseEvent): TToggle {
