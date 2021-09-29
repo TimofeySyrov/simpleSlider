@@ -42,7 +42,7 @@ $ npm i && npm test
   > };
   > ```
 
-## API
+## API плагина
 * `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
   > ```js
   > const myCustomSlider = $('sliderContainer').simpleSlider({
