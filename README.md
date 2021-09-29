@@ -43,6 +43,12 @@ $ npm i && npm test
   > ```
 
 ## API плагина
+* `options` (): ICorrectOptions;</br></br>Это публичный метод, возвращающий опции слайдера.</br></br>**Пример использования:**
+  > ```js
+  > const myCustomSlider = $('sliderContainer').simpleSlider();
+  > 
+  > console.lo(myCustomSlider.options);
+  > ```
 * `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
   > ```js
   > const myCustomSlider = $('sliderContainer').simpleSlider({
