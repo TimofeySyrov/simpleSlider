@@ -47,7 +47,7 @@ $ npm i && npm test
   > ```js
   > const myCustomSlider = $('sliderContainer').simpleSlider();
   > 
-  > console.lo(myCustomSlider.options);
+  > console.log(myCustomSlider.options);
   > ```
 * `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
   > ```js
