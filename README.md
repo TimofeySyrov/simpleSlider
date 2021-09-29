@@ -26,3 +26,44 @@ $ npm i && npm test
 | withRange | boolean | true | Задает отображение полоски интервала слайдера |
 | withThumb | boolean | true | Задает отображение подсказки у ползунков слайдера |
 | withScale | boolean | true | Задает отображение шкалы значений слайдера |
+
+   **Настройки по умолчанию:**
+  > ```js
+  > const defaultModelOptions = {
+  >   min: 0,
+  >   max: 100,
+  >   step: 1,
+  >   orientation: 'horizontal',
+  >   type: 'from-start',
+  >   currentValue: 50,
+  >   withRange: true,
+  >   withThumb: true,
+  >   withScale: true,
+  > };
+  > ```
+
+## API
+* `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
+  > ```js
+  > const myCustomSlider = $('sliderContainer').simpleSlider({
+  >   onSlide: (obj) => {
+  >     console.log(`Ползунок: ${obj.option}, значение: ${obj.value}`);
+  >   }
+  > });
+  > ```
+* `updateOptions` (options: IUserOptions): void;</br></br>Это публичный метод обновления опций слайдера. Не обязательно передавать новые опции со старыми, достаточно передать лишь новые опции.</br></br>**Пример использования:**
+  > ```js
+  > const myCustomSlider = $('sliderContainer').simpleSlider();
+  > 
+  > myCustomSlider.updateOptions({ type: 'from-end', withScale: false });
+  > ```
+* `updateCurrentValue` (newValue: TUpdateCurrentValue): void;</br></br>Это публичный метод обновления текущего значения слайдера. Метод принимает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
+  > ```js
+  > const myCustomSlider = $('sliderContainer').simpleSlider();
+  > 
+  > myCustomSlider.updateCurrentValue({ option: 'from', value: 78 });
+  > ```
+
+## UML диаграмма плагина
+
+<img src="https://sun9-67.userapi.com/impg/lukG1fPIWwiQNSB_T0XJfSE6eA4Ug82P4QZ3wg/L6WYrzt7Wg4.jpg?size=1331x1134&quality=96&sign=81a7982ed48397f4ac62de5ed185e229&type=album" alt="plugin's UML"/>
