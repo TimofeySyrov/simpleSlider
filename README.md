@@ -72,7 +72,7 @@ $ npm i && npm test
 
 ## UML диаграмма плагина
 
-<img src="https://sun9-67.userapi.com/impg/lukG1fPIWwiQNSB_T0XJfSE6eA4Ug82P4QZ3wg/L6WYrzt7Wg4.jpg?size=1331x1134&quality=96&sign=81a7982ed48397f4ac62de5ed185e229&type=album" alt="plugin's UML"><img/>
+<img src="https://sun9-32.userapi.com/impg/EaUxKDJuxMb4BGybp637-DDCRLi6lboUMQyUqg/pvdxOZc-imI.jpg?size=1331x1134&quality=96&sign=c623421ee4f97b90a21f907047226853&type=album" alt="plugin's UML"><img/>
 </br>
 **Pattern MVC with Passive View**
 </br>
@@ -81,5 +81,9 @@ $ npm i && npm test
 * **View** является пользовательским интерфейсом. View ничего не знает о слоях Controller и Model. View также, как и Model наследуется от класса Observer. View взаимодействует с пользователем и отображает получаемую информацию. С помощью функционала Observer, View уведомляет, что изменился.
 
 * **Controller** является руководящим звеном в приложении. Controller знает о слоях Model и View, также он подписан на них. При обновлении View, Controller получает изменения и обновляет Model. Аналогично при обновлении Model, Controller получает изменения и обновляет View
+
+* **Observer** реализует функционал наблюдаемого объекта. На объект можно подписаться и отписаться. Также можно уведомить подписчиков объекта о изменениях.
+
+* **Bar, Range, Scale, Thumb, Toggle** являются subView компонентами. Имеют агригационные отношения с View.
 
 * **SimpleSlider** является фасадом Controller'а. Реализует удобный интерфейс приложения.
