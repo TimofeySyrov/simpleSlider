@@ -70,9 +70,9 @@ $ npm i && npm test
   > myCustomSlider.updateCurrentValue({ option: 'from', value: 78 });
   > ```
 
-## UML диаграмма плагина
+## UML-диаграмма плагина
 
-<img src="https://sun9-32.userapi.com/impg/EaUxKDJuxMb4BGybp637-DDCRLi6lboUMQyUqg/pvdxOZc-imI.jpg?size=1331x1134&quality=96&sign=c623421ee4f97b90a21f907047226853&type=album" alt="plugin's UML"><img/>
+<img src="https://github.com/TimofeySyrov/simpleSlider/blob/master/UML%20SimpleSlider.png?raw=true" alt="plugin's UML"><img/>
 </br>
 **Pattern MVC with Passive View**
 </br>
