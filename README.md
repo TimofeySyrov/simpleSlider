@@ -58,7 +58,7 @@ $ npm run eslint  // Запуск eslint проверки кода прилож�
   > 
   > console.log(myCustomSlider.options);
   > ```
-* `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number };</br></br>**Пример использования:**
+* `onSlide`: (callback: TUpdateCurrentValue) => void;</br></br>Это callback функция. При передвижении ползунков получает объект типа TUpdateCurrentValue = { option: 'from' | 'to', value: number }; Функция вызывается в объекте с настройками слайдера.</br></br>**Пример использования:**
   > ```js
   > const myCustomSlider = $('sliderContainer').simpleSlider({
   >   type: 'range',
