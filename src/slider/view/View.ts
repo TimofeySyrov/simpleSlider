@@ -345,7 +345,7 @@ class View extends Observer {
     return coordsByOrientation;
   }
 
-  public getScaleValues (): number[] {
+  private getScaleValues (): number[] {
     const { max, min, step } = this.modelOptions;
     const middleValue = Math.ceil((max - min) / step);
     const valueWithStep = Math.ceil(middleValue / 6) * step;
