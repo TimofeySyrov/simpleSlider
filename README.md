@@ -14,6 +14,15 @@ $ cd simpleSlider
 $ npm i && npm test
 ```
 
+## NPM команды проекта
+```js
+$ npm run start  // Запуск webpack devServer
+$ npm run dev  // Инициализация приложения в режиме development
+$ npm run build  // Инициализация приложения в режиме production
+$ npm run test  // Показать результаты всех тестов приложения с таблицей coverage 
+$ npm run eslint  // Запуск eslint проверки кода приложения на требования airbnb ts
+```
+
 ## Настройки
 | Название  | Тип  | Значение по умолчанию | Описание |
 | :------------: |:---------------:| :---------:|:--:|
