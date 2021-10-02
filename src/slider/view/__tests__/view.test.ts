@@ -272,8 +272,15 @@ describe('View:', () => {
       const view = new View(mockParent, newOptions);
 
       const bar = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
+      const to = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1] as HTMLDivElement;
+      const newBottom = 30;
 
-      expect(bar.style.top).toEqual(`${32}%`);
+      to.style.bottom = `${newBottom}%`;
+
+      //@ts-ignore
+      view.setRangePosition();
+
+      expect(bar.style.top).toEqual(`${100 - newBottom}%`);
       expect(bar.style.bottom).toEqual(`${25}%`);
     });
   });
