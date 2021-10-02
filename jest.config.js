@@ -18,6 +18,8 @@ module.exports = {
   collectCoverageFrom: [
     "src/slider/**/*.ts",
     "!src/slider/utils/interfaces/IJQuerySlider.d.ts",
+    "!src/slider/index.ts",
+    "!src/slider/simpleSlider.ts",
   ],
   moduleNameMapper: {
     "\\.(css|scss|sass)$": "identity-obj-proxy"
