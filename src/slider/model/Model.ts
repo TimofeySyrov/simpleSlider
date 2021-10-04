@@ -43,19 +43,19 @@ class Model extends Observer {
     const isFromOption = option === 'from';
     const isToOption = option === 'to';
     
-    if(isValue) {
+    if (isValue) {
       if (isRange) {
         if (typeof currentValue === 'object') {
           const { from, to } = currentValue;
 
           if (isFromOption) {
-            const correct = this.getCorrectDiapason(value, min, to);
+            const correct = Model.getCorrectDiapason(value, min, to);
             this.modelOptions.currentValue = { from: correct, to };
             confirmed.value = correct;
           }
           
           if (isToOption) {
-            const correct = this.getCorrectDiapason(value, from, max);
+            const correct = Model.getCorrectDiapason(value, from, max);
             this.modelOptions.currentValue = { from, to: correct };
             confirmed.value = correct;
           }
@@ -63,7 +63,7 @@ class Model extends Observer {
       }
 
       if (isFromStart || isFromEnd) {
-        const valueFromDiapason = this.getCorrectDiapason(value, min, max);
+        const valueFromDiapason = Model.getCorrectDiapason(value, min, max);
 
         this.modelOptions.currentValue = valueFromDiapason;
         confirmed.value = valueFromDiapason;
@@ -75,17 +75,17 @@ class Model extends Observer {
 
   private checkModelOptions (options: ICorrectOptions) {
     const { min, max, currentValue, step } = options;
-    const confirmedMinMax = this.getCorrectMinMax(min, max);
+    const confirmedMinMax = Model.getCorrectMinMax(min, max);
 
     this.modelOptions.min = confirmedMinMax.min;
     this.modelOptions.max = confirmedMinMax.max;
     this.modelOptions.currentValue = this.getCorrectCurrentValue(currentValue);
-    this.modelOptions.step = this.getCorrectStep(step, confirmedMinMax.min, confirmedMinMax.max);
+    this.modelOptions.step = Model.getCorrectStep(step, confirmedMinMax.min, confirmedMinMax.max);
 
     this.modelEvents.modelOptionsChanged.notify(this.modelOptions);
   }
 
-  private getCorrectStep (step: number, min: number, max: number): number {
+  static getCorrectStep (step: number, min: number, max: number): number {
     const maxStep = max - min;
 
     if (step <= 0) return maxStep;
@@ -94,13 +94,13 @@ class Model extends Observer {
     return step;
   }
 
-  private getCorrectDiapason (value: number, min: number, max: number): number {
+  static getCorrectDiapason (value: number, min: number, max: number): number {
     if (value <= min) { return min; }
     if (value >= max) { return max; }
     return value;
   }
 
-  private getCorrectMinMax (min: number, max: number): { min: number, max: number } {
+  static getCorrectMinMax (min: number, max: number): { min: number, max: number } {
     const checkMin = min > max ? max : min;
 
     return { min: checkMin, max };
@@ -113,30 +113,30 @@ class Model extends Observer {
     const isFromEndType = type === 'from-end';
     const isValue = !Number.isNaN(currentValue);
 
-    if(isValue) {
-      if(isRangeType) {
-        if(typeof currentValue === 'number') {
-          const value = this.getCorrectDiapason(currentValue, min, max);
+    if (isValue) {
+      if (isRangeType) {
+        if (typeof currentValue === 'number') {
+          const value = Model.getCorrectDiapason(currentValue, min, max);
           return { from: value, to: value };
         }
 
-        if(typeof currentValue === 'object') {
-          const valuesDiapason = this.getCorrectMinMax(currentValue.from, currentValue.to);
+        if (typeof currentValue === 'object') {
+          const valuesDiapason = Model.getCorrectMinMax(currentValue.from, currentValue.to);
           return {
-            from: this.getCorrectDiapason(valuesDiapason.min, min, max),
-            to: this.getCorrectDiapason(valuesDiapason.max, min, max),
+            from: Model.getCorrectDiapason(valuesDiapason.min, min, max),
+            to: Model.getCorrectDiapason(valuesDiapason.max, min, max),
           };
         }
       }
 
       if (isFromStartType || isFromEndType) {
-        if(typeof currentValue === 'number') {
-          const value = this.getCorrectDiapason(currentValue, min, max);
+        if (typeof currentValue === 'number') {
+          const value = Model.getCorrectDiapason(currentValue, min, max);
           return value;
         }
 
         if (typeof currentValue === 'object') {
-          const from = this.getCorrectDiapason(currentValue.from, min, max);
+          const from = Model.getCorrectDiapason(currentValue.from, min, max);
           return from;
         }
       }
