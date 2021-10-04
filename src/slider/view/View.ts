@@ -45,8 +45,6 @@ class View extends Observer {
   }
 
   private initSubView (newDomParent: TDomParent) {
-    const options = this.modelOptions;
-    
     this.nodes = {
       domParent: newDomParent,
       slider: document.createElement('div'),
@@ -68,63 +66,63 @@ class View extends Observer {
   }
 
   private initSubViewListeners () {
-    const { nodes } = this;
+    const { bar, scale } = this.nodes;
 
     window.removeEventListener('mousemove', this.dragEvent);
     window.removeEventListener('mouseup', this.finishDraggingEvent);
-    nodes.bar.addEventListener('click', this.clickEvent);
-    nodes.bar.addEventListener('mousedown', this.startDraggingEvent);
-    nodes.scale.getDom().addEventListener('click', this.setScaleItemCoords);
+    bar.addEventListener('click', this.clickEvent);
+    bar.addEventListener('mousedown', this.startDraggingEvent);
+    scale.getDom().addEventListener('click', this.setScaleItemCoords);
   }
 
   private render () {
     const { type, withRange, withThumb, withScale } = this.modelOptions;
-    const { nodes } = this;
+    const { domParent, slider, bar, range, from, to, scale } = this.nodes;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
-    const isSliderHave = nodes.domParent.contains(nodes.slider);
-    const isBarHave = nodes.slider.contains(nodes.bar);
-    const isFromHave = nodes.bar.contains(nodes.from.handle);
-    const isToHave = nodes.bar.contains(nodes.to.handle);
-    const isFromThumbHave = nodes.from.handle.contains(nodes.from.thumb);
-    const isToThumbHave = nodes.to.handle.contains(nodes.to.thumb);
+    const isSliderHave = domParent.contains(slider);
+    const isBarHave = slider.contains(bar);
+    const isFromHave = bar.contains(from.handle);
+    const isToHave = bar.contains(to.handle);
+    const isFromThumbHave = from.handle.contains(from.thumb);
+    const isToThumbHave = to.handle.contains(to.thumb);
     const isThumbHave = isFromThumbHave && isToThumbHave;
-    const isRangeHave = nodes.bar.contains(nodes.range);
-    const isScaleHave = nodes.slider.contains(nodes.scale.getDom());
+    const isRangeHave = bar.contains(range);
+    const isScaleHave = slider.contains(scale.getDom());
 
     /* Bar */
     if (!isBarHave) {
-      nodes.slider.appendChild(nodes.bar);
+      slider.appendChild(bar);
     }
 
     /* From-start || From-end */
     if (isFromStart || isFromEnd) {
       if (!isFromHave) {
-        nodes.bar.appendChild(nodes.from.handle);
+        bar.appendChild(from.handle);
       }
       if (isToHave) {
-        nodes.bar.removeChild(nodes.to.handle);
+        bar.removeChild(to.handle);
       }
     }
 
     /* Range */
     if (isRange) {
       if (!isFromHave) {
-        nodes.bar.appendChild(nodes.from.handle);
+        bar.appendChild(from.handle);
       }
       if (!isToHave) {
-        nodes.bar.appendChild(nodes.to.handle);
+        bar.appendChild(to.handle);
       }
     }
 
     /* withRange */
     if (withRange && !isRangeHave) {
-      nodes.bar.appendChild(nodes.range);
+      bar.appendChild(range);
     }
 
     if (!withRange && isRangeHave) {
-      nodes.bar.removeChild(nodes.range);
+      bar.removeChild(range);
     }
 
     /* withScale */
@@ -132,23 +130,23 @@ class View extends Observer {
       this.renderScale();
 
       if (!isScaleHave) {
-        nodes.slider.appendChild(nodes.scale.getDom());
+        slider.appendChild(scale.getDom());
       }
     }
 
     if (!withScale && isScaleHave) {
-      nodes.slider.removeChild(nodes.scale.getDom());
+      slider.removeChild(scale.getDom());
     }
 
     /* withThumb */
     if (withThumb && !isThumbHave) {
-      nodes.from.handle.appendChild(nodes.from.thumb);
-      nodes.to.handle.appendChild(nodes.to.thumb);
+      from.handle.appendChild(from.thumb);
+      to.handle.appendChild(to.thumb);
     }
 
     if (!withThumb && isThumbHave) {
-      nodes.from.handle.removeChild(nodes.from.thumb);
-      nodes.to.handle.removeChild(nodes.to.thumb);
+      from.handle.removeChild(from.thumb);
+      to.handle.removeChild(to.thumb);
     }
 
     this.renderSubViewStyles();
@@ -156,7 +154,7 @@ class View extends Observer {
 
     /* Slider */
     if (!isSliderHave) {
-      nodes.domParent.appendChild(nodes.slider);
+      domParent.appendChild(slider);
     }
   }
 
@@ -295,7 +293,7 @@ class View extends Observer {
     const percentByType = isFromEnd ? revertedPercent : percent;
     const percentIsNan = Number.isNaN(percentByType);
 
-    if(percentIsNan) {
+    if (percentIsNan) {
       return start;
     }
 
@@ -304,10 +302,10 @@ class View extends Observer {
 
   private getBarLength ():number {
     const { orientation } = this.modelOptions;
-    const { nodes } = this;
+    const { bar } = this.nodes;
     const isVertical = orientation === 'vertical';
     const lengthType = isVertical ? 'offsetHeight' : 'offsetWidth';
-    const length = nodes.bar[lengthType];
+    const length = bar[lengthType];
 
     return length;
   }
