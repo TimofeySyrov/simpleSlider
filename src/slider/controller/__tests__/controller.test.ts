@@ -11,7 +11,6 @@ import { TCurrentValue, TUpdateCurrentValue } from '../../utils/types/namespace'
 describe('Controller:', () => {
   describe('options:', () => {
     test('должен вернуть опции слайдера', () => {
-
       const newOptions: ICorrectOptions = {
         min: -10,
         max: 0,
@@ -33,7 +32,6 @@ describe('Controller:', () => {
 
   describe('events:', () => {
     test('должен вернуть эвенты слайдера', () => {
-
       const mockParent = document.createElement('div');
       const controller = new Controller(mockParent, defaultModelOptions);
 
