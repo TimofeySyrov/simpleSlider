@@ -17,6 +17,10 @@ module.exports = {
     "object-curly-newline": ["error", {
       "consistent": true
     }],
+    "no-trailing-spaces": ["error", {
+      "skipBlankLines": true,
+      "ignoreComments": true
+    }],
   },
   globals: {
     window: true,
