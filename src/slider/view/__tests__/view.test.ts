@@ -6,7 +6,7 @@ import $ from 'jquery';
 import View from '../View';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
-import { TToggle, TUpdateCurrentValue } from '../../utils/types/namespace';
+import { TUpdateCurrentValue } from '../../utils/types/namespace';
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 
 describe('View:', () => {
@@ -25,16 +25,18 @@ describe('View:', () => {
       };
 
       const mockParent = document.createElement('div');
-      const view = new class mockView extends View {
+      const view = new class MockView extends View {
+
+        constructor() {
+          super(mockParent, defaultModelOptions);
+        }
+
         get options (): ICorrectOptions {
           // @ts-ignore
           return this.modelOptions;
         }
-
-        constructor () {
-          super(mockParent, defaultModelOptions);
-        }
       };
+
       view.updateOptions(newOptions);
 
       expect(view.options).toStrictEqual(newOptions);
@@ -139,7 +141,7 @@ describe('View:', () => {
       };
 
       const mockParent = document.createElement('div');
-      const view = new View(mockParent, { ...defaultModelOptions, ...{ type: 'range' }});
+      const view = new View(mockParent, { ...defaultModelOptions, ...{ type: 'range' } });
 
       view.updateOptions(newOptions);
 
@@ -167,7 +169,6 @@ describe('View:', () => {
 
       const mockParent = document.createElement('div');
       const view = new View(mockParent, newOptions);
-
       const slider = mockParent.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement;
       const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
       const range = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement;
