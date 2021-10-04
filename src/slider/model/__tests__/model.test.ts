@@ -9,7 +9,7 @@ describe('Model:', () => {
 
   beforeEach(() => {
     model.updateOptions(defaultModelOptions);
-  })
+  });
 
   describe('updateModelOptions:', () => {
     test('должен обновить опции слайдера на входящие', () => {
@@ -65,7 +65,7 @@ describe('Model:', () => {
       const maxStep = max - min;
 
       // @ts-ignore
-      expect(model.getCorrectStep(step, min, max)).toEqual(maxStep);
+      expect(Model.getCorrectStep(step, min, max)).toEqual(maxStep);
     });
 
     test('должен преобразовать нуль-значение на максимальный шаг', () => {
@@ -78,7 +78,7 @@ describe('Model:', () => {
       const maxStep = max - min;
 
       // @ts-ignore
-      expect(model.getCorrectStep(step, min, max)).toEqual(maxStep);
+      expect(Model.getCorrectStep(step, min, max)).toEqual(maxStep);
     });
 
     test('должен преобразовать значение в максимальный шаг, если оно больше максимального значения слайдера и неравно нулю', () => {
@@ -91,7 +91,7 @@ describe('Model:', () => {
       const maxStep = max - min;
 
       // @ts-ignore
-      expect(model.getCorrectStep(step, min, max)).toEqual(maxStep);
+      expect(Model.getCorrectStep(step, min, max)).toEqual(maxStep);
     });
 
     test('должен вернуть входящее значение при отрицательном диапазоне слайдера', () => {
@@ -102,7 +102,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectStep(step, min, max)).toEqual(step);
+      expect(Model.getCorrectStep(step, min, max)).toEqual(step);
     });
   });
 
@@ -115,7 +115,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectDiapason(value, min, max)).toEqual(min);
+      expect(Model.getCorrectDiapason(value, min, max)).toEqual(min);
     });
 
     test('должен вернуть максимальное значение, если текущее значение больше или равно максимальному слайдера', () => {
@@ -126,7 +126,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectDiapason(value, min, max)).toEqual(max);
+      expect(Model.getCorrectDiapason(value, min, max)).toEqual(max);
     });
 
     test('должен вернуть текущее значение, если оно в диапазоне значений слайдера', () => {
@@ -137,7 +137,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectDiapason(value, min, max)).toEqual(value);
+      expect(Model.getCorrectDiapason(value, min, max)).toEqual(value);
     });
   });
 
@@ -149,7 +149,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectMinMax(min, max)).toEqual({ min: max, max });
+      expect(Model.getCorrectMinMax(min, max)).toEqual({ min: max, max });
     });
 
     test('должен вернуть входящие значения, если минимальное меньше максимального', () => {
@@ -159,7 +159,7 @@ describe('Model:', () => {
       };
 
       // @ts-ignore
-      expect(model.getCorrectMinMax(min, max)).toEqual({ min, max });
+      expect(Model.getCorrectMinMax(min, max)).toEqual({ min, max });
     });
   });
 
@@ -183,11 +183,12 @@ describe('Model:', () => {
         ...defaultModelOptions,
         ...{ currentValue: { from: 10, to: 90 }, type: 'range' },
       };
+      const { currentValue } = newOptions;
 
       model.updateOptions(newOptions);
 
       // @ts-ignore
-      expect(model.getCorrectCurrentValue(newOptions.currentValue)).toEqual(newOptions.currentValue);
+      expect(model.getCorrectCurrentValue(currentValue)).toEqual(currentValue);
     });
 
     test('должен прировнять входящие значения, если минимальное больше максимального', () => {
