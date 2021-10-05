@@ -2,6 +2,7 @@ import IModelEvents from '../utils/interfaces/model/IModelEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import { TCurrentValue, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
+import defaultModelOptions from '../utils/defaultModelOptions';
 
 class Model extends Observer {
   private modelOptions: ICorrectOptions;
@@ -50,14 +51,18 @@ class Model extends Observer {
 
           if (isFromOption) {
             const correct = Model.getCorrectDiapason(value, min, to);
+
             this.modelOptions.currentValue = { from: correct, to };
             confirmed.value = correct;
+            this.modelEvents.currentValueChanged.notify(confirmed);
           }
           
           if (isToOption) {
             const correct = Model.getCorrectDiapason(value, from, max);
+
             this.modelOptions.currentValue = { from, to: correct };
             confirmed.value = correct;
+            this.modelEvents.currentValueChanged.notify(confirmed);
           }
         }
       }
@@ -67,9 +72,8 @@ class Model extends Observer {
 
         this.modelOptions.currentValue = valueFromDiapason;
         confirmed.value = valueFromDiapason;
+        this.modelEvents.currentValueChanged.notify(confirmed);
       }
-
-      this.modelEvents.currentValueChanged.notify(confirmed);
     }
   }
 
@@ -128,7 +132,7 @@ class Model extends Observer {
           };
         }
       }
-
+      
       if (isFromStartType || isFromEndType) {
         if (typeof currentValue === 'number') {
           const value = Model.getCorrectDiapason(currentValue, min, max);
