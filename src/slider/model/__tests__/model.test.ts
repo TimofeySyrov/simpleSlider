@@ -1,5 +1,5 @@
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
-import { TUpdateCurrentValue } from '../../utils/types/namespace';
+import { TCurrentValue, TUpdateCurrentValue } from '../../utils/types/namespace';
 import Model from '../Model';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 
@@ -33,14 +33,23 @@ describe('Model:', () => {
   });
 
   describe('updateCurrentValue', () => {
-    test('должен обновить currentValue на корректное входящее значение', () => {
-      const toggle: TUpdateCurrentValue = { option: 'from', value: 30 };
+    test('должен корректно преобразовать входящее значение и обновить currentValue при range', () => {
+      const from: TUpdateCurrentValue = { option: 'from', value: 30 };
+      const to: TUpdateCurrentValue = { option: 'to', value: 12 };
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ type: 'range' },
+      };
+      const correct: TCurrentValue = {
+        from: 30,
+        to: 30,
+      };
 
-      model.updateCurrentValue(toggle);
-      const UpdatedOptions = model.options;
-
-      // @ts-ignore
-      expect(UpdatedOptions.currentValue).toBe(30);
+      model.updateOptions(newOptions);
+      model.updateCurrentValue(from);
+      model.updateCurrentValue(to);
+      
+      expect(model.options.currentValue).toEqual(correct);
     });
 
     test('должен уведомить наблюдателей события currentValueChanged о обновленном значении toggle', () => {
@@ -52,6 +61,22 @@ describe('Model:', () => {
 
       // @ts-ignore
       expect(subscriber).toHaveBeenCalledWith(toggle);
+    });
+
+    test('не должен уведомлять и менять значение модели, если входящее TUpdateCurrentValue равно NaN', () => {
+      const subscriber = jest.fn();
+      const toggle: TUpdateCurrentValue = { option: 'to', value: NaN };
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ currentValue: { from: 33, to: 10 }, type: 'range' },
+      };
+
+      model.updateOptions(newOptions);
+      model.events.currentValueChanged.subscribe(subscriber);
+      model.updateCurrentValue(toggle);
+
+      expect(model.options.currentValue).toEqual(newOptions.currentValue);
+      expect(subscriber).not.toHaveBeenCalled();
     });
   });
 
@@ -203,6 +228,27 @@ describe('Model:', () => {
       const value = model.getCorrectCurrentValue(newOptions.currentValue);
 
       expect(value).toEqual(newOptions.currentValue);
+    });
+
+    test('должен вернуть значение from, если поступает диапазон значений при from-start, from-end типе', () => {
+      const newCurrentValue: TCurrentValue = { from: 33, to: 10 };
+
+      // @ts-ignore
+      expect(model.getCorrectCurrentValue(newCurrentValue)).toEqual(newCurrentValue.from);
+    });
+
+    test('должен прировнять диапазон, если входящее значение number при range типе', () => {
+      const newOptions: ICorrectOptions = {
+        ...defaultModelOptions,
+        ...{ type: 'range' },
+      };
+      const newValue: TCurrentValue = 87;
+      const correct: TCurrentValue = { from: newValue, to: newValue }
+
+      model.updateOptions(newOptions);
+
+      // @ts-ignore
+      expect(model.getCorrectCurrentValue(newValue)).toEqual(correct);
     });
   });
 });
