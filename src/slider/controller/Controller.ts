@@ -51,34 +51,34 @@ class Controller extends Observer {
   }
 
   private subscribeToLayers () {
-    this.model.subscribe(this.updateView);
-    this.view.subscribe(this.updateModel);
+    this.model.subscribe(this.handleModelUpdate);
+    this.view.subscribe(this.handleViewUpdate);
   }
 
   private subscribeToEvents () {
-    this.model.events.currentValueChanged.subscribe(this.updateCurrentValueByView);
-    this.view.events.onSlide.subscribe(this.updateCurrentValueByModel);
+    this.model.events.currentValueChanged.subscribe(this.handleModelCurrentValueChange);
+    this.view.events.onSlide.subscribe(this.handleViewOnSlide);
   }
 
   @bind
-  private updateCurrentValueByView (newValue: TUpdateCurrentValue) {
+  private handleModelCurrentValueChange (newValue: TUpdateCurrentValue) {
     this.view.updateCurrentValue(newValue);
   }
 
   @bind
-  private updateCurrentValueByModel (newValue: TUpdateCurrentValue) {
+  private handleViewOnSlide (newValue: TUpdateCurrentValue) {
     this.model.updateCurrentValue(newValue);
   }
 
   // наблюдатель Модели
   @bind
-  private updateView (newOptions: ICorrectOptions) {
+  private handleModelUpdate (newOptions: ICorrectOptions) {
     this.view.updateOptions(newOptions);
   }
 
   // наблюдатель Отображения
   @bind
-  private updateModel (newOptions: ICorrectOptions) {
+  private handleViewUpdate (newOptions: ICorrectOptions) {
     this.model.updateOptions(newOptions);
   }
 }

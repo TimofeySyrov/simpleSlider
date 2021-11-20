@@ -67,11 +67,11 @@ class View extends Observer {
   private initSubViewListeners () {
     const { bar, scale } = this.nodes;
 
-    window.removeEventListener('mousemove', this.dragEvent);
-    window.removeEventListener('mouseup', this.finishDraggingEvent);
-    bar.addEventListener('click', this.clickEvent);
-    bar.addEventListener('mousedown', this.startDraggingEvent);
-    scale.getDom().addEventListener('click', this.setScaleItemCoords);
+    window.removeEventListener('mousemove', this.handleWindowMouseMove);
+    window.removeEventListener('mouseup', this.handleWindowMouseUp);
+    bar.addEventListener('click', this.handleBarClick);
+    bar.addEventListener('mousedown', this.handleBarMouseDown);
+    scale.getDom().addEventListener('click', this.handleScaleClick);
   }
 
   private render () {
@@ -215,29 +215,29 @@ class View extends Observer {
   }
 
   @bind
-  private clickEvent (event: MouseEvent) {
+  private handleBarClick (event: MouseEvent) {
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if (this.draggingToggle) {
       this.setLastToggle(this.draggingToggle);
-      this.dragEvent(event);
+      this.handleWindowMouseMove(event);
     }
   }
 
   @bind
-  private startDraggingEvent (event: MouseEvent) {
+  private handleBarMouseDown (event: MouseEvent) {
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if (this.draggingToggle) {
       this.setLastToggle(this.draggingToggle);
-      this.dragEvent(event);
-      window.addEventListener('mousemove', this.dragEvent);
-      window.addEventListener('mouseup', this.finishDraggingEvent);
+      this.handleWindowMouseMove(event);
+      window.addEventListener('mousemove', this.handleWindowMouseMove);
+      window.addEventListener('mouseup', this.handleWindowMouseUp);
     }
   }
 
   @bind
-  private dragEvent (event: MouseEvent) {
+  private handleWindowMouseMove (event: MouseEvent) {
     if (this.draggingToggle) {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
@@ -248,16 +248,16 @@ class View extends Observer {
   }
 
   @bind
-  private finishDraggingEvent () {
+  private handleWindowMouseUp () {
     if (this.draggingToggle) {
-      window.removeEventListener('mousemove', this.dragEvent);
-      window.removeEventListener('mouseup', this.finishDraggingEvent);
+      window.removeEventListener('mousemove', this.handleWindowMouseMove);
+      window.removeEventListener('mouseup', this.handleWindowMouseUp);
       this.draggingToggle = null;
     }
   }
 
   @bind
-  private setScaleItemCoords (event: MouseEvent) {
+  private handleScaleClick (event: MouseEvent) {
     const { target } = event;
     const { scale } = this.nodes;
 
