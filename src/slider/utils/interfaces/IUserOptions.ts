@@ -1,5 +1,4 @@
 import { TType, TCurrentValue, TOrientation } from '../types/namespace';
-
 import ICallbackAPI from './ICallbackAPI';
 
 interface IUserOptions extends ICallbackAPI {

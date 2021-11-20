@@ -6,7 +6,6 @@ import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
 import IViewEvents from '../utils/interfaces/view/IViewEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import sliderClassNames from '../utils/sliderClassNames';
-
 import Range from './components/range/range';
 import Toggle from './components/toggle/toggle';
 import Thumb from './components/thumb/thumb';

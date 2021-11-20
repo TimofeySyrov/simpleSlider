@@ -1,11 +1,12 @@
 import { bind } from 'decko';
+
 import IUserOptions from '../../slider/utils/interfaces/IUserOptions';
+import ICorrectOptions from '../../slider/utils/interfaces/ICorrectOptions';
 import { TCurrentValue, TDomParent, TType, TUpdateCurrentValue } from '../../slider/utils/types/namespace';
 import SimpleSlider from '../../slider/simpleSlider';
-import template from './utils/template';
 import INodes from './utils/interfaces/INodes';
+import template from './utils/template';
 import debounce from './utils/debounce';
-import ICorrectOptions from '../../slider/utils/interfaces/ICorrectOptions';
 
 class SimpleSliderPanel {
   private domParent: TDomParent;

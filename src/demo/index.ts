@@ -1,8 +1,6 @@
-import './index.scss';
 import '../slider/index';
-import '../slider/styles/view.scss';
 import './panel/index';
-import './panel/styles/view.scss';
+import './index.scss';
 
 /* Slider boxes */
 const sliderBoxes1 = {

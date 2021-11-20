@@ -1,5 +1,4 @@
 import SimpleSlider from '../../simpleSlider';
-
 import IUserOptions from './IUserOptions';
 
 declare global {
