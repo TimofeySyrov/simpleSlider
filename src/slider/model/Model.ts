@@ -1,8 +1,7 @@
+import Observer from '../observer/Observer';
 import IModelEvents from '../utils/interfaces/model/IModelEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import { TCurrentValue, TUpdateCurrentValue } from '../utils/types/namespace';
-import Observer from '../observer/Observer';
-import defaultModelOptions from '../utils/defaultModelOptions';
 
 class Model extends Observer {
   private modelOptions: ICorrectOptions;

@@ -1,17 +1,17 @@
 import { bind } from 'decko';
 
+import Observer from '../observer/Observer';
+import { TDomParent, TToggle, TUpdateCurrentValue } from '../utils/types/namespace';
+import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
+import IViewEvents from '../utils/interfaces/view/IViewEvents';
+import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import sliderClassNames from '../utils/sliderClassNames';
+
 import Range from './components/range/range';
 import Toggle from './components/toggle/toggle';
 import Thumb from './components/thumb/thumb';
 import Scale from './components/scale/scale';
 import Bar from './components/bar/bar';
-
-import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
-import IViewEvents from '../utils/interfaces/view/IViewEvents';
-import { TDomParent, TToggle, TUpdateCurrentValue } from '../utils/types/namespace';
-import Observer from '../observer/Observer';
-import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 
 class View extends Observer {
   private modelOptions: ICorrectOptions;

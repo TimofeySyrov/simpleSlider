@@ -1,5 +1,6 @@
-import IUserOptions from './IUserOptions';
 import SimpleSlider from '../../simpleSlider';
+
+import IUserOptions from './IUserOptions';
 
 declare global {
   interface JQuery {

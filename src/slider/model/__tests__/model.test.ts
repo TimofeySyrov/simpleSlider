@@ -1,7 +1,7 @@
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 import { TCurrentValue, TUpdateCurrentValue } from '../../utils/types/namespace';
-import Model from '../Model';
 import defaultModelOptions from '../../utils/defaultModelOptions';
+import Model from '../Model';
 
 describe('Model:', () => {
   const options = defaultModelOptions;

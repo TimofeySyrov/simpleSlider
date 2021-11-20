@@ -1,12 +1,12 @@
 import { bind } from 'decko';
 
 import IUserOptions from '../utils/interfaces/IUserOptions';
+import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
+import ISliderEvents from '../utils/interfaces/ISliderEvents';
 import { TDomParent, TUpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
 import View from '../view/View';
-import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
-import ISliderEvents from '../utils/interfaces/ISliderEvents';
 
 class Controller extends Observer {
   private domParent: TDomParent;

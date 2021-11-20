@@ -1,13 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-import $ from 'jquery';
-import View from '../View';
+import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
+import { TUpdateCurrentValue } from '../../utils/types/namespace';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
-import { TUpdateCurrentValue } from '../../utils/types/namespace';
-import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
+import View from '../View';
 
 describe('View:', () => {
   describe('updateModelOptions:', () => {
@@ -226,6 +224,35 @@ describe('View:', () => {
       $(bar).trigger('click');
 
       expect(sb).toBeCalledTimes(2);
+    });
+  });
+
+  describe('clickEvent:', () => {
+    test('должен вызывать метод dragEvent при клике', () => {
+      const newOptions: ICorrectOptions = {
+        min: 0,
+        max: 100,
+        step: 1,
+        orientation: 'vertical',
+        type: 'range',
+        currentValue: { from: 25, to: 50 },
+        withRange: true,
+        withThumb: true,
+        withScale: true,
+      };
+
+      const mockParent = document.createElement('div');
+      const view = new View(mockParent, newOptions);
+
+      //@ts-ignore
+      const mockDragEvent = jest.spyOn(view, 'dragEvent');
+
+      const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`) as HTMLElement;
+      const from = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0] as HTMLElement;
+
+      $(from).trigger('click');
+
+      expect(mockDragEvent).toHaveBeenCalled();
     });
   });
 

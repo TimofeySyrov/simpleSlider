@@ -1,12 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-import Controller from '../Controller';
-import defaultModelOptions from '../../utils/defaultModelOptions';
 import IUserOptions from '../../utils/interfaces/IUserOptions';
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
 import { TCurrentValue, TUpdateCurrentValue } from '../../utils/types/namespace';
+import defaultModelOptions from '../../utils/defaultModelOptions';
+import Controller from '../Controller';
 
 describe('Controller:', () => {
   describe('options:', () => {

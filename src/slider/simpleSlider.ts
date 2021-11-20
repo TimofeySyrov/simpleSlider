@@ -1,8 +1,8 @@
-import Controller from './controller/Controller';
 import IUserOptions from './utils/interfaces/IUserOptions';
 import ICorrectOptions from './utils/interfaces/ICorrectOptions';
-import { TDomParent, TUpdateCurrentValue } from './utils/types/namespace';
 import ISliderEvents from './utils/interfaces/ISliderEvents';
+import { TDomParent, TUpdateCurrentValue } from './utils/types/namespace';
+import Controller from './controller/Controller';
 
 class SimpleSlider {
   private controller: Controller;
