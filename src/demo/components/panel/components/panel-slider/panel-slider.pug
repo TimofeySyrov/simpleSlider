@@ -1,0 +1,13 @@
+mixin panel-slider({ min= 0, max= 100, step= 1, orientation= 'horizontal', type= 'from-start', from= 50, to, withRange= true, withThumb= true, withScale= true }={})
+  .panel-slider(
+    data-min= min
+    data-max= max
+    data-step= step
+    data-orientation= orientation
+    data-type= type
+    data-from= from
+    data-to= to
+    data-with-range= `${withRange}`
+    data-with-thumb= `${withThumb}`
+    data-with-scale= `${withScale}`
+  )

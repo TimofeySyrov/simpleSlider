@@ -1,0 +1,34 @@
+.panel-settings-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__option-labels {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__option {
+    width: 100%;
+    margin-bottom: 15px;
+    background-color: rgba(230, 230, 230, 0.562);
+    padding: 5px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__option-title {
+    font-weight: 700;
+  }
+
+  &__input-title {
+    margin-right: 5px;
+  }
+}

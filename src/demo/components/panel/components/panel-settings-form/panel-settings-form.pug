@@ -1,0 +1,15 @@
+- let defaultSettings = require("./components/panel/components/panel-settings-form/utils/settingsListData.json");
+
+mixin panel-settings-form(settings= defaultSettings)
+  form.panel-settings-form.js-panel-settings-form
+    each option in settings
+      .panel-settings-form__option
+        .panel-settings-form__option-title= option.title
+        .panel-settings-form__option-labels
+          each input in option.inputs
+            label.panel-settings-form__option-label
+              span.panel-settings-form__input-title= input.optionType
+              input.panel-settings-form__option-input(
+                type= input.type
+                name= input.name
+                data-option-type= input.optionType)

@@ -1,0 +1,97 @@
+[
+  {
+    "title": "Diapason:",
+    "inputs": [
+      {
+        "type": "number",
+        "optionType": "min",
+        "name": "min"
+      },
+      {
+        "type": "number",
+        "optionType": "max",
+        "name": "max"
+      }
+    ]
+  },
+  {
+    "title": "Current value:",
+    "inputs": [
+      {
+        "type": "number",
+        "optionType": "from",
+        "name": "from"
+      },
+      {
+        "type": "number",
+        "optionType": "to",
+        "name": "to"
+      }
+    ]
+  },
+  {
+    "title": "Step:",
+    "inputs": [
+      {
+        "type": "number",
+        "optionType": "step",
+        "name": "step"
+      }
+    ]
+  },
+  {
+    "title": "Orientation:",
+    "inputs": [
+      {
+        "type": "radio",
+        "optionType": "vertical",
+        "name": "orientation"
+      },
+      {
+        "type": "radio",
+        "optionType": "horizontal",
+        "name": "orientation"
+      }
+    ]
+  },
+  {
+    "title": "Type:",
+    "inputs": [
+      {
+        "type": "radio",
+        "optionType": "from-start",
+        "name": "type"
+      },
+      {
+        "type": "radio",
+        "optionType": "from-end",
+        "name": "type"
+      },
+      {
+        "type": "radio",
+        "optionType": "range",
+        "name": "type"
+      }
+    ]
+  },
+  {
+    "title": "Other settings:",
+    "inputs": [
+      {
+        "type": "checkbox",
+        "optionType": "withRange",
+        "name": "withRange"
+      },
+      {
+        "type": "checkbox",
+        "optionType": "withThumb",
+        "name": "withThumb"
+      },
+      {
+        "type": "checkbox",
+        "optionType": "withScale",
+        "name": "withScale"
+      }
+    ]
+  }
+]
