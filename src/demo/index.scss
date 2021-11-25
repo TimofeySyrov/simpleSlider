@@ -1,6 +1,3 @@
-@import '../slider/styles/view.scss';
-@import './panel/styles/view.scss';
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,36 +7,10 @@
 .wrapper {
   width: fit-content;
   height: 100%;
+  padding: 15px;
   margin: 0 auto;
   display: flex;
-}
-
-.preview {
-  width: fit-content;
-  height: 100%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-}
-
-.preview__title {
-  width: fit-content;
-  font-size: 20px;
-  padding: 5px;
-  border: 1px solid rgb(153, 153, 153);
-  border-top-left-radius: 5px;
-  border-bottom: 0;
-  border-right: 0;
-}
-
-.preview__slider-box {
-  width: 100%;
-  height: 350px;
-  padding: 15px 30px;
-  margin-bottom: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 35px;
 }
 
 @media screen and (max-width: 1380px) {
