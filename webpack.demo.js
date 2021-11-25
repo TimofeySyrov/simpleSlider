@@ -39,6 +39,12 @@ module.exports = {
         }
       },
       {
+        test: /\.pug$/,
+        use: {
+          loader: 'pug-loader',
+        },
+      },
+      {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
@@ -57,10 +63,6 @@ module.exports = {
           'sass-loader',
         ],
       },
-      {
-        test: /\.hbs$/,
-        loader: 'handlebars-loader'
-      }
     ],
   },
   resolve: {
@@ -74,7 +76,7 @@ module.exports = {
       jQuery: 'jquery',
     }),
     new HtmlWebpackPlugin({
-      template: './src/demo/index.html',
+      template: './src/demo/index.pug',
       filename: 'index.html'
     }),
     new MiniCssExtractPlugin({

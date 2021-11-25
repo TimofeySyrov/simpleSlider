@@ -68,10 +68,6 @@ module.exports = {
           'sass-loader',
         ],
       },
-      {
-        test: /\.hbs$/,
-        loader: 'handlebars-loader'
-      }
     ],
   },
   resolve: {
