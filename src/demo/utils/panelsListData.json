@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Default slider:",
+    "sliderOptions": {
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "orientation": "horizontal",
+      "type": "from-start",
+      "from": 50,
+      "withRange": true,
+      "withThumb": true,
+      "withScale": true
+    }
+  },
+  {
+    "title": "Vertical slider:",
+    "sliderOptions": {
+      "min": -10,
+      "max": 0,
+      "orientation": "vertical",
+      "step": 0.01,
+      "type": "from-end",
+      "withRange": false,
+      "from": -7
+    }
+  },
+  {
+    "title": "Range slider:",
+    "sliderOptions": {
+      "min": -50,
+      "max": 50,
+      "type": "range",
+      "from": -20,
+      "to": 20,
+      "step": 10,
+      "withRange": false,
+      "withScale": false,
+      "withThumb": false
+    }
+  }
+]
