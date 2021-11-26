@@ -1,4 +1,4 @@
-function importAll(resolve: __WebpackModuleApi.RequireContext): void {
+function importAll (resolve: __WebpackModuleApi.RequireContext): void {
   resolve.keys().forEach(resolve);
 }
 

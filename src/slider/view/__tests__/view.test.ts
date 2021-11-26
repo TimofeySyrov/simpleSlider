@@ -24,8 +24,7 @@ describe('View:', () => {
 
       const mockParent = document.createElement('div');
       const view = new class MockView extends View {
-
-        constructor() {
+        constructor () {
           super(mockParent, defaultModelOptions);
         }
 
@@ -33,7 +32,7 @@ describe('View:', () => {
           // @ts-ignore
           return this.modelOptions;
         }
-      };
+      }();
 
       view.updateOptions(newOptions);
 
@@ -244,7 +243,7 @@ describe('View:', () => {
       const mockParent = document.createElement('div');
       const view = new View(mockParent, newOptions);
 
-      //@ts-ignore
+      // @ts-ignore
       const mockDragEvent = jest.spyOn(view, 'dragEvent');
 
       const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`) as HTMLElement;
@@ -277,7 +276,7 @@ describe('View:', () => {
       const value = 429.5;
       const result = Number((((value - min) / (max - min)) * 100).toFixed(3));
 
-      //@ts-ignore
+      // @ts-ignore
       expect(view.convertValueToPercent(value)).toEqual(result);
     });
   });
@@ -305,7 +304,7 @@ describe('View:', () => {
 
       to.style.bottom = `${newBottom}%`;
 
-      //@ts-ignore
+      // @ts-ignore
       view.setRangePosition();
 
       expect(bar.style.top).toEqual(`${100 - newBottom}%`);

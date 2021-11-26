@@ -243,7 +243,7 @@ describe('Model:', () => {
         ...{ type: 'range' },
       };
       const newValue: TCurrentValue = 87;
-      const correct: TCurrentValue = { from: newValue, to: newValue }
+      const correct: TCurrentValue = { from: newValue, to: newValue };
 
       model.updateOptions(newOptions);
 

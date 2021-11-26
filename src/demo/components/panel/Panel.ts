@@ -9,12 +9,16 @@ import PanelSettingsForm from './components/panel-settings-form/PanelSettingsFor
 
 class Panel {
   private domParent: HTMLElement;
+
   private sliderBox: HTMLElement | null;
+
   private settingsBox: HTMLElement | null;
+
   private slider!: SimpleSlider;
+  
   private settingsForm!: PanelSettingsForm;
 
-  constructor(domParent: HTMLElement) {
+  constructor (domParent: HTMLElement) {
     this.domParent = domParent;
     this.sliderBox = this.domParent.querySelector('.js-panel__slider-box');
     this.settingsBox = this.domParent.querySelector('.js-panel__settings-box');
@@ -22,13 +26,13 @@ class Panel {
     this.init();
   }
 
-  private init(): void {
+  private init (): void {
     this.initSlider();
     this.initPanelSettingsForm();
     this.bindEventListener();
   }
 
-  private initSlider(): void {
+  private initSlider (): void {
     const panelSlider = this.sliderBox?.firstElementChild as HTMLElement;
     const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
     const options = this.getSliderOptions();
@@ -38,7 +42,7 @@ class Panel {
     }
   }
 
-  private initPanelSettingsForm(): void {
+  private initPanelSettingsForm (): void {
     const panelForm = this.settingsBox?.firstElementChild as HTMLElement;
     const isPaneForm = panelForm !== undefined && panelForm !== null;
 
@@ -47,7 +51,7 @@ class Panel {
     }
   }
 
-  private getSliderOptions(): IUserOptions | undefined {
+  private getSliderOptions (): IUserOptions | undefined {
     const panelSlider = this.sliderBox?.firstElementChild;
     const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
 
@@ -81,26 +85,26 @@ class Panel {
     return undefined;
   }
 
-  private bindEventListener(): void {
+  private bindEventListener (): void {
     const { modelOptionsChanged, currentValueChanged } = this.slider.events;
 
     modelOptionsChanged.subscribe(this.handleModelOptionsChange);
     currentValueChanged.subscribe(this.handleCurrentValueUpdate);
-    this.settingsForm.subscribe(this.handleSettingsFormChange)
+    this.settingsForm.subscribe(this.handleSettingsFormChange);
   }
 
   @bind
-  private handleSettingsFormChange(newOptions: ICorrectOptions) {
+  private handleSettingsFormChange (newOptions: ICorrectOptions) {
     this.slider.updateOptions(newOptions);
   }
 
   @bind
-  private handleModelOptionsChange(newOptions: ICorrectOptions) {
+  private handleModelOptionsChange (newOptions: ICorrectOptions) {
     this.settingsForm.updateOptions(newOptions);
   }
 
   @bind
-  private handleCurrentValueUpdate(newValue: TUpdateCurrentValue) {
+  private handleCurrentValueUpdate (newValue: TUpdateCurrentValue) {
     this.settingsForm.updateCurrentValue(newValue);
   }
 }

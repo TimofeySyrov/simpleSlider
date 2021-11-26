@@ -8,7 +8,9 @@ import debounce from './utils/debounce';
 
 class PanelSettingsForm extends Observer {
   private domParent: HTMLElement;
+
   private sliderOptions: ICorrectOptions;
+
   private nodes!: INodes;
 
   constructor (domParent: HTMLElement, options: ICorrectOptions) {
@@ -56,7 +58,7 @@ class PanelSettingsForm extends Observer {
     nodes[newValue.option].value = `${newValue.value}`;
   }
 
-  private init(): void {
+  private init (): void {
     this.findDOMElements();
     this.updateOptions(this.sliderOptions);
     this.bindEventListeners();
@@ -104,7 +106,7 @@ class PanelSettingsForm extends Observer {
     nodes.withScale.addEventListener('change', this.handleInputChange);
   }
 
-  private updateSliderOptions(): void {
+  private updateSliderOptions (): void {
     const { nodes } = this;
     const getCheckedType = (): TType => {
       const isFromEnd = nodes['from-end'].checked;
@@ -138,7 +140,7 @@ class PanelSettingsForm extends Observer {
   });
 
   @bind
-  private handleInputChange(): void {
+  private handleInputChange (): void {
     this.updateSliderOptions();
   }
 
