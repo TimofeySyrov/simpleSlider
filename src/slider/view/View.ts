@@ -23,6 +23,10 @@ class View extends Observer {
     onSlide: new Observer(),
   };
 
+  get options (): ICorrectOptions {
+    return this.modelOptions;
+  }
+
   get events (): IViewEvents {
     return this.viewEvents;
   }
