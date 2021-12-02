@@ -10,6 +10,30 @@ import sliderClassNames from '../../utils/sliderClassNames';
 import View from '../View';
 
 describe('View:', () => {
+  const domParent = document.createElement('div');
+  const view = new View(domParent, defaultModelOptions);
+  const getNodes = (body: HTMLElement) => {
+    return {
+      slider: body.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement,
+      bar: body.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement,
+      range: body.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement,
+      from: {
+        handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0] as HTMLElement,
+        thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0] as HTMLElement,
+      },
+      to: {
+        handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1] as HTMLElement,
+        thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1] as HTMLElement,
+      },
+      scale: body.querySelector(`.${sliderClassNames.scale.main}`) as HTMLElement,
+      scaleItems: body.querySelectorAll(`.${sliderClassNames.scaleItem.main}`) as NodeListOf<HTMLElement>,
+    };
+  };
+
+  beforeEach(() => {
+    view.updateOptions(defaultModelOptions);
+  });
+
   describe('updateOptions:', () => {
     test('должен обновлять опции', () => {
       const newOptions: ICorrectOptions = {
@@ -23,8 +47,6 @@ describe('View:', () => {
         withThumb: false,
         withScale: false,
       };
-      const domParent = document.createElement('div');
-      const view = new View(domParent, defaultModelOptions);
 
       view.updateOptions(newOptions);
 
@@ -35,150 +57,114 @@ describe('View:', () => {
   describe('updateCurrentValue:', () => {
     test('должен обновлять значения позлунков слайдера', () => {
       const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'horizontal',
-        type: 'range',
-        currentValue: { from: 25, to: 50 },
-        withRange: true,
-        withThumb: true,
-        withScale: true,
+        ...defaultModelOptions,
+        ...{
+          type: 'range',
+          currentValue: { from: 25, to: 50 },
+        },
       };
-
-      const mockParent = document.createElement('div');
       const newToValue: TUpdateCurrentValue = { option: 'to', value: 76 };
       const newFromValue: TUpdateCurrentValue = { option: 'from', value: 1 };
-      const view = new View(mockParent, newOptions);
-
+      
+      view.updateOptions(newOptions);
       view.updateCurrentValue(newToValue);
       view.updateCurrentValue(newFromValue);
 
-      const toToggleBox = mockParent.querySelector('[data-index="1"]') as HTMLElement;
-      const fromToggleBox = mockParent.querySelector('[data-index="0"]') as HTMLElement;
-      const toThumbBox = toToggleBox.querySelector(`.${sliderClassNames.thumb.main}`) as HTMLElement;
-      const fromThumbBox = fromToggleBox.querySelector(`.${sliderClassNames.thumb.main}`) as HTMLElement;
+      const { from, to } = getNodes(domParent);
 
-      expect(toThumbBox.innerHTML).toBe(`${newToValue.value}`);
-      expect(fromThumbBox.innerHTML).toBe(`${newFromValue.value}`);
+      expect(from.thumb.innerHTML).toBe(`${newFromValue.value}`);
+      expect(to.thumb.innerHTML).toBe(`${newToValue.value}`);
     });
   });
 
   describe('initSubView, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
       const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'vertical',
-        type: 'range',
-        currentValue: { from: 25, to: 50 },
-        withRange: true,
-        withThumb: true,
-        withScale: true,
+        ...defaultModelOptions,
+        ...{
+          orientation: 'vertical',
+          type: 'range',
+          currentValue: { from: 25, to: 50 },
+        },
       };
 
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, newOptions);
+      view.updateOptions(newOptions);
 
-      expect(mockParent.querySelector(`.${sliderClassNames.slider.main}`)).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelector(`.${sliderClassNames.bar.main}`)).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelector(`.${sliderClassNames.range.main}`)).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeInstanceOf(HTMLElement);
+      const { slider, bar, range, from, to, scale } = getNodes(domParent);
+
+      expect(slider).toBeInstanceOf(HTMLElement);
+      expect(bar).toBeInstanceOf(HTMLElement);
+      expect(range).toBeInstanceOf(HTMLElement);
+      expect(from.handle).toBeInstanceOf(HTMLElement);
+      expect(from.thumb).toBeInstanceOf(HTMLElement);
+      expect(to.handle).toBeInstanceOf(HTMLElement);
+      expect(to.thumb).toBeInstanceOf(HTMLElement);
+      expect(scale).toBeInstanceOf(HTMLElement);
     });
   });
 
   describe('render:', () => {
     test('должен добавлять отсутствующие dom-элементы subView', () => {
       const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'vertical',
-        type: 'range',
-        currentValue: { from: 25, to: 50 },
-        withRange: false,
-        withThumb: false,
-        withScale: false,
+        ...defaultModelOptions,
+        ...{ type: 'range' },
       };
 
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, newOptions);
+      view.updateOptions(newOptions);
 
-      const fromToggle: ChildNode = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0];
-      fromToggle.remove();
+      const { from, to } = getNodes(domParent);
 
-      view.updateOptions({
-        ...newOptions,
-        ...{ withRange: true, withScale: true, withThumb: true },
-      });
-
-      expect(mockParent.querySelector(`.${sliderClassNames.range.main}`)).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeInstanceOf(HTMLElement);
-      expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeInstanceOf(HTMLElement);
+      expect(from.handle).toBeInstanceOf(HTMLElement);
+      expect(from.thumb).toBeInstanceOf(HTMLElement);
+      expect(to.handle).toBeInstanceOf(HTMLElement);
+      expect(to.thumb).toBeInstanceOf(HTMLElement);
     });
     test('должен удалять лишние dom-элементы subView', () => {
       const newOptions: ICorrectOptions = {
         ...defaultModelOptions,
-        ...{ withThumb: false, withRange: false, withScale: false },
+        ...{
+          type: 'range',
+          withThumb: false,
+          withRange: false,
+          withScale: false
+        },
       };
-
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, { ...defaultModelOptions, ...{ type: 'range' } });
 
       view.updateOptions(newOptions);
 
-      expect(mockParent.querySelector(`.${sliderClassNames.range.main}`)).toBeUndefined;
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1]).toBeUndefined;
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0]).toBeUndefined;
-      expect(mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1]).toBeUndefined;
-      expect(mockParent.querySelector(`.${sliderClassNames.scale.main}`)).toBeUndefined;
+      const { range, from, to, scale } = getNodes(domParent);
+
+      expect(range).toBeUndefined;
+      expect(from.thumb).toBeUndefined;
+      expect(to.thumb).toBeUndefined;
+      expect(scale).toBeUndefined;
     });
   });
 
   describe('renderSubViewStyles:', () => {
     test('должен корректно задавать классы и дата-атрибуты для subView', () => {
       const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'vertical',
-        type: 'range',
-        currentValue: { from: 25, to: 50 },
-        withRange: true,
-        withThumb: true,
-        withScale: true,
+        ...defaultModelOptions,
+        ...{ orientation: 'vertical', type: 'range' },
       };
 
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, newOptions);
-      const slider = mockParent.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement;
-      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
-      const range = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement;
-      const toggles = mockParent.querySelectorAll(`.${sliderClassNames.toggle.main}`) as NodeListOf<HTMLElement>;
-      const thumbs = mockParent.querySelectorAll(`.${sliderClassNames.thumb.main}`) as NodeListOf<HTMLElement>;
-      const scale = mockParent.querySelector(`.${sliderClassNames.scale.main}`) as HTMLElement;
-      const scaleItems = mockParent.querySelectorAll(`.${sliderClassNames.scaleItem.main}`) as NodeListOf<HTMLElement>;
+      view.updateOptions(newOptions);
+
+      const { slider, bar, range, from, to, scale, scaleItems } = getNodes(domParent);
 
       expect(slider.classList.contains(`${sliderClassNames.slider[newOptions.orientation]}`)).toBeTruthy();
       expect(bar.classList.contains(`${sliderClassNames.bar[newOptions.orientation]}`)).toBeTruthy();
       expect(range.classList.contains(`${sliderClassNames.range[newOptions.orientation]}`)).toBeTruthy();
 
       /* From toggle */
-      expect(toggles[0].classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(toggles[0].getAttribute('data-index')).toEqual('0');
-      expect(thumbs[0].classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
+      expect(from.handle.classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
+      expect(from.handle.getAttribute('data-index')).toEqual('0');
+      expect(from.thumb.classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* To toggle */
-      expect(toggles[1].classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(toggles[1].getAttribute('data-index')).toEqual('1');
-      expect(thumbs[1].classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
+      expect(to.handle.classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
+      expect(to.handle.getAttribute('data-index')).toEqual('1');
+      expect(to.thumb.classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* Scale */
       expect(scale.classList.contains(`${sliderClassNames.scale[newOptions.orientation]}`)).toBeTruthy();
@@ -190,28 +176,11 @@ describe('View:', () => {
 
   describe('handleBarClick', () => {
     test('должны уведомлять при click на шкалу и бар слайдера', () => {
-      const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'vertical',
-        type: 'range',
-        currentValue: { from: 25, to: 50 },
-        withRange: true,
-        withThumb: true,
-        withScale: true,
-      };
-
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, newOptions);
-
       const sb = jest.fn();
+      const { bar, scaleItems } = getNodes(domParent);
+
       view.events.onSlide.subscribe(sb);
-
-      const scaleItem = mockParent.querySelector(`.${sliderClassNames.scaleItem.main}`) as HTMLElement;
-      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
-
-      $(scaleItem).trigger('click');
+      $(scaleItems[0]).trigger('click');
       $(bar).trigger('click');
 
       expect(sb).toBeCalledTimes(2);
@@ -220,25 +189,10 @@ describe('View:', () => {
 
   describe('handleBarMouseDown', () => {
     test('должен уведомлять при mousedown на бар слайдера', () => {
-      const newOptions: ICorrectOptions = {
-        min: 0,
-        max: 100,
-        step: 1,
-        orientation: 'horizontal',
-        type: 'from-start',
-        currentValue: 50,
-        withRange: true,
-        withThumb: true,
-        withScale: true,
-      };
-
-      const mockParent = document.createElement('div');
-      const view = new View(mockParent, newOptions);
-
       const sb = jest.fn();
-      view.events.onSlide.subscribe(sb);
-      const bar = mockParent.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement;
+      const { bar, scaleItems } = getNodes(domParent);
 
+      view.events.onSlide.subscribe(sb);
       bar.dispatchEvent(new Event('mousedown'));
 
       expect(sb).toBeCalledTimes(1);
@@ -250,66 +204,56 @@ describe('View:', () => {
       describe('при vertical положении:', () => {
         test('при from-start типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'vertical',
-            type: 'from-start',
-            currentValue: 99.9,
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{
+              orientation: 'vertical',
+              currentValue: 99.9,
+            },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeTopNum = Number((parseFloat(barBox.style.top).toFixed(1)));
-          const rangeBottomNum = parseFloat(barBox.style.bottom);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeTopNum = Number((parseFloat(range.style.top).toFixed(1)));
+          const rangeBottomNum = parseFloat(range.style.bottom);
     
           expect(rangeTopNum).toEqual(0.1);
           expect(rangeBottomNum).toEqual(0);
         });
         test('при from-end типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'vertical',
-            type: 'from-end',
-            currentValue: 0,
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{
+              orientation: 'vertical',
+              type: 'from-end',
+              currentValue: 0,
+            },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeTopNum = parseFloat(barBox.style.top);
-          const rangeBottomNum = parseFloat(barBox.style.bottom);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeTopNum = parseFloat(range.style.top);
+          const rangeBottomNum = parseFloat(range.style.bottom);
     
           expect(rangeTopNum).toEqual(0);
           expect(rangeBottomNum).toEqual(100);
         });
         test('при range типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'vertical',
-            type: 'range',
-            currentValue: { from: 25, to: 68 },
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{
+              orientation: 'vertical',
+              type: 'range',
+              currentValue: { from: 25, to: 68 },
+            },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeTopNum = parseFloat(barBox.style.top);
-          const rangeBottomNum = parseFloat(barBox.style.bottom);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeTopNum = parseFloat(range.style.top);
+          const rangeBottomNum = parseFloat(range.style.bottom);
     
           expect(rangeTopNum).toEqual(32);
           expect(rangeBottomNum).toEqual(25);
@@ -318,66 +262,51 @@ describe('View:', () => {
       describe('при horizontal положении:', () => {
         test('при from-start типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'horizontal',
-            type: 'from-start',
-            currentValue: 43,
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{ currentValue: 43 },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeLeftNum = parseFloat(barBox.style.left);
-          const rangeRightNum = parseFloat(barBox.style.right);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeLeftNum = parseFloat(range.style.left);
+          const rangeRightNum = parseFloat(range.style.right);
     
           expect(rangeLeftNum).toEqual(0);
           expect(rangeRightNum).toEqual(57);
         });
         test('при from-end типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'horizontal',
-            type: 'from-end',
-            currentValue: 27.4,
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{
+              type: 'from-end',
+              currentValue: 27.4,
+            },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeLeftNum = Number((parseFloat(barBox.style.left).toFixed(1)));
-          const rangeRightNum = parseFloat(barBox.style.right);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeLeftNum = Number((parseFloat(range.style.left).toFixed(1)));
+          const rangeRightNum = parseFloat(range.style.right);
     
           expect(rangeLeftNum).toEqual(72.6);
           expect(rangeRightNum).toEqual(0);
         });
         test('при range типе', () => {
           const newOptions: ICorrectOptions = {
-            min: 0,
-            max: 100,
-            step: 1,
-            orientation: 'horizontal',
-            type: 'range',
-            currentValue: { from: 50, to: 50 },
-            withRange: true,
-            withThumb: true,
-            withScale: true,
+            ...defaultModelOptions,
+            ...{
+              type: 'range',
+              currentValue: { from: 50, to: 50 },
+            },
           };
     
-          const mockParent = document.createElement('div');
-          const view = new View(mockParent, newOptions);
-          const barBox = mockParent.querySelector(`.${sliderClassNames.range.main}`) as HTMLDivElement;
-          const rangeLeftNum = parseFloat(barBox.style.left);
-          const rangeRightNum = parseFloat(barBox.style.right);
+          view.updateOptions(newOptions);
+
+          const { range } = getNodes(domParent);
+          const rangeLeftNum = parseFloat(range.style.left);
+          const rangeRightNum = parseFloat(range.style.right);
     
           expect(rangeLeftNum).toEqual(50);
           expect(rangeRightNum).toEqual(50);
