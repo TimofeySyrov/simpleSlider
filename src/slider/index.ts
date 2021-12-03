@@ -5,6 +5,7 @@ import { TDomParent } from './utils/types/namespace';
 import defaultModelOptions from './utils/defaultModelOptions';
 import SimpleSlider from './simpleSlider';
 
+/* eslint-disable func-names, no-param-reassign */
 (function ($) {
   $.fn.simpleSlider = function (options?: IUserOptions) {
     const domParent: TDomParent = this[0];
@@ -15,3 +16,4 @@ import SimpleSlider from './simpleSlider';
     return slider;
   };
 }(jQuery));
+/* eslint-enable func-names, no-param-reassign */
