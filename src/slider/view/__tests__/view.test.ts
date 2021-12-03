@@ -12,23 +12,21 @@ import View from '../View';
 describe('View:', () => {
   const domParent = document.createElement('div');
   const view = new View(domParent, defaultModelOptions);
-  const getNodes = (body: HTMLElement) => {
-    return {
-      slider: body.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement,
-      bar: body.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement,
-      range: body.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement,
-      from: {
-        handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0] as HTMLElement,
-        thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0] as HTMLElement,
-      },
-      to: {
-        handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1] as HTMLElement,
-        thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1] as HTMLElement,
-      },
-      scale: body.querySelector(`.${sliderClassNames.scale.main}`) as HTMLElement,
-      scaleItems: body.querySelectorAll(`.${sliderClassNames.scaleItem.main}`) as NodeListOf<HTMLElement>,
-    };
-  };
+  const getNodes = (body: HTMLElement) => ({
+    slider: body.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement,
+    bar: body.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement,
+    range: body.querySelector(`.${sliderClassNames.range.main}`) as HTMLElement,
+    from: {
+      handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[0] as HTMLElement,
+      thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[0] as HTMLElement,
+    },
+    to: {
+      handle: body.querySelectorAll(`.${sliderClassNames.toggle.main}`)[1] as HTMLElement,
+      thumb: body.querySelectorAll(`.${sliderClassNames.thumb.main}`)[1] as HTMLElement,
+    },
+    scale: body.querySelector(`.${sliderClassNames.scale.main}`) as HTMLElement,
+    scaleItems: body.querySelectorAll(`.${sliderClassNames.scaleItem.main}`) as NodeListOf<HTMLElement>,
+  });
 
   beforeEach(() => {
     view.updateOptions(defaultModelOptions);
@@ -126,7 +124,7 @@ describe('View:', () => {
           type: 'range',
           withThumb: false,
           withRange: false,
-          withScale: false
+          withScale: false,
         },
       };
 
@@ -134,10 +132,12 @@ describe('View:', () => {
 
       const { range, from, to, scale } = getNodes(domParent);
 
+      /* eslint-disable @typescript-eslint/no-unused-expressions */
       expect(range).toBeUndefined;
       expect(from.thumb).toBeUndefined;
       expect(to.thumb).toBeUndefined;
       expect(scale).toBeUndefined;
+      /* eslint-enable @typescript-eslint/no-unused-expressions */
     });
   });
 
@@ -190,7 +190,7 @@ describe('View:', () => {
   describe('handleBarMouseDown', () => {
     test('должен уведомлять при mousedown на бар слайдера', () => {
       const sb = jest.fn();
-      const { bar, scaleItems } = getNodes(domParent);
+      const { bar } = getNodes(domParent);
 
       view.events.onSlide.subscribe(sb);
       bar.dispatchEvent(new Event('mousedown'));
