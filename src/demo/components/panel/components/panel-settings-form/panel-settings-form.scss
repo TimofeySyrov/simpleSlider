@@ -24,11 +24,20 @@
     }
   }
 
-  &__option-title {
-    font-weight: 700;
+  &__option-label {
+    direction: ltr;
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+
+    &_type {
+      &_rtl {
+        direction: rtl;
+      }
+    }
   }
 
-  &__input-title {
-    margin-right: 5px;
+  &__option-title {
+    font-weight: 700;
   }
 }

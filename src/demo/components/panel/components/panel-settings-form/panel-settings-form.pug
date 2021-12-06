@@ -7,7 +7,12 @@ mixin panel-settings-form(settings= defaultSettings)
         .panel-settings-form__option-title= option.title
         .panel-settings-form__option-labels
           each input in option.inputs
-            label.panel-settings-form__option-label
+            - var isRadioInput = input.type === 'radio';
+            - var isCheckboxInput = input.type === 'checkbox';
+            - var isRtlLabel = isRadioInput || isCheckboxInput;
+            - var rtlLabelClassName = 'panel-settings-form__option-label_type_rtl';
+
+            label.panel-settings-form__option-label(class= isRtlLabel && rtlLabelClassName)
               span.panel-settings-form__input-title= input.optionType
               input.panel-settings-form__option-input(
                 type= input.type
