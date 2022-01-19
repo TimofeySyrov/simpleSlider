@@ -1,10 +1,11 @@
 import Observer from './Observer';
+import { ObserverData } from './IObserver';
 
 describe('Observable:', () => {
   const observable = new Observer();
-  const data = { text: 'some data' };
+  const data: ObserverData = { option: 'from', value: 10 };
 
-  test('should add subscriber to observers and send them data', () => {
+  test('должен добавить подписчика в наблюдатели и уведомить его о обновлении', () => {
     const subscriber = jest.fn();
 
     observable.subscribe(subscriber);
@@ -13,7 +14,7 @@ describe('Observable:', () => {
     expect(subscriber).toHaveBeenCalledWith(data);
   });
 
-  test('should delete subscriber from observers', () => {
+  test('должен удалить подписчика из наблюдателей', () => {
     const subscriber = jest.fn();
 
     observable.subscribe(subscriber);
