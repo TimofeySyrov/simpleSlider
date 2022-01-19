@@ -174,16 +174,15 @@ describe('View:', () => {
     });
   });
 
-  describe('handleBarClick', () => {
-    test('должны уведомлять при click на шкалу и бар слайдера', () => {
+  describe('handleScaleClick', () => {
+    test('должен уведомлять при click на шкалу слайдера', () => {
       const sb = jest.fn();
-      const { bar, scaleItems } = getNodes(domParent);
+      const { scaleItems } = getNodes(domParent);
 
       view.events.onSlide.subscribe(sb);
       $(scaleItems[0]).trigger('click');
-      $(bar).trigger('click');
 
-      expect(sb).toBeCalledTimes(2);
+      expect(sb).toBeCalledTimes(1);
     });
   });
 
