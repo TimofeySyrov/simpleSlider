@@ -1,7 +1,7 @@
-import { TUpdateCurrentValue } from '../types/namespace';
+import { UpdateCurrentValue } from '../types/namespace';
 
 interface ICallbackAPI {
-  onSlide?: (callback: TUpdateCurrentValue) => void;
+  onSlide?: (callback: UpdateCurrentValue) => void;
 }
 
 export default ICallbackAPI;

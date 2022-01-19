@@ -1,7 +1,7 @@
 import Observer from '../observer/Observer';
 import IModelEvents from '../utils/interfaces/model/IModelEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
-import { TCurrentValue, TUpdateCurrentValue } from '../utils/types/namespace';
+import { CurrentValue, UpdateCurrentValue } from '../utils/types/namespace';
 
 class Model extends Observer {
   private modelOptions: ICorrectOptions;
@@ -32,9 +32,9 @@ class Model extends Observer {
     this.notify(this.modelOptions);
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+  public updateCurrentValue (newValue: UpdateCurrentValue): void {
     const { min, max, type, currentValue } = this.modelOptions;
-    const confirmed: TUpdateCurrentValue = { ...newValue };
+    const confirmed: UpdateCurrentValue = { ...newValue };
     const { option, value } = confirmed;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
@@ -109,7 +109,7 @@ class Model extends Observer {
     return { min: checkMin, max };
   }
 
-  private getCorrectCurrentValue (currentValue: TCurrentValue): TCurrentValue {
+  private getCorrectCurrentValue (currentValue: CurrentValue): CurrentValue {
     const { type, min, max } = this.modelOptions;
     const isRangeType = type === 'range';
     const isFromStartType = type === 'from-start';

@@ -1,7 +1,7 @@
 import IUserOptions from './utils/interfaces/IUserOptions';
 import ICorrectOptions from './utils/interfaces/ICorrectOptions';
 import ISliderEvents from './utils/interfaces/ISliderEvents';
-import { TDomParent, TUpdateCurrentValue } from './utils/types/namespace';
+import { DomParent, UpdateCurrentValue } from './utils/types/namespace';
 import Controller from './controller/Controller';
 
 class SimpleSlider {
@@ -15,7 +15,7 @@ class SimpleSlider {
     return this.controller.options;
   }
 
-  constructor (domParent: TDomParent, options: IUserOptions) {
+  constructor (domParent: DomParent, options: IUserOptions) {
     this.controller = new Controller(domParent, options as ICorrectOptions);
     this.initUserCallbackEvents(options);
   }
@@ -25,7 +25,7 @@ class SimpleSlider {
     this.initUserCallbackEvents(options);
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+  public updateCurrentValue (newValue: UpdateCurrentValue): void {
     this.controller.updateCurrentValue(newValue);
   }
 

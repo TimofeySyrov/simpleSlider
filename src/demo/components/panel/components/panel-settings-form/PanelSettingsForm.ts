@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 
 import ICorrectOptions from '../../../../../slider/utils/interfaces/ICorrectOptions';
-import { TCurrentValue, TType, TUpdateCurrentValue } from '../../../../../slider/utils/types/namespace';
+import { CurrentValue, SliderType, UpdateCurrentValue } from '../../../../../slider/utils/types/namespace';
 import Observer from '../../../../../slider/observer/Observer';
 import INodes from './utils/interfaces/INodes';
 import debounce from './utils/debounce';
@@ -52,7 +52,7 @@ class PanelSettingsForm extends Observer {
   }
 
   @bind
-  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+  public updateCurrentValue (newValue: UpdateCurrentValue): void {
     const { nodes } = this;
 
     nodes[newValue.option].value = `${newValue.value}`;
@@ -108,7 +108,7 @@ class PanelSettingsForm extends Observer {
 
   private updateSliderOptions (): void {
     const { nodes } = this;
-    const getCheckedType = (): TType => {
+    const getCheckedType = (): SliderType => {
       const isFromEnd = nodes['from-end'].checked;
       const isRange = nodes.range.checked;
 
@@ -144,7 +144,7 @@ class PanelSettingsForm extends Observer {
     this.updateSliderOptions();
   }
 
-  private changeCurrentValue (currentValue: TCurrentValue): void {
+  private changeCurrentValue (currentValue: CurrentValue): void {
     const { nodes } = this;
 
     if (typeof currentValue === 'object') {

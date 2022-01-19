@@ -1,15 +1,15 @@
-import { TType, TCurrentValue, TOrientation } from '../types/namespace';
+import { SliderType, CurrentValue, Orientation } from '../types/namespace';
 import ICallbackAPI from './ICallbackAPI';
 
 interface IUserOptions extends ICallbackAPI {
   min?: number,
   max?: number,
-  orientation?: TOrientation,
-  type?: TType,
+  orientation?: Orientation,
+  type?: SliderType,
   withRange?: boolean,
   withThumb?: boolean,
   withScale?: boolean,
-  currentValue?: TCurrentValue,
+  currentValue?: CurrentValue,
   step?: number
 }
 

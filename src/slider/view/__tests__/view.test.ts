@@ -4,7 +4,7 @@
 import $ from 'jquery';
 
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
-import { TUpdateCurrentValue } from '../../utils/types/namespace';
+import { UpdateCurrentValue } from '../../utils/types/namespace';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
 import View from '../View';
@@ -61,8 +61,8 @@ describe('View:', () => {
           currentValue: { from: 25, to: 50 },
         },
       };
-      const newToValue: TUpdateCurrentValue = { option: 'to', value: 76 };
-      const newFromValue: TUpdateCurrentValue = { option: 'from', value: 1 };
+      const newToValue: UpdateCurrentValue = { option: 'to', value: 76 };
+      const newFromValue: UpdateCurrentValue = { option: 'from', value: 1 };
       
       view.updateOptions(newOptions);
       view.updateCurrentValue(newToValue);

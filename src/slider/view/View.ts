@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 
 import Observer from '../observer/Observer';
-import { TDomParent, TToggle, TUpdateCurrentValue } from '../utils/types/namespace';
+import { DomParent, ToggleType, UpdateCurrentValue } from '../utils/types/namespace';
 import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
 import IViewEvents from '../utils/interfaces/view/IViewEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
@@ -17,7 +17,7 @@ class View extends Observer {
 
   private nodes!: ISliderNodes;
 
-  private draggingToggle!: TToggle | null;
+  private draggingToggle!: ToggleType | null;
 
   private viewEvents: IViewEvents = {
     onSlide: new Observer(),
@@ -31,7 +31,7 @@ class View extends Observer {
     return this.viewEvents;
   }
 
-  constructor (domParent: TDomParent, modelOptions: ICorrectOptions) {
+  constructor (domParent: DomParent, modelOptions: ICorrectOptions) {
     super();
 
     this.modelOptions = modelOptions;
@@ -43,11 +43,11 @@ class View extends Observer {
     this.render();
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+  public updateCurrentValue (newValue: UpdateCurrentValue): void {
     this.setToggleValue(newValue.option, newValue.value);
   }
 
-  private initSubView (newDomParent: TDomParent) {
+  private initSubView (newDomParent: DomParent) {
     this.nodes = {
       domParent: newDomParent,
       slider: document.createElement('div'),
@@ -245,7 +245,7 @@ class View extends Observer {
     if (this.draggingToggle) {
       const coords = this.getRelativeCoords(event);
       const value = this.convertCoordsToValue(coords);
-      const toggleToUpdate: TUpdateCurrentValue = { option: this.draggingToggle, value };
+      const toggleToUpdate: UpdateCurrentValue = { option: this.draggingToggle, value };
 
       this.viewEvents.onSlide.notify(toggleToUpdate);
     }
@@ -269,7 +269,7 @@ class View extends Observer {
       if (target === item) {
         const value = Number(item.getAttribute('data-value'));
         const toggle = this.chooseToggleByCoords(event);
-        const toggleToUpdate: TUpdateCurrentValue = { option: toggle, value };
+        const toggleToUpdate: UpdateCurrentValue = { option: toggle, value };
 
         this.viewEvents.onSlide.notify(toggleToUpdate);
       }
@@ -363,7 +363,7 @@ class View extends Observer {
     return [min, ...values, max];
   }
 
-  private getToggleCoords (toggle: TToggle): number {
+  private getToggleCoords (toggle: ToggleType): number {
     const { orientation, type } = this.modelOptions;
     const { nodes } = this;
 
@@ -383,7 +383,7 @@ class View extends Observer {
     return coordsByOrientation;
   }
 
-  private chooseToggleByCoords (event: MouseEvent): TToggle {
+  private chooseToggleByCoords (event: MouseEvent): ToggleType {
     const { type } = this.modelOptions;
     const isRange = type === 'range';
     const fromValue = this.getToggleCoords('from');
@@ -422,7 +422,7 @@ class View extends Observer {
     }
   }
 
-  private setLastToggle (toggle: TToggle) {
+  private setLastToggle (toggle: ToggleType) {
     const { nodes } = this;
 
     if (!nodes[toggle].handle.classList.contains(`${sliderClassNames.toggle.active}`)) {
@@ -464,12 +464,12 @@ class View extends Observer {
     }
   }
 
-  private setThumbValue (toggle: TToggle, value: number) {
+  private setThumbValue (toggle: ToggleType, value: number) {
     const { nodes } = this;
     nodes[toggle].thumb.innerHTML = `${value}`;
   }
 
-  private setToggleValue (toggle: TToggle, value: number) {
+  private setToggleValue (toggle: ToggleType, value: number) {
     const { orientation, withThumb, withRange } = this.modelOptions;
     const { nodes } = this;
     const isVertical = orientation === 'vertical';

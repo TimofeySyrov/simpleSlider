@@ -2,7 +2,7 @@ import { bind } from 'decko';
 
 import ICorrectOptions from '../../../slider/utils/interfaces/ICorrectOptions';
 import IUserOptions from '../../../slider/utils/interfaces/IUserOptions';
-import { TUpdateCurrentValue } from '../../../slider/utils/types/namespace';
+import { UpdateCurrentValue } from '../../../slider/utils/types/namespace';
 import SimpleSlider from '../../../slider/simpleSlider';
 import '../../../slider/index';
 import PanelSettingsForm from './components/panel-settings-form/PanelSettingsForm';
@@ -104,7 +104,7 @@ class Panel {
   }
 
   @bind
-  private handleCurrentValueUpdate (newValue: TUpdateCurrentValue) {
+  private handleCurrentValueUpdate (newValue: UpdateCurrentValue) {
     this.settingsForm.updateCurrentValue(newValue);
   }
 }

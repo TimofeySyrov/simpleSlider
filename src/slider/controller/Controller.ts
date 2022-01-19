@@ -3,13 +3,13 @@ import { bind } from 'decko';
 import IUserOptions from '../utils/interfaces/IUserOptions';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import ISliderEvents from '../utils/interfaces/ISliderEvents';
-import { TDomParent, TUpdateCurrentValue } from '../utils/types/namespace';
+import { DomParent, UpdateCurrentValue } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
 import View from '../view/View';
 
 class Controller extends Observer {
-  private domParent: TDomParent;
+  private domParent: DomParent;
 
   private model: Model;
 
@@ -26,7 +26,7 @@ class Controller extends Observer {
     return this.model.options;
   }
 
-  constructor (domParent: TDomParent, options: ICorrectOptions) {
+  constructor (domParent: DomParent, options: ICorrectOptions) {
     super();
 
     this.domParent = domParent;
@@ -41,7 +41,7 @@ class Controller extends Observer {
     this.model.updateOptions(newOptions);
   }
 
-  public updateCurrentValue (newValue: TUpdateCurrentValue): void {
+  public updateCurrentValue (newValue: UpdateCurrentValue): void {
     this.model.updateCurrentValue(newValue);
   }
 
@@ -61,12 +61,12 @@ class Controller extends Observer {
   }
 
   @bind
-  private handleModelCurrentValueChange (newValue: TUpdateCurrentValue) {
+  private handleModelCurrentValueChange (newValue: UpdateCurrentValue) {
     this.view.updateCurrentValue(newValue);
   }
 
   @bind
-  private handleViewOnSlide (newValue: TUpdateCurrentValue) {
+  private handleViewOnSlide (newValue: UpdateCurrentValue) {
     this.model.updateCurrentValue(newValue);
   }
 

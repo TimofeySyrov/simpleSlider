@@ -1,8 +1,8 @@
 import Scale from '../../../view/components/scale/scale';
-import { TDomParent } from '../../types/namespace';
+import { DomParent } from '../../types/namespace';
 
 interface ISliderNodes {
-  domParent: TDomParent,
+  domParent: DomParent,
   slider: HTMLDivElement,
   bar: HTMLDivElement,
   range: HTMLDivElement,

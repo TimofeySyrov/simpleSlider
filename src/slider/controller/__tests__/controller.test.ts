@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import IUserOptions from '../../utils/interfaces/IUserOptions';
-import { TCurrentValue, TUpdateCurrentValue } from '../../utils/types/namespace';
+import { CurrentValue, UpdateCurrentValue } from '../../utils/types/namespace';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import Controller from '../Controller';
 
@@ -44,13 +44,13 @@ describe('Controller:', () => {
   describe('updateCurrentValue:', () => {
     test('должен обновлять текущее значение слайдера', () => {
       const newOptions: IUserOptions = { type: 'range' };
-      const newFrom: TUpdateCurrentValue = { option: 'from', value: 57 };
-      const newTo: TUpdateCurrentValue = { option: 'to', value: 97 };
+      const newFrom: UpdateCurrentValue = { option: 'from', value: 57 };
+      const newTo: UpdateCurrentValue = { option: 'to', value: 97 };
 
       controller.updateOptions(newOptions);
       controller.updateCurrentValue(newTo);
       controller.updateCurrentValue(newFrom);
-      const result: TCurrentValue = { from: newFrom.value, to: newTo.value };
+      const result: CurrentValue = { from: newFrom.value, to: newTo.value };
 
       expect(controller.options.currentValue).toStrictEqual(result);
     });

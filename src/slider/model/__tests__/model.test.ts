@@ -1,5 +1,5 @@
 import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
-import { TUpdateCurrentValue } from '../../utils/types/namespace';
+import { UpdateCurrentValue } from '../../utils/types/namespace';
 import defaultModelOptions from '../../utils/defaultModelOptions';
 import Model from '../Model';
 
@@ -36,8 +36,8 @@ describe('Model:', () => {
         ...defaultModelOptions,
         ...{ type: 'range' },
       };
-      const from: TUpdateCurrentValue = { option: 'from', value: 30 };
-      const to: TUpdateCurrentValue = { option: 'to', value: 12 };
+      const from: UpdateCurrentValue = { option: 'from', value: 30 };
+      const to: UpdateCurrentValue = { option: 'to', value: 12 };
 
       model.updateOptions(newOptions);
       model.updateCurrentValue(from);
@@ -48,7 +48,7 @@ describe('Model:', () => {
 
     test('должен уведомить наблюдателей события currentValueChanged о обновленном значении toggle', () => {
       const sb = jest.fn();
-      const newFromToggle: TUpdateCurrentValue = { option: 'from', value: 70 };
+      const newFromToggle: UpdateCurrentValue = { option: 'from', value: 70 };
 
       model.events.currentValueChanged.subscribe(sb);
       model.updateCurrentValue(newFromToggle);
@@ -58,7 +58,7 @@ describe('Model:', () => {
 
     test('не должен уведомлять и менять значение модели, если входящее TUpdateCurrentValue равно NaN', () => {
       const sb = jest.fn();
-      const newToToggle: TUpdateCurrentValue = { option: 'to', value: NaN };
+      const newToToggle: UpdateCurrentValue = { option: 'to', value: NaN };
       const newOptions: ICorrectOptions = {
         ...defaultModelOptions,
         ...{

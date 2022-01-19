@@ -1,14 +1,14 @@
-import { TCurrentValue, TOrientation, TType } from '../types/namespace';
+import { CurrentValue, Orientation, SliderType } from '../types/namespace';
 
 interface ICorrectOptions {
   min: number,
   max: number,
-  orientation: TOrientation,
-  type: TType,
+  orientation: Orientation,
+  type: SliderType,
   withRange: boolean,
   withThumb: boolean,
   withScale: boolean,
-  currentValue: TCurrentValue,
+  currentValue: CurrentValue,
   step: number
 }
 
