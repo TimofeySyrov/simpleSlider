@@ -1,20 +1,20 @@
 interface ISliderClassNames {
-  slider: TClassNameKey,
-  bar: TClassNameKey,
-  range: TClassNameKey,
-  toggle: TToggleKey,
-  thumb: TClassNameKey,
-  scale: TClassNameKey,
-  scaleItem: TClassNameKey
+  slider: IClassNameKey,
+  bar: IClassNameKey,
+  range: IClassNameKey,
+  toggle: IToggleKey,
+  thumb: IClassNameKey,
+  scale: IClassNameKey,
+  scaleItem: IClassNameKey
 }
 
-interface TClassNameKey {
+interface IClassNameKey {
   main: string,
   horizontal: string,
   vertical: string,
 }
 
-interface TToggleKey extends TClassNameKey {
+interface IToggleKey extends IClassNameKey {
   active: string,
 }
 
