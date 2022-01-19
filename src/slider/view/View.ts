@@ -73,7 +73,6 @@ class View extends Observer {
 
     window.removeEventListener('mousemove', this.handleWindowMouseMove);
     window.removeEventListener('mouseup', this.handleWindowMouseUp);
-    bar.addEventListener('click', this.handleBarClick);
     bar.addEventListener('mousedown', this.handleBarMouseDown);
     scale.getDom().addEventListener('click', this.handleScaleClick);
   }
@@ -216,16 +215,6 @@ class View extends Observer {
       const percent = this.convertValueToPercent(item);
       domItem.style[typeStyleSide] = `${percent}%`;
     });
-  }
-
-  @bind
-  private handleBarClick (event: MouseEvent) {
-    this.draggingToggle = this.chooseToggleByCoords(event);
-
-    if (this.draggingToggle) {
-      this.setLastToggle(this.draggingToggle);
-      this.handleWindowMouseMove(event);
-    }
   }
 
   @bind
