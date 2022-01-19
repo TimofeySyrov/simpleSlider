@@ -1,10 +1,10 @@
-type TCurrentValue = number | { from: number, to: number };
-type TOrientation = 'vertical' | 'horizontal';
-type TToggle = 'from' | 'to';
-type TType = 'from-start' | 'from-end' | 'range';
-type TDomParent = HTMLDivElement | HTMLSpanElement;
-type TUpdateCurrentValue = { option: TToggle, value: number };
+type CurrentValue = number | { from: number, to: number };
+type Orientation = 'vertical' | 'horizontal';
+type ToggleType = 'from' | 'to';
+type SliderType = 'from-start' | 'from-end' | 'range';
+type DomParent = HTMLDivElement | HTMLSpanElement;
+type UpdateCurrentValue = { option: ToggleType, value: number };
 
 export {
-  TCurrentValue, TOrientation, TToggle, TType, TDomParent, TUpdateCurrentValue,
+  CurrentValue, Orientation, ToggleType, SliderType, DomParent, UpdateCurrentValue,
 };
