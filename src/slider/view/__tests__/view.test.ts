@@ -75,7 +75,7 @@ describe('View:', () => {
     });
   });
 
-  describe('initSubView, render:', () => {
+  describe('initComponents, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
       const newOptions: ICorrectOptions = {
         ...defaultModelOptions,
@@ -141,8 +141,8 @@ describe('View:', () => {
     });
   });
 
-  describe('renderSubViewStyles:', () => {
-    test('должен корректно задавать классы и дата-атрибуты для subView', () => {
+  describe('updateSliderState:', () => {
+    test('должен корректно задавать классы для subView', () => {
       const newOptions: ICorrectOptions = {
         ...defaultModelOptions,
         ...{ orientation: 'vertical', type: 'range' },
@@ -158,12 +158,10 @@ describe('View:', () => {
 
       /* From toggle */
       expect(from.handle.classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(from.handle.getAttribute('data-index')).toEqual('0');
       expect(from.thumb.classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* To toggle */
       expect(to.handle.classList.contains(`${sliderClassNames.toggle[newOptions.orientation]}`)).toBeTruthy();
-      expect(to.handle.getAttribute('data-index')).toEqual('1');
       expect(to.thumb.classList.contains(`${sliderClassNames.thumb[newOptions.orientation]}`)).toBeTruthy();
 
       /* Scale */
