@@ -13,6 +13,8 @@ module.exports = {
   rules: {
     "linebreak-style": 0,
     "operator-linebreak": 0,
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "@typescript-eslint/lines-between-class-members": 0,
     "@typescript-eslint/space-before-function-paren": ["error", "always"],
     "object-curly-newline": ["error", {
       "consistent": true
