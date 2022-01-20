@@ -91,72 +91,70 @@ class View extends Observer {
     const { type, withRange, withThumb, withScale } = this.modelOptions;
     const { bar, range, from, to, scale } = this.components;
     const isRange = type === 'range';
-    const isFromStart = type === 'from-start';
-    const isFromEnd = type === 'from-end';
-    const isSliderHave = this.domParent.contains(this.domSlider);
-    const isBarHave = this.domSlider.contains(bar.getDom());
-    const isFromHave = bar.getDom().contains(from.handle.getDom());
-    const isToHave = bar.getDom().contains(to.handle.getDom());
-    const isFromThumbHave = from.handle.getDom().contains(from.thumb.getDom());
-    const isToThumbHave = to.handle.getDom().contains(to.thumb.getDom());
-    const isThumbHave = isFromThumbHave && isToThumbHave;
-    const isRangeHave = bar.getDom().contains(range.getDom());
-    const isScaleHave = this.domSlider.contains(scale.getDom());
+    const hasSlider = this.domParent.contains(this.domSlider);
+    const hasBar = this.domSlider.contains(bar.getDom());
+    const hasFrom = bar.getDom().contains(from.handle.getDom());
+    const hasTo = bar.getDom().contains(to.handle.getDom());
+    const hasFromThumb = from.handle.getDom().contains(from.thumb.getDom());
+    const hasToThumb = to.handle.getDom().contains(to.thumb.getDom());
+    const hasThumbs = hasFromThumb && hasToThumb;
+    const hasRange = bar.getDom().contains(range.getDom());
+    const hasScale = this.domSlider.contains(scale.getDom());
 
     this.updateSliderState(this.modelOptions);
 
     /* Bar */
-    if (!isBarHave) {
+    if (!hasBar) {
       this.domSlider.appendChild(bar.getDom());
     }
 
     /* From-start || From-end */
-    if (isFromStart || isFromEnd) {
-      if (!isFromHave) {
+    if (!isRange) {
+      if (!hasFrom) {
         bar.getDom().appendChild(from.handle.getDom());
       }
-      if (isToHave) {
+      if (hasTo) {
         bar.getDom().removeChild(to.handle.getDom());
       }
     }
 
     /* Range */
     if (isRange) {
-      if (!isFromHave) {
+      if (!hasFrom) {
         bar.getDom().appendChild(from.handle.getDom());
       }
-      if (!isToHave) {
+      if (!hasTo) {
         bar.getDom().appendChild(to.handle.getDom());
       }
     }
 
     /* withRange */
-    if (withRange && !isRangeHave) {
+    if (withRange && !hasRange) {
       bar.getDom().appendChild(range.getDom());
     }
 
-    if (!withRange && isRangeHave) {
+    if (!withRange && hasRange) {
       bar.getDom().removeChild(range.getDom());
     }
 
     /* withScale */
     if (withScale) {
-      if (!isScaleHave) {
+      if (!hasScale) {
         this.domSlider.appendChild(scale.getDom());
       }
     }
 
-    if (!withScale && isScaleHave) {
+    if (!withScale && hasScale) {
       this.domSlider.removeChild(scale.getDom());
     }
 
     /* withThumb */
-    if (withThumb && !isThumbHave) {
+    if (withThumb && !hasThumbs) {
       from.handle.getDom().appendChild(from.thumb.getDom());
       to.handle.getDom().appendChild(to.thumb.getDom());
     }
 
-    if (!withThumb && isThumbHave) {
+    if (!withThumb && hasThumbs) {
       from.handle.getDom().removeChild(from.thumb.getDom());
       to.handle.getDom().removeChild(to.thumb.getDom());
     }
@@ -165,7 +163,7 @@ class View extends Observer {
     this.setRangePosition();
 
     /* Slider */
-    if (!isSliderHave) {
+    if (!hasSlider) {
       this.domParent.appendChild(this.domSlider);
     }
   }
