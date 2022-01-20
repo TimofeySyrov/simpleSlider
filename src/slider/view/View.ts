@@ -1,8 +1,8 @@
 import { bind } from 'decko';
 
 import Observer from '../observer/Observer';
-import { DomParent, ToggleType, UpdateCurrentValue } from '../utils/types/namespace';
-import ISliderNodes from '../utils/interfaces/view/ISliderNodes';
+import { DomParent, Orientation, ToggleType, UpdateCurrentValue } from '../utils/types/namespace';
+import ISliderComponents from '../utils/interfaces/view/ISliderComponents';
 import IViewEvents from '../utils/interfaces/view/IViewEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import sliderClassNames from '../utils/sliderClassNames';
@@ -14,11 +14,10 @@ import Bar from './components/bar/bar';
 
 class View extends Observer {
   private modelOptions: ICorrectOptions;
-
-  private nodes!: ISliderNodes;
-
+  private domParent: DomParent;
+  private domSlider!: HTMLDivElement;
+  private components!: ISliderComponents;
   private draggingToggle!: ToggleType | null;
-
   private viewEvents: IViewEvents = {
     onSlide: new Observer(),
   };
@@ -34,8 +33,9 @@ class View extends Observer {
   constructor (domParent: DomParent, modelOptions: ICorrectOptions) {
     super();
 
+    this.domParent = domParent;
     this.modelOptions = modelOptions;
-    this.initSubView(domParent);
+    this.init();
   }
 
   public updateOptions (newModelOptions: ICorrectOptions): void {
@@ -44,177 +44,146 @@ class View extends Observer {
   }
 
   public updateCurrentValue (newValue: UpdateCurrentValue): void {
-    this.setToggleValue(newValue.option, newValue.value);
+    this.setToggleValue(newValue);
+    this.setRangePosition();
   }
 
-  private initSubView (newDomParent: DomParent) {
-    this.nodes = {
-      domParent: newDomParent,
-      slider: document.createElement('div'),
-      bar: new Bar().getDom(),
-      range: new Range().getDom(),
+  private init (): void {
+    this.createSliderDom();
+    this.initComponents();
+    this.initComponentsListeners();
+    this.render();
+  }
+
+  private initComponents () {
+    const { options } = this;
+
+    this.components = {
+      bar: new Bar(options),
+      range: new Range(options),
       from: {
-        handle: new Toggle().getDom(),
-        thumb: new Thumb().getDom(),
+        handle: new Toggle(options),
+        thumb: new Thumb(options),
       },
       to: {
-        handle: new Toggle().getDom(),
-        thumb: new Thumb().getDom(),
+        handle: new Toggle(options),
+        thumb: new Thumb(options),
       },
-      scale: new Scale(),
+      scale: new Scale(options),
     };
-
-    this.render();
-    this.initSubViewListeners();
   }
 
-  private initSubViewListeners () {
-    const { bar, scale } = this.nodes;
+  private initComponentsListeners () {
+    const { bar, scale } = this.components;
 
     window.removeEventListener('mousemove', this.handleWindowMouseMove);
     window.removeEventListener('mouseup', this.handleWindowMouseUp);
-    bar.addEventListener('mousedown', this.handleBarMouseDown);
+    bar.getDom().addEventListener('mousedown', this.handleBarMouseDown);
     scale.getDom().addEventListener('click', this.handleScaleClick);
+  }
+
+  private createSliderDom (): void {
+    this.domSlider = document.createElement('div');
+    this.domSlider.classList.add(`${sliderClassNames.slider.main}`);
   }
 
   private render () {
     const { type, withRange, withThumb, withScale } = this.modelOptions;
-    const { domParent, slider, bar, range, from, to, scale } = this.nodes;
+    const { bar, range, from, to, scale } = this.components;
     const isRange = type === 'range';
     const isFromStart = type === 'from-start';
     const isFromEnd = type === 'from-end';
-    const isSliderHave = domParent.contains(slider);
-    const isBarHave = slider.contains(bar);
-    const isFromHave = bar.contains(from.handle);
-    const isToHave = bar.contains(to.handle);
-    const isFromThumbHave = from.handle.contains(from.thumb);
-    const isToThumbHave = to.handle.contains(to.thumb);
+    const isSliderHave = this.domParent.contains(this.domSlider);
+    const isBarHave = this.domSlider.contains(bar.getDom());
+    const isFromHave = bar.getDom().contains(from.handle.getDom());
+    const isToHave = bar.getDom().contains(to.handle.getDom());
+    const isFromThumbHave = from.handle.getDom().contains(from.thumb.getDom());
+    const isToThumbHave = to.handle.getDom().contains(to.thumb.getDom());
     const isThumbHave = isFromThumbHave && isToThumbHave;
-    const isRangeHave = bar.contains(range);
-    const isScaleHave = slider.contains(scale.getDom());
+    const isRangeHave = bar.getDom().contains(range.getDom());
+    const isScaleHave = this.domSlider.contains(scale.getDom());
+
+    this.updateSliderState(this.modelOptions);
 
     /* Bar */
     if (!isBarHave) {
-      slider.appendChild(bar);
+      this.domSlider.appendChild(bar.getDom());
     }
 
     /* From-start || From-end */
     if (isFromStart || isFromEnd) {
       if (!isFromHave) {
-        bar.appendChild(from.handle);
+        bar.getDom().appendChild(from.handle.getDom());
       }
       if (isToHave) {
-        bar.removeChild(to.handle);
+        bar.getDom().removeChild(to.handle.getDom());
       }
     }
 
     /* Range */
     if (isRange) {
       if (!isFromHave) {
-        bar.appendChild(from.handle);
+        bar.getDom().appendChild(from.handle.getDom());
       }
       if (!isToHave) {
-        bar.appendChild(to.handle);
+        bar.getDom().appendChild(to.handle.getDom());
       }
     }
 
     /* withRange */
     if (withRange && !isRangeHave) {
-      bar.appendChild(range);
+      bar.getDom().appendChild(range.getDom());
     }
 
     if (!withRange && isRangeHave) {
-      bar.removeChild(range);
+      bar.getDom().removeChild(range.getDom());
     }
 
     /* withScale */
     if (withScale) {
-      this.renderScale();
-
       if (!isScaleHave) {
-        slider.appendChild(scale.getDom());
+        this.domSlider.appendChild(scale.getDom());
       }
     }
 
     if (!withScale && isScaleHave) {
-      slider.removeChild(scale.getDom());
+      this.domSlider.removeChild(scale.getDom());
     }
 
     /* withThumb */
     if (withThumb && !isThumbHave) {
-      from.handle.appendChild(from.thumb);
-      to.handle.appendChild(to.thumb);
+      from.handle.getDom().appendChild(from.thumb.getDom());
+      to.handle.getDom().appendChild(to.thumb.getDom());
     }
 
     if (!withThumb && isThumbHave) {
-      from.handle.removeChild(from.thumb);
-      to.handle.removeChild(to.thumb);
+      from.handle.getDom().removeChild(from.thumb.getDom());
+      to.handle.getDom().removeChild(to.thumb.getDom());
     }
 
-    this.renderSubViewStyles();
     this.setCurrentValue();
+    this.setRangePosition();
 
     /* Slider */
     if (!isSliderHave) {
-      domParent.appendChild(slider);
+      this.domParent.appendChild(this.domSlider);
     }
   }
 
-  private renderSubViewStyles () {
-    const { orientation } = this.modelOptions;
-    const { slider, from, to, bar, range, scale } = this.nodes;
-    const isVertical = orientation === 'vertical';
-    const orientClear = isVertical ? 'horizontal' : 'vertical';
-    const startSideClear = isVertical ? 'left' : 'bottom';
-    const endSideClear = isVertical ? 'right' : 'top';
+  private updateSliderState (options: ICorrectOptions): void {
+    const { orientation } = options;
+    const oldOrientation: Orientation = orientation === 'vertical' ? 'horizontal' : 'vertical';
+    const { bar, range, scale, to, from } = this.components;
 
-    slider.setAttribute('class', `${sliderClassNames.slider.main}`);
-    from.handle.setAttribute('data-index', '0');
-    to.handle.setAttribute('data-index', '1');
-
-    bar.classList.remove(`${sliderClassNames.bar[orientClear]}`);
-    range.classList.remove(`${sliderClassNames.range[orientClear]}`);
-    from.handle.classList.remove(`${sliderClassNames.toggle[orientClear]}`);
-    from.thumb.classList.remove(`${sliderClassNames.thumb[orientClear]}`);
-    to.handle.classList.remove(`${sliderClassNames.toggle[orientClear]}`);
-    to.thumb.classList.remove(`${sliderClassNames.thumb[orientClear]}`);
-    scale.getDom().classList.remove(`${sliderClassNames.scale[orientClear]}`);
-    scale.getItems().forEach((item) => {
-      item.classList.remove(`${sliderClassNames.scaleItem[orientClear]}`);
-    });
-
-    range.style[startSideClear] = '0';
-    range.style[endSideClear] = '0';
-
-    from.handle.style.removeProperty(startSideClear);
-    to.handle.style.removeProperty(startSideClear);
-
-    slider.classList.add(`${sliderClassNames.slider[orientation]}`);
-    bar.classList.add(`${sliderClassNames.bar[orientation]}`);
-    range.classList.add(`${sliderClassNames.range[orientation]}`);
-    from.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
-    from.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
-    to.handle.classList.add(`${sliderClassNames.toggle[orientation]}`);
-    to.thumb.classList.add(`${sliderClassNames.thumb[orientation]}`);
-    scale.getDom().classList.add(`${sliderClassNames.scale[orientation]}`);
-    scale.getItems().forEach((item) => {
-      item.classList.add(`${sliderClassNames.scaleItem[orientation]}`);
-    });
-  }
-
-  private renderScale () {
-    const { orientation } = this.modelOptions;
-    const { scale } = this.nodes;
-    const values = this.getScaleValues();
-    const isVertical = orientation === 'vertical';
-    const typeStyleSide = isVertical ? 'bottom' : 'left';
-    scale.getDom().innerHTML = '';
-
-    values.forEach((item) => {
-      const domItem = scale.addItem(Number(item.toFixed(1)));
-      const percent = this.convertValueToPercent(item);
-      domItem.style[typeStyleSide] = `${percent}%`;
-    });
+    this.domSlider.classList.remove(`${sliderClassNames.slider[oldOrientation]}`);
+    this.domSlider.classList.add(`${sliderClassNames.slider[orientation]}`);
+    bar.updateState(options);
+    range.updateState(options);
+    scale.updateState(options);
+    to.handle.updateState(options);
+    to.thumb.updateState(options);
+    from.handle.updateState(options);
+    from.thumb.updateState(options);
   }
 
   @bind
@@ -222,7 +191,7 @@ class View extends Observer {
     this.draggingToggle = this.chooseToggleByCoords(event);
 
     if (this.draggingToggle) {
-      this.setLastToggle(this.draggingToggle);
+      this.setActiveToggle(this.draggingToggle);
       this.handleWindowMouseMove(event);
       window.addEventListener('mousemove', this.handleWindowMouseMove);
       window.addEventListener('mouseup', this.handleWindowMouseUp);
@@ -231,9 +200,11 @@ class View extends Observer {
 
   @bind
   private handleWindowMouseMove (event: MouseEvent) {
+    const { bar } = this.components;
+
     if (this.draggingToggle) {
-      const coords = this.getRelativeCoords(event);
-      const value = this.convertCoordsToValue(coords);
+      const coords = bar.getRelativeCoords(event);
+      const value = bar.getValueByCoords(coords);
       const toggleToUpdate: UpdateCurrentValue = { option: this.draggingToggle, value };
 
       this.viewEvents.onSlide.notify(toggleToUpdate);
@@ -252,7 +223,7 @@ class View extends Observer {
   @bind
   private handleScaleClick (event: MouseEvent) {
     const { target } = event;
-    const { scale } = this.nodes;
+    const { scale } = this.components;
 
     scale.getItems().forEach((item) => {
       if (target === item) {
@@ -265,121 +236,16 @@ class View extends Observer {
     });
   }
 
-  private convertCoordsToValue (coords: number): number {
-    const { max, min, step } = this.modelOptions;
-    const barLength = this.getBarLength();
-
-    const value = Number(((coords * (max - min)) / barLength + min));
-    const valueWithStep = Number((Math.round((value - min) / step) * step + min).toFixed(1));
-
-    return valueWithStep;
-  }
-
-  private convertValueToPercent (value: number): number {
-    const { min, max, type } = this.modelOptions;
-    const isFromEnd = type === 'from-end';
-    const start = 0; // Start percent
-
-    const percent = Number((((value - min) * 100) / (max - min)).toFixed(3));
-    const revertedPercent = 100 - percent;
-    const percentByType = isFromEnd ? revertedPercent : percent;
-    const percentIsNan = Number.isNaN(percentByType);
-
-    if (percentIsNan) {
-      return start;
-    }
-
-    return percentByType;
-  }
-
-  private getBarLength ():number {
-    const { orientation } = this.modelOptions;
-    const { bar } = this.nodes;
-    const isVertical = orientation === 'vertical';
-    const lengthType = isVertical ? 'offsetHeight' : 'offsetWidth';
-    const length = bar[lengthType];
-
-    return length;
-  }
-
-  private getBarOffset ():number {
-    const { orientation, type } = this.modelOptions;
-    const { bar } = this.nodes;
-    const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
-
-    const forVertical = isFromEnd ? 'top' : 'bottom';
-    const forHorizontal = isFromEnd ? 'right' : 'left';
-    const side = isVertical ? forVertical : forHorizontal;
-
-    const offset = bar.getBoundingClientRect()[side];
-
-    return offset;
-  }
-
-  private getRelativeCoords (event: MouseEvent): number {
-    const { orientation, type } = this.modelOptions;
-    const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
-    const axis = isVertical ? 'clientY' : 'clientX';
-    const barOffset = this.getBarOffset();
-
-    const coords = event[axis] - barOffset;
-    const reverted = barOffset - event[axis];
-
-    const forVertical = isFromEnd ? coords : reverted;
-    const forHorizontal = isFromEnd ? reverted : coords;
-
-    const coordsByOrientation = isVertical ? forVertical : forHorizontal;
-
-    return coordsByOrientation;
-  }
-
-  private getScaleValues (): number[] {
-    const { max, min, step } = this.modelOptions;
-    const middleValue = Math.ceil((max - min) / step);
-    const valueWithStep = Math.ceil(middleValue / 6) * step;
-    const values = [];
-    let value = min;
-
-    for (let i = 0; value < max; i += 1) {
-      value += valueWithStep;
-      if (value < max) {
-        values.push(value);
-      }
-    }
-
-    return [min, ...values, max];
-  }
-
-  private getToggleCoords (toggle: ToggleType): number {
-    const { orientation, type } = this.modelOptions;
-    const { nodes } = this;
-
-    const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
-    const offsetType = isVertical ? 'offsetTop' : 'offsetLeft';
-    const toggleSize = isVertical ? 'offsetHeight' : 'offsetWidth';
-    const barLength = this.getBarLength();
-
-    const coords = nodes[toggle].handle[offsetType] + (nodes[toggle].handle[toggleSize] / 2);
-    const reverted = barLength - coords;
-
-    const forVertical = isFromEnd ? coords : reverted;
-    const forHorizontal = isFromEnd ? reverted : coords;
-    const coordsByOrientation = isVertical ? forVertical : forHorizontal;
-
-    return coordsByOrientation;
-  }
-
   private chooseToggleByCoords (event: MouseEvent): ToggleType {
     const { type } = this.modelOptions;
+    const { bar, from, to } = this.components;
     const isRange = type === 'range';
-    const fromValue = this.getToggleCoords('from');
-    const mouseCoords = this.getRelativeCoords(event);
+    const barLenght = bar.getLength();
+    const fromValue = from.handle.getCoords(barLenght);
+    const mouseCoords = bar.getRelativeCoords(event);
 
     if (isRange) {
-      const toValue = this.getToggleCoords('to');
+      const toValue = to.handle.getCoords(barLenght);
       const rangeMiddle = (toValue - fromValue) / 2;
       const valueFromRangeMiddle = (mouseCoords - fromValue);
 
@@ -392,84 +258,51 @@ class View extends Observer {
     return 'from';
   }
 
+  private setToggleValue (newValue: UpdateCurrentValue): void {
+    const { option, value } = newValue;
+
+    this.components[option].handle.setValue(value);
+    this.components[option].thumb.setValue(value);
+  }
+
+  private setActiveToggle (toggle: ToggleType): void {
+    const isFromToggle = toggle === 'from';
+    const old: ToggleType = isFromToggle ? 'to' : 'from';
+
+    this.components[old].handle.removeActive();
+    this.components[toggle].handle.setActive();
+  }
+
+  private setRangePosition (): void {
+    const { range, from, to } = this.components;
+    const { orientation } = this.options;
+    const fromToggle = from.handle.getDom();
+    const toToggle = to.handle.getDom();
+    const isVertical = orientation === 'vertical';
+    const sideStart = isVertical ? 'bottom' : 'left';
+    const fromIndent = parseFloat(fromToggle.style[sideStart].replace(/[^0-9,.]/g, ' '));
+    const toIndent = parseFloat(toToggle.style[sideStart].replace(/[^0-9,.]/g, ' '));
+
+    range.setLenght(fromIndent, toIndent);
+  }
+
   private setCurrentValue () {
     const { currentValue, type } = this.modelOptions;
     const isRange = type === 'range';
 
     if (typeof currentValue === 'object') {
-      this.setToggleValue('from', currentValue.from);
+      this.setToggleValue({ option: 'from', value: currentValue.from });
       if (isRange) {
-        this.setToggleValue('to', currentValue.to);
+        this.setToggleValue({ option: 'to', value: currentValue.to });
       }
     }
 
     if (typeof currentValue === 'number') {
-      this.setToggleValue('from', currentValue);
+      this.setToggleValue({ option: 'from', value: currentValue });
       if (isRange) {
-        this.setToggleValue('to', currentValue);
+        this.setToggleValue({ option: 'to', value: currentValue });
       }
     }
-  }
-
-  private setLastToggle (toggle: ToggleType) {
-    const { nodes } = this;
-
-    if (!nodes[toggle].handle.classList.contains(`${sliderClassNames.toggle.active}`)) {
-      nodes.from.handle.classList.remove(`${sliderClassNames.toggle.active}`);
-      nodes.to.handle.classList.remove(`${sliderClassNames.toggle.active}`);
-
-      nodes[toggle].handle.classList.add(`${sliderClassNames.toggle.active}`);
-    }
-  }
-
-  private setRangePosition () {
-    const { orientation, type, withRange } = this.modelOptions;
-    const { range, from, to } = this.nodes;
-    const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
-    const isFromStart = type === 'from-start';
-    const isRange = type === 'range';
-    const sideStart = isVertical ? 'bottom' : 'left';
-    const sideEnd = isVertical ? 'top' : 'right';
-
-    if (withRange) {
-      const fromPercent = parseFloat(from.handle.style[sideStart].replace(/[^0-9,.]/g, ' '));
-      const toPercent = 100 - parseFloat(to.handle.style[sideStart].replace(/[^0-9,.]/g, ' '));
-
-      if (isFromStart) {
-        range.style[sideStart] = '0';
-        range.style[sideEnd] = `${100 - fromPercent}%`;
-      }
-
-      if (isFromEnd) {
-        range.style[sideStart] = `${fromPercent}%`;
-        range.style[sideEnd] = '0';
-      }
-
-      if (isRange) {
-        range.style[sideStart] = `${fromPercent}%`;
-        range.style[sideEnd] = `${toPercent}%`;
-      }
-    }
-  }
-
-  private setThumbValue (toggle: ToggleType, value: number) {
-    const { nodes } = this;
-    nodes[toggle].thumb.innerHTML = `${value}`;
-  }
-
-  private setToggleValue (toggle: ToggleType, value: number) {
-    const { orientation, withThumb, withRange } = this.modelOptions;
-    const { nodes } = this;
-    const isVertical = orientation === 'vertical';
-    const typeStyleSide = isVertical ? 'bottom' : 'left';
-    const percent = this.convertValueToPercent(value);
-
-    nodes[toggle].handle.style[typeStyleSide] = `${percent}%`;
-
-    this.setLastToggle(toggle);
-    if (withThumb) this.setThumbValue(toggle, value);
-    if (withRange) this.setRangePosition();
   }
 }
 

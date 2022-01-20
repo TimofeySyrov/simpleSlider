@@ -1,27 +1,55 @@
+import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
+import convertValueToPercent from '../../../helpers/helpers';
 
 class Scale {
   private dom!: HTMLElement;
+  private options: ICorrectOptions;
 
-  constructor () {
-    this.createDom();
+  constructor (options: ICorrectOptions) {
+    this.options = options;
+
+    this.init();
   }
 
-  private createDom () {
-    const domScale = document.createElement('ul');
-    domScale.classList.add(`${sliderClassNames.scale.main}`);
+  public updateState (options: ICorrectOptions): void {
+    this.options = options;
+    this.updateStyles();
+    this.createScaleItems();
+  }
 
-    this.saveDom(domScale);
+  /* Получить массив с значениями шкалы */
+  public getValues (): number[] {
+    const { max, min, step } = this.options;
+    const middleValue = Math.ceil((max - min) / step);
+    const valueWithStep = Math.ceil(middleValue / 6) * step;
+    const values = [];
+    let value = min;
+
+    for (let i = 0; value < max; i += 1) {
+      value += valueWithStep;
+      if (value < max) {
+        values.push(value);
+      }
+    }
+
+    return [min, ...values, max];
   }
 
   public addItem (value: number): HTMLElement {
-    const domScaleItem = document.createElement('li');
-    domScaleItem.classList.add(`${sliderClassNames.scaleItem.main}`);
+    const { orientation, type, min, max } = this.options;
+    const isVertical = orientation === 'vertical';
+    const typeStyleSide = isVertical ? 'bottom' : 'left';
+    const domItem = document.createElement('li');
+    const indentPercent = convertValueToPercent({ min, max, value, type });
 
-    domScaleItem.setAttribute('data-value', `${value}`);
-    domScaleItem.innerHTML = `${value}`;
-    this.dom.appendChild(domScaleItem);
-    return domScaleItem;
+    domItem.classList.add(`${sliderClassNames.scaleItem.main}`, `${sliderClassNames.scaleItem[orientation]}`);
+    domItem.setAttribute('data-value', `${value}`);
+    domItem.innerHTML = `${value}`;
+    domItem.style[typeStyleSide] = `${indentPercent}%`;
+    this.dom.appendChild(domItem);
+
+    return domItem;
   }
 
   public getItems (): NodeListOf<HTMLElement> {
@@ -29,12 +57,37 @@ class Scale {
     return list as NodeListOf<HTMLElement>;
   }
 
-  public saveDom (el: HTMLElement) {
-    this.dom = el;
-  }
-
   public getDom (): HTMLElement {
     return this.dom;
+  }
+
+  private init (): void {
+    this.createDom();
+    this.createScaleItems();
+  }
+
+  private createDom () {
+    const domScale = document.createElement('ul');
+    domScale.classList.add(`${sliderClassNames.scale.main}`);
+    this.dom = domScale;
+  }
+
+  private createScaleItems (): void {
+    this.dom.innerHTML = '';
+    this.getValues().forEach((value) => this.addItem(Number(value.toFixed(1))));
+  }
+
+  private updateStyles (): void {
+    const { orientation } = this.options;
+    const isVertical = orientation === 'vertical';
+    const oldOrientation = isVertical ? 'horizontal' : 'vertical';
+
+    this.dom.classList.remove(`${sliderClassNames.scale[oldOrientation]}`);
+    this.dom.classList.add(`${sliderClassNames.scale[orientation]}`);
+    this.getItems().forEach((item) => {
+      item.classList.remove(`${sliderClassNames.scaleItem[oldOrientation]}`);
+      item.classList.add(`${sliderClassNames.scaleItem[orientation]}`);
+    });
   }
 }
 
