@@ -129,12 +129,16 @@ class View extends Observer {
     }
 
     /* withRange */
-    if (withRange && !hasRange) {
-      bar.getDom().appendChild(range.getDom());
+    if (withRange) {
+      if (!hasRange) {
+        bar.getDom().appendChild(range.getDom());
+      }
     }
 
-    if (!withRange && hasRange) {
-      bar.getDom().removeChild(range.getDom());
+    if (!withRange) {
+      if (hasRange) {
+        bar.getDom().removeChild(range.getDom());
+      }
     }
 
     /* withScale */
@@ -144,19 +148,25 @@ class View extends Observer {
       }
     }
 
-    if (!withScale && hasScale) {
-      this.domSlider.removeChild(scale.getDom());
+    if (!withScale) {
+      if (hasScale) {
+        this.domSlider.removeChild(scale.getDom());
+      }
     }
 
     /* withThumb */
-    if (withThumb && !hasThumbs) {
-      from.handle.getDom().appendChild(from.thumb.getDom());
-      to.handle.getDom().appendChild(to.thumb.getDom());
+    if (withThumb) {
+      if (!hasThumbs) {
+        from.handle.getDom().appendChild(from.thumb.getDom());
+        to.handle.getDom().appendChild(to.thumb.getDom());
+      }
     }
 
-    if (!withThumb && hasThumbs) {
-      from.handle.getDom().removeChild(from.thumb.getDom());
-      to.handle.getDom().removeChild(to.thumb.getDom());
+    if (!withThumb) {
+      if (hasThumbs) {
+        from.handle.getDom().removeChild(from.thumb.getDom());
+        to.handle.getDom().removeChild(to.thumb.getDom());
+      }
     }
 
     this.setCurrentValue();
