@@ -20,7 +20,7 @@ class Range {
     return this.dom;
   }
 
-  public setLenght (fromValue: number, toValue: number) {
+  public setLenght (fromValue: number, toValue: number): void {
     const { orientation, type, withRange } = this.options;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
@@ -50,7 +50,7 @@ class Range {
     }
   }
 
-  private createDom () {
+  private createDom (): void {
     const rangeDom = document.createElement('div');
     rangeDom.classList.add(`${sliderClassNames.range.main}`);
 

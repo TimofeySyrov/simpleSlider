@@ -67,7 +67,7 @@ class Bar {
     return this.dom.getBoundingClientRect()[side];
   }
 
-  private createDom () {
+  private createDom (): void {
     const barDom = document.createElement('div');
     barDom.classList.add(`${sliderClassNames.bar.main}`);
 

@@ -20,7 +20,7 @@ class Thumb {
     return this.dom;
   }
 
-  public setValue (value: number) {
+  public setValue (value: number): void {
     this.dom.innerHTML = `${value}`;
   }
 

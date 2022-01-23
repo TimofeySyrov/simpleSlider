@@ -66,7 +66,7 @@ class Scale {
     this.createScaleItems();
   }
 
-  private createDom () {
+  private createDom (): void {
     const domScale = document.createElement('ul');
     domScale.classList.add(`${sliderClassNames.scale.main}`);
     this.dom = domScale;
