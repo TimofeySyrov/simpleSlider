@@ -291,7 +291,7 @@ class View extends Observer {
     const fromIndent = parseFloat(fromToggle.style[sideStart].replace(/[^0-9,.]/g, ' '));
     const toIndent = parseFloat(toToggle.style[sideStart].replace(/[^0-9,.]/g, ' '));
 
-    range.setLenght(fromIndent, toIndent);
+    range.setLength(fromIndent, toIndent);
   }
 
   private setCurrentValue () {

@@ -20,7 +20,7 @@ class Range {
     return this.dom;
   }
 
-  public setLenght (fromValue: number, toValue: number): void {
+  public setLength (fromValue: number, toValue: number): void {
     const { orientation, type, withRange } = this.options;
     const isVertical = orientation === 'vertical';
     const isFromEnd = type === 'from-end';
