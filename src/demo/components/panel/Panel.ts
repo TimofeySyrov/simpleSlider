@@ -38,7 +38,8 @@ class Panel {
     const options = this.getSliderOptions();
 
     if (isPanelSlider) {
-      this.slider = $(panelSlider).simpleSlider(options);
+      $(panelSlider).simpleSlider(options);
+      this.slider = $(panelSlider).data('simpleSlider');
     }
   }
 

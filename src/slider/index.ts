@@ -7,13 +7,14 @@ import SimpleSlider from './simpleSlider';
 
 /* eslint-disable func-names, no-param-reassign */
 (function ($) {
-  $.fn.simpleSlider = function (options?: IUserOptions) {
+  $.fn.simpleSlider = function (userOptions?: IUserOptions) {
     const domParent: DomParent = this[0];
-    const finalOptions: IUserOptions = $.extend({}, defaultModelOptions, options);
+    const mergedOptions: IUserOptions = $.extend({}, defaultModelOptions, userOptions);
+    const slider = new SimpleSlider(domParent, mergedOptions);
 
-    const slider = new SimpleSlider(domParent, finalOptions);
+    $(domParent).data('simpleSlider', slider);
 
-    return slider;
+    return domParent;
   };
 }(jQuery));
 /* eslint-enable func-names, no-param-reassign */
