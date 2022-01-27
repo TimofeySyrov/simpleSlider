@@ -4,7 +4,14 @@ type ToggleType = 'from' | 'to';
 type SliderType = 'from-start' | 'from-end' | 'range';
 type DomParent = HTMLDivElement | HTMLSpanElement;
 type UpdateCurrentValue = { option: ToggleType, value: number };
+type SliderEvents = 'onSlide' | 'updateOptions' | 'updateCurrentValue';
 
 export {
-  CurrentValue, Orientation, ToggleType, SliderType, DomParent, UpdateCurrentValue,
+  CurrentValue,
+  Orientation,
+  ToggleType,
+  SliderType,
+  DomParent,
+  UpdateCurrentValue,
+  SliderEvents,
 };
