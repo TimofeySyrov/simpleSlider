@@ -1,22 +1,26 @@
-import { IObserver, ObserverData } from './IObserver';
+import { IObserver, ISubscriber, ObserverData } from './IObserver';
 
 class Observer implements IObserver {
-  private subscribers: Function[];
+  private subscribers: ISubscriber[];
 
   constructor () {
     this.subscribers = [];
   }
 
-  public subscribe (cb: Function): void {
-    this.subscribers.push(cb);
+  public subscribe (event: string, cb: Function): void {
+    this.subscribers.push({ event, cb });
   }
 
-  public unsubscribe (cb: Function): void {
-    this.subscribers = this.subscribers.filter((sub) => sub !== cb);
+  public unsubscribe (event: string, cb: Function): void {
+    this.subscribers = this.subscribers.filter((item) => item !== { event, cb });
   }
 
-  public notify (data: ObserverData): void {
-    this.subscribers.forEach((subscriber) => subscriber(data));
+  public notify (event: string, data: ObserverData): void {
+    this.subscribers.forEach((subscriber) => {
+      if (subscriber.event === event) {
+        subscriber.cb(data);
+      }
+    });
   }
 }
 

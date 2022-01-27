@@ -3,10 +3,15 @@ import { UpdateCurrentValue } from '../utils/types/namespace';
 
 type ObserverData = ICorrectOptions | UpdateCurrentValue;
 
-interface IObserver {
-  subscribe: (cb: Function) => void;
-  unsubscribe: (cb: Function) => void;
-  notify: (data: ObserverData) => void;
+interface ISubscriber {
+  event: string,
+  cb: Function,
 }
 
-export { IObserver, ObserverData };
+interface IObserver {
+  subscribe: (event: string, cb: Function) => void;
+  unsubscribe: (event: string, cb: Function) => void;
+  notify: (event: string, data: ObserverData) => void;
+}
+
+export { IObserver, ISubscriber, ObserverData };
