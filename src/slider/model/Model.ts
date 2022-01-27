@@ -1,22 +1,12 @@
 import Observer from '../observer/Observer';
-import IModelEvents from '../utils/interfaces/model/IModelEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import { CurrentValue, UpdateCurrentValue } from '../utils/types/namespace';
 
 class Model extends Observer {
   private modelOptions: ICorrectOptions;
 
-  private modelEvents: IModelEvents = {
-    currentValueChanged: new Observer(),
-    modelOptionsChanged: new Observer(),
-  };
-
   get options (): ICorrectOptions {
     return this.modelOptions;
-  }
-
-  get events (): IModelEvents {
-    return this.modelEvents;
   }
 
   constructor (options: ICorrectOptions) {
@@ -29,7 +19,7 @@ class Model extends Observer {
   public updateOptions (options: ICorrectOptions): void {
     this.modelOptions = options;
     this.checkModelOptions(options);
-    this.notify(this.modelOptions);
+    this.notify('updateOptions', this.modelOptions);
   }
 
   public updateCurrentValue (newValue: UpdateCurrentValue): void {
@@ -53,7 +43,7 @@ class Model extends Observer {
 
             this.modelOptions.currentValue = { from: correct, to };
             confirmed.value = correct;
-            this.modelEvents.currentValueChanged.notify(confirmed);
+            this.notify('updateCurrentValue', confirmed);
           }
           
           if (isToOption) {
@@ -61,7 +51,7 @@ class Model extends Observer {
 
             this.modelOptions.currentValue = { from, to: correct };
             confirmed.value = correct;
-            this.modelEvents.currentValueChanged.notify(confirmed);
+            this.notify('updateCurrentValue', confirmed);
           }
         }
       }
@@ -71,7 +61,7 @@ class Model extends Observer {
 
         this.modelOptions.currentValue = valueFromDiapason;
         confirmed.value = valueFromDiapason;
-        this.modelEvents.currentValueChanged.notify(confirmed);
+        this.notify('updateCurrentValue', confirmed);
       }
     }
   }
@@ -85,7 +75,7 @@ class Model extends Observer {
     this.modelOptions.currentValue = this.getCorrectCurrentValue(currentValue);
     this.modelOptions.step = Model.getCorrectStep(step, confirmedMinMax.min, confirmedMinMax.max);
 
-    this.modelEvents.modelOptionsChanged.notify(this.modelOptions);
+    this.notify('updateOptions', this.modelOptions);
   }
 
   static getCorrectStep (step: number, min: number, max: number): number {

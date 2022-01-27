@@ -3,7 +3,6 @@ import { bind } from 'decko';
 import Observer from '../observer/Observer';
 import { DomParent, Orientation, ToggleType, UpdateCurrentValue } from '../utils/types/namespace';
 import ISliderComponents from '../utils/interfaces/view/ISliderComponents';
-import IViewEvents from '../utils/interfaces/view/IViewEvents';
 import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
 import sliderClassNames from '../utils/sliderClassNames';
 import Range from './components/range/range';
@@ -18,16 +17,9 @@ class View extends Observer {
   private domSlider!: HTMLDivElement;
   private components!: ISliderComponents;
   private draggingToggle!: ToggleType | null;
-  private viewEvents: IViewEvents = {
-    onSlide: new Observer(),
-  };
 
   get options (): ICorrectOptions {
     return this.modelOptions;
-  }
-
-  get events (): IViewEvents {
-    return this.viewEvents;
   }
 
   constructor (domParent: DomParent, modelOptions: ICorrectOptions) {
@@ -215,7 +207,7 @@ class View extends Observer {
       const value = bar.getValueByCoords(coords);
       const toggleToUpdate: UpdateCurrentValue = { option: this.draggingToggle, value };
 
-      this.viewEvents.onSlide.notify(toggleToUpdate);
+      this.notify('onSlide', toggleToUpdate);
     }
   }
 
@@ -239,7 +231,7 @@ class View extends Observer {
         const toggle = this.chooseToggleByCoords(event);
         const toggleToUpdate: UpdateCurrentValue = { option: toggle, value };
 
-        this.viewEvents.onSlide.notify(toggleToUpdate);
+        this.notify('onSlide', toggleToUpdate);
       }
     });
   }

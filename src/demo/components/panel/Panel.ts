@@ -87,11 +87,9 @@ class Panel {
   }
 
   private bindEventListener (): void {
-    const { modelOptionsChanged, currentValueChanged } = this.slider.events;
-
-    modelOptionsChanged.subscribe(this.handleModelOptionsChange);
-    currentValueChanged.subscribe(this.handleCurrentValueUpdate);
-    this.settingsForm.subscribe(this.handleSettingsFormChange);
+    this.slider.subscribe('updateOptions', this.handleModelOptionsChange);
+    this.slider.subscribe('updateCurrentValue', this.handleCurrentValueUpdate);
+    this.settingsForm.subscribe('changeOptions', this.handleSettingsFormChange);
   }
 
   @bind

@@ -8,9 +8,7 @@ import debounce from './utils/debounce';
 
 class PanelSettingsForm extends Observer {
   private domParent: HTMLElement;
-
   private sliderOptions: ICorrectOptions;
-
   private nodes!: INodes;
 
   constructor (domParent: HTMLElement, options: ICorrectOptions) {
@@ -132,7 +130,7 @@ class PanelSettingsForm extends Observer {
       withScale: nodes.withScale.checked,
     };
 
-    this.notify(newOptions);
+    this.notify('changeOptions', newOptions);
   }
 
   private handleNumberInputInput = debounce(() => {
