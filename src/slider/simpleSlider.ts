@@ -1,25 +1,24 @@
-import IUserOptions from './utils/interfaces/IUserOptions';
-import ICorrectOptions from './utils/interfaces/ICorrectOptions';
-import { DomParent, SliderEvents, UpdateCurrentValue } from './utils/types/namespace';
+import Options from './utils/interfaces/options';
+import { DomParent, SliderEvents, UpdateValues } from './utils/types/namespace';
 import Controller from './controller/Controller';
 
 class SimpleSlider {
   private controller: Controller;
 
-  get options (): ICorrectOptions {
+  get options (): Options {
     return this.controller.options;
   }
 
-  constructor (domParent: DomParent, options: IUserOptions) {
-    this.controller = new Controller(domParent, options as ICorrectOptions);
+  constructor (domParent: DomParent, options: Options) {
+    this.controller = new Controller(domParent, options);
   }
 
-  public updateOptions (options: IUserOptions): void {
+  public updateOptions (options: Partial<Options>): void {
     this.controller.updateOptions(options);
   }
 
-  public updateCurrentValue (newValue: UpdateCurrentValue): void {
-    this.controller.updateCurrentValue(newValue);
+  public updateValues (value: UpdateValues): void {
+    this.controller.updateValues(value);
   }
 
   public subscribe (event: SliderEvents, cb: Function): void {

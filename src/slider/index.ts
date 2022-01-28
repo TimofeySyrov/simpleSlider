@@ -1,15 +1,15 @@
-/// <reference path="./utils/interfaces/IJQuerySlider.d.ts" />
+/// <reference path="./utils/interfaces/jquerySimpleSlider.d.ts" />
 
-import IUserOptions from './utils/interfaces/IUserOptions';
 import { DomParent } from './utils/types/namespace';
-import defaultModelOptions from './utils/defaultModelOptions';
 import SimpleSlider from './simpleSlider';
+import Options from './utils/interfaces/options';
+import defaultOptions from './utils/defaultOptions';
 
 /* eslint-disable func-names, no-param-reassign */
 (function ($) {
-  $.fn.simpleSlider = function (userOptions?: IUserOptions) {
+  $.fn.simpleSlider = function (options?: Partial<Options>) {
     const domParent: DomParent = this[0];
-    const mergedOptions: IUserOptions = $.extend({}, defaultModelOptions, userOptions);
+    const mergedOptions: Options = $.extend({}, defaultOptions, options);
     const slider = new SimpleSlider(domParent, mergedOptions);
 
     $(domParent).data('simpleSlider', slider);
