@@ -1,7 +1,7 @@
-import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
-import { UpdateCurrentValue } from '../utils/types/namespace';
+import Options from '../utils/interfaces/options';
+import { UpdateValues } from '../utils/types/namespace';
 
-type ObserverData = ICorrectOptions | UpdateCurrentValue;
+type ObserverData = Options | UpdateValues;
 
 interface ISubscriber {
   event: string,
