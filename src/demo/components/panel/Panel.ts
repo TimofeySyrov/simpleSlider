@@ -30,10 +30,9 @@ class Panel {
   private initSlider (): void {
     const panelSlider = this.sliderBox?.firstElementChild as HTMLElement;
     const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
-    const options = this.getSliderOptions();
 
     if (isPanelSlider) {
-      $(panelSlider).simpleSlider(options);
+      $(panelSlider).simpleSlider();
       this.slider = $(panelSlider).data('simpleSlider');
     }
   }
@@ -45,41 +44,6 @@ class Panel {
     if (isPaneForm) {
       this.settingsForm = new PanelSettingsForm(panelForm, this.slider.options);
     }
-  }
-
-  private getSliderOptions (): Options | undefined {
-    const panelSlider = this.sliderBox?.firstElementChild;
-    const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
-
-    if (isPanelSlider) {
-      const min = parseFloat(`${panelSlider?.getAttribute('data-min')}`);
-      const max = parseFloat(`${panelSlider?.getAttribute('data-max')}`);
-      const step = parseFloat(`${panelSlider?.getAttribute('data-step')}`);
-      const from = parseFloat(`${panelSlider?.getAttribute('data-from')}`);
-      const to = parseFloat(`${panelSlider?.getAttribute('data-to')}`);
-      const direction = panelSlider?.getAttribute('data-direction');
-      const orientation = panelSlider?.getAttribute('data-orientation');
-      const withRange = panelSlider?.getAttribute('data-with-range') === 'true';
-      const withThumb = panelSlider?.getAttribute('data-with-thumb') === 'true';
-      const withScale = panelSlider?.getAttribute('data-with-scale') === 'true';
-
-      const options = {
-        min,
-        max,
-        step,
-        from,
-        to,
-        direction,
-        orientation,
-        withRange,
-        withThumb,
-        withScale,
-      };
-
-      return options as Options;
-    }
-
-    return undefined;
   }
 
   private bindEventListener (): void {

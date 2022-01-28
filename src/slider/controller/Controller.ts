@@ -1,7 +1,8 @@
 import { bind } from 'decko';
 
 import Options from '../utils/interfaces/options';
-import { DomParent, UpdateValues } from '../utils/types/namespace';
+import { Direction, DomParent, Orientation, UpdateValues } from '../utils/types/namespace';
+import sliderDataAttributes from '../utils/sliderDataAttributes';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
 import View from '../view/View';
@@ -19,7 +20,10 @@ class Controller extends Observer {
     super();
 
     this.domParent = domParent;
-    this.model = new Model(options);
+    this.model = new Model({
+      ...options,
+      ...this.getOptionsFromAttributes(),
+    });
     this.view = new View(this.domParent, this.model.options);
 
     this.init();
@@ -54,6 +58,45 @@ class Controller extends Observer {
   @bind
   private handleViewOnSlide (value: UpdateValues) {
     this.model.updateValues(value);
+  }
+
+  private getOptionsFromAttributes (): Partial<Options> {
+    const {
+      min,
+      max,
+      step,
+      from,
+      to,
+      direction,
+      orientation,
+      withScale,
+      withThumb,
+      withRange,
+    } = {
+      min: this.domParent.getAttribute(`${sliderDataAttributes.min}`),
+      max: this.domParent.getAttribute(`${sliderDataAttributes.max}`),
+      from: this.domParent.getAttribute(`${sliderDataAttributes.from}`),
+      to: this.domParent.getAttribute(`${sliderDataAttributes.to}`),
+      step: this.domParent.getAttribute(`${sliderDataAttributes.step}`),
+      direction: this.domParent.getAttribute(`${sliderDataAttributes.direction}`),
+      orientation: this.domParent.getAttribute(`${sliderDataAttributes.orientation}`),
+      withRange: this.domParent.getAttribute(`${sliderDataAttributes.withRange}`),
+      withThumb: this.domParent.getAttribute(`${sliderDataAttributes.withThumb}`),
+      withScale: this.domParent.getAttribute(`${sliderDataAttributes.withScale}`),
+    };
+
+    return {
+      min: min ? parseFloat(min) : undefined,
+      max: max ? parseFloat(max) : undefined,
+      step: step ? parseFloat(step) : undefined,
+      from: from ? parseFloat(from) : undefined,
+      to: to ? parseFloat(to) : undefined,
+      direction: direction ? direction as Direction : undefined,
+      orientation: orientation ? orientation as Orientation : undefined,
+      withRange: withRange ? withRange === 'true' : undefined,
+      withThumb: withThumb ? withThumb === 'true' : undefined,
+      withScale: withScale ? withScale === 'true' : undefined,
+    };
   }
 }
 
