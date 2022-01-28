@@ -1,17 +1,15 @@
-type CurrentValue = number | { from: number, to: number };
 type Orientation = 'vertical' | 'horizontal';
-type ToggleType = 'from' | 'to';
-type SliderType = 'from-start' | 'from-end' | 'range';
+type Direction = 'ltr' | 'rtl';
 type DomParent = HTMLDivElement | HTMLSpanElement;
-type UpdateCurrentValue = { option: ToggleType, value: number };
-type SliderEvents = 'onSlide' | 'updateOptions' | 'updateCurrentValue';
+type SliderEvents = 'updateOptions' | 'updateValues';
+type ToggleType = 'from' | 'to';
+type UpdateValues = { option: ToggleType, value: number };
 
 export {
-  CurrentValue,
   Orientation,
   ToggleType,
-  SliderType,
+  Direction,
   DomParent,
-  UpdateCurrentValue,
   SliderEvents,
+  UpdateValues,
 };
