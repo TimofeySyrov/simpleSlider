@@ -1,17 +1,17 @@
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Bar {
   private dom!: HTMLDivElement;
-  private options: ICorrectOptions;
+  private options: Options;
 
-  constructor (options: ICorrectOptions) {
+  constructor (options: Options) {
     this.options = options;
 
     this.createDom();
   }
 
-  public updateState (options: ICorrectOptions): void {
+  public updateState (options: Options): void {
     this.options = options;
     this.updateStyles();
   }
@@ -22,9 +22,9 @@ class Bar {
 
   /* Получить координаты относительно бара */
   public getRelativeCoords (event: MouseEvent): number {
-    const { orientation, type } = this.options;
+    const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
+    const isFromEnd = direction === 'rtl';
     const axis = isVertical ? 'clientY' : 'clientX';
     const barOffset = this.getOffset();
     const coords = event[axis] - barOffset;
@@ -57,9 +57,9 @@ class Bar {
 
   /* Получить отступ бара относительно видимой части страницы */
   public getOffset (): number {
-    const { orientation, type } = this.options;
+    const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
+    const isFromEnd = direction === 'rtl';
     const forVertical = isFromEnd ? 'top' : 'bottom';
     const forHorizontal = isFromEnd ? 'right' : 'left';
     const side = isVertical ? forVertical : forHorizontal;

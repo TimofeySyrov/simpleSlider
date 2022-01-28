@@ -1,18 +1,18 @@
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import convertValueToPercent from '../../../helpers/helpers';
 
 class Toggle {
   private dom!: HTMLDivElement;
-  private options: ICorrectOptions;
+  private options: Options;
 
-  constructor (options: ICorrectOptions) {
+  constructor (options: Options) {
     this.options = options;
 
     this.createDom();
   }
 
-  public updateState (options: ICorrectOptions): void {
+  public updateState (options: Options): void {
     this.options = options;
     this.updateStyles();
   }
@@ -22,9 +22,9 @@ class Toggle {
   }
 
   public getCoords (barLength: number): number {
-    const { orientation, type } = this.options;
+    const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
+    const isFromEnd = direction === 'rtl';
     const offsetType = isVertical ? 'offsetTop' : 'offsetLeft';
     const toggleSize = isVertical ? 'offsetHeight' : 'offsetWidth';
     const coords = this.dom[offsetType] + (this.dom[toggleSize] / 2);
@@ -37,10 +37,10 @@ class Toggle {
   }
 
   public setValue (value: number): void {
-    const { min, max, orientation, type } = this.options;
+    const { min, max, orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
     const typeStyleSide = isVertical ? 'bottom' : 'left';
-    const percent = convertValueToPercent({ min, max, value, type });
+    const percent = convertValueToPercent({ min, max, value, direction });
 
     this.dom.style[typeStyleSide] = `${percent}%`;
   }

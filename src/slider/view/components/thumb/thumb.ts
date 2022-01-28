@@ -1,17 +1,17 @@
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Thumb {
   private dom!: HTMLDivElement;
-  private options: ICorrectOptions;
+  private options: Options;
 
-  constructor (options: ICorrectOptions) {
+  constructor (options: Options) {
     this.options = options;
 
     this.createDom();
   }
 
-  public updateState (options: ICorrectOptions): void {
+  public updateState (options: Options): void {
     this.options = options;
     this.updateStyles();
   }

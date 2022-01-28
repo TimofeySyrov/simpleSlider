@@ -1,17 +1,17 @@
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 
 class Range {
   private dom!: HTMLDivElement;
-  private options: ICorrectOptions;
+  private options: Options;
 
-  constructor (options: ICorrectOptions) {
+  constructor (options: Options) {
     this.options = options;
 
     this.createDom();
   }
 
-  public updateState (options: ICorrectOptions): void {
+  public updateState (options: Options): void {
     this.options = options;
     this.updateStyles();
   }
@@ -21,11 +21,11 @@ class Range {
   }
 
   public setLength (fromValue: number, toValue: number): void {
-    const { orientation, type, withRange } = this.options;
+    const { orientation, direction, withRange, to } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = type === 'from-end';
-    const isFromStart = type === 'from-start';
-    const isRange = type === 'range';
+    const isFromEnd = direction === 'rtl';
+    const isFromStart = !isFromEnd;
+    const isRange = to !== undefined && !Number.isNaN(toValue);
     const sideStart = isVertical ? 'bottom' : 'left';
     const sideEnd = isVertical ? 'top' : 'right';
 

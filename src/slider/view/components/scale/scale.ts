@@ -1,18 +1,18 @@
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import convertValueToPercent from '../../../helpers/helpers';
 
 class Scale {
   private dom!: HTMLElement;
-  private options: ICorrectOptions;
+  private options: Options;
 
-  constructor (options: ICorrectOptions) {
+  constructor (options: Options) {
     this.options = options;
 
     this.init();
   }
 
-  public updateState (options: ICorrectOptions): void {
+  public updateState (options: Options): void {
     this.options = options;
     this.updateStyles();
     this.createScaleItems();
@@ -37,11 +37,11 @@ class Scale {
   }
 
   public addItem (value: number): HTMLElement {
-    const { orientation, type, min, max } = this.options;
+    const { orientation, direction, min, max } = this.options;
     const isVertical = orientation === 'vertical';
     const typeStyleSide = isVertical ? 'bottom' : 'left';
     const domItem = document.createElement('li');
-    const indentPercent = convertValueToPercent({ min, max, value, type });
+    const indentPercent = convertValueToPercent({ min, max, value, direction });
 
     domItem.classList.add(`${sliderClassNames.scaleItem.main}`, `${sliderClassNames.scaleItem[orientation]}`);
     domItem.setAttribute('data-value', `${value}`);

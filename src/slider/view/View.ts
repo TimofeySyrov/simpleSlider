@@ -1,10 +1,10 @@
 import { bind } from 'decko';
 
-import Observer from '../observer/Observer';
-import { DomParent, Orientation, ToggleType, UpdateCurrentValue } from '../utils/types/namespace';
 import ISliderComponents from '../utils/interfaces/view/ISliderComponents';
-import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
+import Options from '../utils/interfaces/options';
+import { DomParent, Orientation, ToggleType, UpdateValues } from '../utils/types/namespace';
 import sliderClassNames from '../utils/sliderClassNames';
+import Observer from '../observer/Observer';
 import Range from './components/range/range';
 import Toggle from './components/toggle/toggle';
 import Thumb from './components/thumb/thumb';
@@ -12,32 +12,28 @@ import Scale from './components/scale/scale';
 import Bar from './components/bar/bar';
 
 class View extends Observer {
-  private modelOptions: ICorrectOptions;
+  private options: Options;
   private domParent: DomParent;
   private domSlider!: HTMLDivElement;
   private components!: ISliderComponents;
   private draggingToggle!: ToggleType | null;
 
-  get options (): ICorrectOptions {
-    return this.modelOptions;
-  }
-
-  constructor (domParent: DomParent, modelOptions: ICorrectOptions) {
+  constructor (domParent: DomParent, options: Options) {
     super();
 
     this.domParent = domParent;
-    this.modelOptions = modelOptions;
+    this.options = options;
     this.init();
   }
 
-  public updateOptions (newModelOptions: ICorrectOptions): void {
-    this.modelOptions = newModelOptions;
+  public updateOptions (options: Options): void {
+    this.options = options;
     this.render();
   }
 
-  public updateCurrentValue (newValue: UpdateCurrentValue): void {
-    this.setToggleValue(newValue);
-    this.setRangePosition();
+  public updateValues ({ option, value }: UpdateValues): void {
+    this.options = { ...this.options, ...{ [option]: value } };
+    this.setValues();
   }
 
   private init (): void {
@@ -80,9 +76,9 @@ class View extends Observer {
   }
 
   private render () {
-    const { type, withRange, withThumb, withScale } = this.modelOptions;
+    const { withRange, withThumb, withScale } = this.options;
     const { bar, range, from, to, scale } = this.components;
-    const isRange = type === 'range';
+    const isRange = this.options.to !== undefined && !Number.isNaN(this.options.to);
     const hasSlider = this.domParent.contains(this.domSlider);
     const hasBar = this.domSlider.contains(bar.getDom());
     const hasFrom = bar.getDom().contains(from.handle.getDom());
@@ -93,28 +89,25 @@ class View extends Observer {
     const hasRange = bar.getDom().contains(range.getDom());
     const hasScale = this.domSlider.contains(scale.getDom());
 
-    this.updateSliderState(this.modelOptions);
+    this.updateSliderState(this.options);
 
     /* Bar */
     if (!hasBar) {
       this.domSlider.appendChild(bar.getDom());
     }
 
-    /* From-start || From-end */
+    /* From и To ползунки */
+    if (!hasFrom) {
+      bar.getDom().appendChild(from.handle.getDom());
+    }
+
     if (!isRange) {
-      if (!hasFrom) {
-        bar.getDom().appendChild(from.handle.getDom());
-      }
       if (hasTo) {
         bar.getDom().removeChild(to.handle.getDom());
       }
     }
 
-    /* Range */
     if (isRange) {
-      if (!hasFrom) {
-        bar.getDom().appendChild(from.handle.getDom());
-      }
       if (!hasTo) {
         bar.getDom().appendChild(to.handle.getDom());
       }
@@ -161,7 +154,7 @@ class View extends Observer {
       }
     }
 
-    this.setCurrentValue();
+    this.setValues();
     this.setRangePosition();
 
     /* Slider */
@@ -170,7 +163,7 @@ class View extends Observer {
     }
   }
 
-  private updateSliderState (options: ICorrectOptions): void {
+  private updateSliderState (options: Options): void {
     const { orientation } = options;
     const oldOrientation: Orientation = orientation === 'vertical' ? 'horizontal' : 'vertical';
     const { bar, range, scale, to, from } = this.components;
@@ -205,9 +198,8 @@ class View extends Observer {
     if (this.draggingToggle) {
       const coords = bar.getRelativeCoords(event);
       const value = bar.getValueByCoords(coords);
-      const toggleToUpdate: UpdateCurrentValue = { option: this.draggingToggle, value };
 
-      this.notify('onSlide', toggleToUpdate);
+      this.notify('onSlide', { option: this.draggingToggle, value });
     }
   }
 
@@ -229,17 +221,15 @@ class View extends Observer {
       if (target === item) {
         const value = Number(item.getAttribute('data-value'));
         const toggle = this.chooseToggleByCoords(event);
-        const toggleToUpdate: UpdateCurrentValue = { option: toggle, value };
 
-        this.notify('onSlide', toggleToUpdate);
+        this.notify('onSlide', { option: toggle, value });
       }
     });
   }
 
   private chooseToggleByCoords (event: MouseEvent): ToggleType {
-    const { type } = this.modelOptions;
     const { bar, from, to } = this.components;
-    const isRange = type === 'range';
+    const isRange = this.options.to !== undefined && !Number.isNaN(this.options.to);
     const barLenght = bar.getLength();
     const fromValue = from.handle.getCoords(barLenght);
     const mouseCoords = bar.getRelativeCoords(event);
@@ -258,11 +248,10 @@ class View extends Observer {
     return 'from';
   }
 
-  private setToggleValue (newValue: UpdateCurrentValue): void {
-    const { option, value } = newValue;
-
-    this.components[option].handle.setValue(value);
-    this.components[option].thumb.setValue(value);
+  private setToggleValue (toggle: ToggleType, value: number): void {
+    this.components[toggle].handle.setValue(value);
+    this.components[toggle].thumb.setValue(value);
+    this.setRangePosition();
   }
 
   private setActiveToggle (toggle: ToggleType): void {
@@ -286,23 +275,12 @@ class View extends Observer {
     range.setLength(fromIndent, toIndent);
   }
 
-  private setCurrentValue () {
-    const { currentValue, type } = this.modelOptions;
-    const isRange = type === 'range';
+  private setValues (): void {
+    const { from, to } = this.options;
+    const isRange = to !== undefined && !Number.isNaN(to);
 
-    if (typeof currentValue === 'object') {
-      this.setToggleValue({ option: 'from', value: currentValue.from });
-      if (isRange) {
-        this.setToggleValue({ option: 'to', value: currentValue.to });
-      }
-    }
-
-    if (typeof currentValue === 'number') {
-      this.setToggleValue({ option: 'from', value: currentValue });
-      if (isRange) {
-        this.setToggleValue({ option: 'to', value: currentValue });
-      }
-    }
+    this.setToggleValue('from', from);
+    if (isRange) this.setToggleValue('to', to);
   }
 }
 
