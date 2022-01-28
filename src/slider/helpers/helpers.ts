@@ -1,14 +1,14 @@
-import { SliderType } from '../utils/types/namespace';
+import { Direction } from '../utils/types/namespace';
 
 interface IConvertValueToPercent {
   min: number;
   max: number;
   value: number;
-  type: SliderType;
+  direction: Direction;
 }
 
-function convertValueToPercent ({ min, max, value, type }: IConvertValueToPercent): number {
-  const isFromEnd = type === 'from-end';
+function convertValueToPercent ({ min, max, value, direction }: IConvertValueToPercent): number {
+  const isFromEnd = direction === 'rtl';
   const start = 0; // Start percent
   const percent = Number((((value - min) * 100) / (max - min)).toFixed(3));
   const revertedPercent = 100 - percent;
