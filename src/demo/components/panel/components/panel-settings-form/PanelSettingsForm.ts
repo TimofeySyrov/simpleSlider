@@ -1,17 +1,16 @@
 import { bind } from 'decko';
 
-import ICorrectOptions from '../../../../../slider/utils/interfaces/ICorrectOptions';
-import { CurrentValue, SliderType, UpdateCurrentValue } from '../../../../../slider/utils/types/namespace';
+import Options from '../../../../../slider/utils/interfaces/options';
 import Observer from '../../../../../slider/observer/Observer';
 import INodes from './utils/interfaces/INodes';
 import debounce from './utils/debounce';
 
 class PanelSettingsForm extends Observer {
   private domParent: HTMLElement;
-  private sliderOptions: ICorrectOptions;
+  private sliderOptions: Options;
   private nodes!: INodes;
 
-  constructor (domParent: HTMLElement, options: ICorrectOptions) {
+  constructor (domParent: HTMLElement, options: Options) {
     super();
 
     this.domParent = domParent;
@@ -21,44 +20,38 @@ class PanelSettingsForm extends Observer {
   }
 
   @bind
-  public updateOptions (options: ICorrectOptions): void {
+  public updateState (options: Partial<Options>): void {
     const { nodes } = this;
     const {
       min,
       max,
-      currentValue,
+      from,
+      to,
       step,
-      type,
+      direction,
       orientation,
       withRange,
       withScale,
       withThumb,
-    } = options;
-    const isRange = type === 'range';
+    } = { ...this.sliderOptions, ...options };
+    const isRange = to !== undefined && !Number.isNaN(to);
 
     nodes.min.value = `${min}`;
     nodes.max.value = `${max}`;
+    nodes.from.value = `${from}`;
+    if (isRange) nodes.to.value = `${to}`;
     nodes.step.value = `${step}`;
     nodes[orientation].checked = true;
-    nodes[type].checked = true;
+    nodes[direction].checked = true;
     nodes.withRange.checked = withRange;
     nodes.withThumb.checked = withThumb;
     nodes.withScale.checked = withScale;
     nodes.to.disabled = !isRange;
-
-    this.changeCurrentValue(currentValue);
-  }
-
-  @bind
-  public updateCurrentValue (newValue: UpdateCurrentValue): void {
-    const { nodes } = this;
-
-    nodes[newValue.option].value = `${newValue.value}`;
   }
 
   private init (): void {
     this.findDOMElements();
-    this.updateOptions(this.sliderOptions);
+    this.updateState(this.sliderOptions);
     this.bindEventListeners();
   }
 
@@ -72,9 +65,8 @@ class PanelSettingsForm extends Observer {
       step: domParent.querySelector('[data-option-type="step"]') as HTMLInputElement,
       horizontal: domParent.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
       vertical: domParent.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
-      'from-start': domParent.querySelector('[data-option-type="from-start"]') as HTMLInputElement,
-      'from-end': domParent.querySelector('[data-option-type="from-end"]') as HTMLInputElement,
-      range: domParent.querySelector('[data-option-type="range"]') as HTMLInputElement,
+      ltr: domParent.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
+      rtl: domParent.querySelector('[data-option-type="rtl"]') as HTMLInputElement,
       withRange: domParent.querySelector('[data-option-type="withRange"]') as HTMLInputElement,
       withThumb: domParent.querySelector('[data-option-type="withThumb"]') as HTMLInputElement,
       withScale: domParent.querySelector('[data-option-type="withScale"]') as HTMLInputElement,
@@ -94,9 +86,8 @@ class PanelSettingsForm extends Observer {
     /* Input type of RADIO */
     nodes.horizontal.addEventListener('change', this.handleInputChange);
     nodes.vertical.addEventListener('change', this.handleInputChange);
-    nodes['from-start'].addEventListener('change', this.handleInputChange);
-    nodes['from-end'].addEventListener('change', this.handleInputChange);
-    nodes.range.addEventListener('change', this.handleInputChange);
+    nodes.ltr.addEventListener('change', this.handleInputChange);
+    nodes.rtl.addEventListener('change', this.handleInputChange);
 
     /* Input type of CHECKBOX */
     nodes.withRange.addEventListener('change', this.handleInputChange);
@@ -106,29 +97,22 @@ class PanelSettingsForm extends Observer {
 
   private updateSliderOptions (): void {
     const { nodes } = this;
-    const getCheckedType = (): SliderType => {
-      const isFromEnd = nodes['from-end'].checked;
-      const isRange = nodes.range.checked;
 
-      if (isRange) return 'range';
-      if (isFromEnd) return 'from-end';
-      return 'from-start';
-    };
-
-    const newOptions: ICorrectOptions = {
+    const newOptions: Options = {
       min: nodes.min.value ? parseFloat(nodes.min.value) : this.sliderOptions.min,
       max: nodes.max.value ? parseFloat(nodes.max.value) : this.sliderOptions.max,
       step: nodes.step.value ? parseFloat(nodes.step.value) : this.sliderOptions.step,
-      currentValue: {
-        from: nodes.from.value ? parseFloat(nodes.from.value) : this.sliderOptions.min,
-        to: nodes.to.value ? parseFloat(nodes.to.value) : this.sliderOptions.min,
-      },
+      from: nodes.from.value ? parseFloat(nodes.from.value) : this.sliderOptions.min,
       orientation: nodes.horizontal.checked ? 'horizontal' : 'vertical',
-      type: getCheckedType(),
+      direction: nodes.ltr.checked ? 'ltr' : 'rtl',
       withRange: nodes.withRange.checked,
       withThumb: nodes.withThumb.checked,
       withScale: nodes.withScale.checked,
     };
+
+    if (nodes.to.value) {
+      newOptions.to = parseFloat(nodes.to.value);
+    }
 
     this.notify('changeOptions', newOptions);
   }
@@ -140,19 +124,6 @@ class PanelSettingsForm extends Observer {
   @bind
   private handleInputChange (): void {
     this.updateSliderOptions();
-  }
-
-  private changeCurrentValue (currentValue: CurrentValue): void {
-    const { nodes } = this;
-
-    if (typeof currentValue === 'object') {
-      nodes.from.value = `${currentValue.from}`;
-      nodes.to.value = `${currentValue.to}`;
-    }
-
-    if (typeof currentValue === 'number') {
-      nodes.from.value = `${currentValue}`;
-    }
   }
 }
 

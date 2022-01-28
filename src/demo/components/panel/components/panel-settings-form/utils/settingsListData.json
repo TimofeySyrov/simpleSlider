@@ -55,21 +55,16 @@
     ]
   },
   {
-    "title": "Type:",
+    "title": "Direction:",
     "inputs": [
       {
         "type": "radio",
-        "optionType": "from-start",
+        "optionType": "ltr",
         "name": "type"
       },
       {
         "type": "radio",
-        "optionType": "from-end",
-        "name": "type"
-      },
-      {
-        "type": "radio",
-        "optionType": "range",
+        "optionType": "rtl",
         "name": "type"
       }
     ]

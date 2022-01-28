@@ -1,21 +1,16 @@
 import { bind } from 'decko';
 
-import ICorrectOptions from '../../../slider/utils/interfaces/ICorrectOptions';
-import IUserOptions from '../../../slider/utils/interfaces/IUserOptions';
-import { UpdateCurrentValue } from '../../../slider/utils/types/namespace';
+import Options from '../../../slider/utils/interfaces/options';
+import { UpdateValues } from '../../../slider/utils/types/namespace';
 import SimpleSlider from '../../../slider/simpleSlider';
 import '../../../slider/index';
 import PanelSettingsForm from './components/panel-settings-form/PanelSettingsForm';
 
 class Panel {
   private domParent: HTMLElement;
-
   private sliderBox: HTMLElement | null;
-
   private settingsBox: HTMLElement | null;
-
   private slider!: SimpleSlider;
-  
   private settingsForm!: PanelSettingsForm;
 
   constructor (domParent: HTMLElement) {
@@ -52,7 +47,7 @@ class Panel {
     }
   }
 
-  private getSliderOptions (): IUserOptions | undefined {
+  private getSliderOptions (): Options | undefined {
     const panelSlider = this.sliderBox?.firstElementChild;
     const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
 
@@ -62,7 +57,7 @@ class Panel {
       const step = parseFloat(`${panelSlider?.getAttribute('data-step')}`);
       const from = parseFloat(`${panelSlider?.getAttribute('data-from')}`);
       const to = parseFloat(`${panelSlider?.getAttribute('data-to')}`);
-      const type = panelSlider?.getAttribute('data-type');
+      const direction = panelSlider?.getAttribute('data-direction');
       const orientation = panelSlider?.getAttribute('data-orientation');
       const withRange = panelSlider?.getAttribute('data-with-range') === 'true';
       const withThumb = panelSlider?.getAttribute('data-with-thumb') === 'true';
@@ -72,39 +67,40 @@ class Panel {
         min,
         max,
         step,
-        currentValue: { from, to },
-        type,
+        from,
+        to,
+        direction,
         orientation,
         withRange,
         withThumb,
         withScale,
       };
 
-      return options as IUserOptions;
+      return options as Options;
     }
 
     return undefined;
   }
 
   private bindEventListener (): void {
-    this.slider.subscribe('updateOptions', this.handleModelOptionsChange);
-    this.slider.subscribe('updateCurrentValue', this.handleCurrentValueUpdate);
+    this.slider.subscribe('updateOptions', this.handleModelUpdateOptions);
+    this.slider.subscribe('updateValues', this.handleModelValuesUpdate);
     this.settingsForm.subscribe('changeOptions', this.handleSettingsFormChange);
   }
 
   @bind
-  private handleSettingsFormChange (newOptions: ICorrectOptions) {
+  private handleSettingsFormChange (newOptions: Options) {
     this.slider.updateOptions(newOptions);
   }
 
   @bind
-  private handleModelOptionsChange (newOptions: ICorrectOptions) {
-    this.settingsForm.updateOptions(newOptions);
+  private handleModelUpdateOptions (newOptions: Options) {
+    this.settingsForm.updateState(newOptions);
   }
 
   @bind
-  private handleCurrentValueUpdate (newValue: UpdateCurrentValue) {
-    this.settingsForm.updateCurrentValue(newValue);
+  private handleModelValuesUpdate ({ option, value }: UpdateValues) {
+    this.settingsForm.updateState({ [option]: value });
   }
 }
 

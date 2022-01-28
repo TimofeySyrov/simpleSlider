@@ -6,7 +6,7 @@
       "max": 100,
       "step": 1,
       "orientation": "horizontal",
-      "type": "from-start",
+      "direction": "ltr",
       "from": 50,
       "withRange": true,
       "withThumb": true,
@@ -20,7 +20,7 @@
       "max": 0,
       "orientation": "vertical",
       "step": 0.01,
-      "type": "from-end",
+      "direction": "rtl",
       "withRange": false,
       "from": -7
     }
@@ -30,7 +30,7 @@
     "sliderOptions": {
       "min": -50,
       "max": 50,
-      "type": "range",
+      "direction": "rtl",
       "from": -20,
       "to": 20,
       "step": 10,
