@@ -1,8 +1,7 @@
 import { bind } from 'decko';
 
-import IUserOptions from '../utils/interfaces/IUserOptions';
-import ICorrectOptions from '../utils/interfaces/ICorrectOptions';
-import { DomParent, UpdateCurrentValue } from '../utils/types/namespace';
+import Options from '../utils/interfaces/options';
+import { DomParent, UpdateValues } from '../utils/types/namespace';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
 import View from '../view/View';
@@ -12,11 +11,11 @@ class Controller extends Observer {
   private model: Model;
   private view: View;
 
-  get options (): ICorrectOptions {
+  get options (): Options {
     return this.model.options;
   }
 
-  constructor (domParent: DomParent, options: ICorrectOptions) {
+  constructor (domParent: DomParent, options: Options) {
     super();
 
     this.domParent = domParent;
@@ -26,34 +25,35 @@ class Controller extends Observer {
     this.init();
   }
 
-  public updateOptions (options: IUserOptions): void {
-    const newOptions = { ...this.model.options, ...options } as ICorrectOptions;
-    this.model.updateOptions(newOptions);
+  public updateOptions (options: Partial<Options>): void {
+    this.model.updateOptions(options);
   }
 
-  public updateCurrentValue (newValue: UpdateCurrentValue): void {
-    this.model.updateCurrentValue(newValue);
+  public updateValues (value: UpdateValues): void {
+    this.model.updateValues(value);
   }
 
   private init () {
     this.model.subscribe('updateOptions', this.handleModelUpdateOptions);
-    this.model.subscribe('updateCurrentValue', this.handleModelUpdateCurrentValue);
+    this.model.subscribe('updateValues', this.handleModelUpdateValues);
     this.view.subscribe('onSlide', this.handleViewOnSlide);
   }
 
   @bind
-  private handleModelUpdateOptions (newOptions: ICorrectOptions) {
-    this.view.updateOptions(newOptions);
+  private handleModelUpdateOptions (options: Options) {
+    this.view.updateOptions(options);
+    this.notify('updateOptions', options);
   }
 
   @bind
-  private handleModelUpdateCurrentValue (newValue: UpdateCurrentValue) {
-    this.view.updateCurrentValue(newValue);
+  private handleModelUpdateValues (value: UpdateValues) {
+    this.view.updateValues(value);
+    this.notify('updateValues', value);
   }
 
   @bind
-  private handleViewOnSlide (newValue: UpdateCurrentValue) {
-    this.model.updateCurrentValue(newValue);
+  private handleViewOnSlide (value: UpdateValues) {
+    this.model.updateValues(value);
   }
 }
 
