@@ -1,9 +1,9 @@
 /// <reference path="./utils/interfaces/jquerySimpleSlider.d.ts" />
 
 import { DomParent } from './utils/types/namespace';
-import SimpleSlider from './simpleSlider';
 import Options from './utils/interfaces/options';
 import defaultOptions from './utils/defaultOptions';
+import SimpleSlider from './simpleSlider';
 
 /* eslint-disable func-names, no-param-reassign */
 (function ($) {
