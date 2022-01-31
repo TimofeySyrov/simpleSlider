@@ -45,4 +45,37 @@ describe('Controller:', () => {
       expect(controller.options.to).toEqual(newTo.value);
     });
   });
+
+  describe('getOptionsFromAttributes:', () => {
+    test('должен инициализировать слайдер с опциями из атрибутов', () => {
+      const newOptions: Options = {
+        min: 10,
+        max: 50,
+        step: 2,
+        from: 10,
+        to: 22,
+        orientation: 'vertical',
+        direction: 'rtl',
+        withRange: false,
+        withThumb: false,
+        withScale: false,
+      };
+      const newDomParent = document.createElement('div');
+
+      newDomParent.setAttribute('data-min', `${newOptions.min}`);
+      newDomParent.setAttribute('data-max', `${newOptions.max}`);
+      newDomParent.setAttribute('data-step', `${newOptions.step}`);
+      newDomParent.setAttribute('data-from', `${newOptions.from}`);
+      newDomParent.setAttribute('data-to', `${newOptions.to}`);
+      newDomParent.setAttribute('data-orientation', `${newOptions.orientation}`);
+      newDomParent.setAttribute('data-direction', `${newOptions.direction}`);
+      newDomParent.setAttribute('data-with-range', `${newOptions.withRange}`);
+      newDomParent.setAttribute('data-with-scale', `${newOptions.withScale}`);
+      newDomParent.setAttribute('data-with-thumb', `${newOptions.withThumb}`);
+
+      const newController = new Controller(newDomParent, defaultModelOptions);
+
+      expect(newController.options).toEqual(newOptions);
+    });
+  });
 });
