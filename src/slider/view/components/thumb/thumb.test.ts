@@ -4,7 +4,7 @@
 import Options from '../../../utils/interfaces/options';
 import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Thumb from './Thumb';
+import Thumb from './thumb';
    
 describe('Thumb:', () => {
   const thumb = new Thumb(defaultOptions);

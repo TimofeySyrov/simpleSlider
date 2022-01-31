@@ -3,7 +3,7 @@
 import { DomParent } from './utils/types/namespace';
 import Options from './utils/interfaces/options';
 import defaultOptions from './utils/defaultOptions';
-import SimpleSlider from './SimpleSlider';
+import SimpleSlider from './simpleSlider';
 
 /* eslint-disable func-names, no-param-reassign */
 (function ($) {

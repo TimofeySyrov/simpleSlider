@@ -4,7 +4,7 @@
 import Options from '../../../utils/interfaces/options';
 import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Toggle from './Toggle';
+import Toggle from './toggle';
     
 describe('Toggle:', () => {
   const toggle = new Toggle(defaultOptions);

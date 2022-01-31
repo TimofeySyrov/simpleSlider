@@ -5,11 +5,11 @@ import Options from '../utils/interfaces/options';
 import { DomParent, Orientation, ToggleType, UpdateValues } from '../utils/types/namespace';
 import sliderClassNames from '../utils/sliderClassNames';
 import Observer from '../observer/Observer';
-import Range from './components/Range/Range';
-import Toggle from './components/Toggle/Toggle';
-import Thumb from './components/Thumb/Thumb';
-import Scale from './components/Scale/Scale';
-import Bar from './components/Bar/Bar';
+import Range from './components/range/range';
+import Toggle from './components/toggle/toggle';
+import Thumb from './components/thumb/thumb';
+import Scale from './components/scale/scale';
+import Bar from './components/bar/bar';
 
 class View extends Observer {
   private options: Options;

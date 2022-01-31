@@ -4,7 +4,7 @@
 import defaultOptions from '../../../utils/defaultOptions';
 import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Range from './Range';
+import Range from './range';
  
 describe('Range:', () => {
   const range = new Range(defaultOptions);
