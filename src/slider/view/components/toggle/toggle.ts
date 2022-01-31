@@ -24,13 +24,13 @@ class Toggle {
   public getCoords (barLength: number): number {
     const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = direction === 'rtl';
+    const isRtlDirection = direction === 'rtl';
     const offsetType = isVertical ? 'offsetTop' : 'offsetLeft';
     const toggleSize = isVertical ? 'offsetHeight' : 'offsetWidth';
     const coords = this.dom[offsetType] + (this.dom[toggleSize] / 2);
     const reverted = barLength - coords;
-    const forVertical = isFromEnd ? coords : reverted;
-    const forHorizontal = isFromEnd ? reverted : coords;
+    const forVertical = isRtlDirection ? coords : reverted;
+    const forHorizontal = isRtlDirection ? reverted : coords;
     const coordsByOrientation = isVertical ? forVertical : forHorizontal;
 
     return coordsByOrientation;

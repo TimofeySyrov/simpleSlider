@@ -8,11 +8,11 @@ interface IConvertValueToPercent {
 }
 
 function convertValueToPercent ({ min, max, value, direction }: IConvertValueToPercent): number {
-  const isFromEnd = direction === 'rtl';
+  const isRtlDirection = direction === 'rtl';
   const start = 0; // Start percent
   const percent = Number((((value - min) * 100) / (max - min)).toFixed(3));
   const revertedPercent = 100 - percent;
-  const percentByType = isFromEnd ? revertedPercent : percent;
+  const percentByType = isRtlDirection ? revertedPercent : percent;
   const percentIsNan = Number.isNaN(percentByType);
 
   if (percentIsNan) return start;

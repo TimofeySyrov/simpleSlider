@@ -24,13 +24,13 @@ class Bar {
   public getRelativeCoords (event: MouseEvent): number {
     const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = direction === 'rtl';
+    const isRtlDirection = direction === 'rtl';
     const axis = isVertical ? 'clientY' : 'clientX';
     const barOffset = this.getOffset();
     const coords = event[axis] - barOffset;
     const reverted = barOffset - event[axis];
-    const forVertical = isFromEnd ? coords : reverted;
-    const forHorizontal = isFromEnd ? reverted : coords;
+    const forVertical = isRtlDirection ? coords : reverted;
+    const forHorizontal = isRtlDirection ? reverted : coords;
     const coordsByOrientation = isVertical ? forVertical : forHorizontal;
 
     return coordsByOrientation;
@@ -59,9 +59,9 @@ class Bar {
   public getOffset (): number {
     const { orientation, direction } = this.options;
     const isVertical = orientation === 'vertical';
-    const isFromEnd = direction === 'rtl';
-    const forVertical = isFromEnd ? 'top' : 'bottom';
-    const forHorizontal = isFromEnd ? 'right' : 'left';
+    const isRtlDirection = direction === 'rtl';
+    const forVertical = isRtlDirection ? 'top' : 'bottom';
+    const forHorizontal = isRtlDirection ? 'right' : 'left';
     const side = isVertical ? forVertical : forHorizontal;
 
     return this.dom.getBoundingClientRect()[side];
