@@ -3,7 +3,6 @@ import { bind } from 'decko';
 import Options from '../../../../../slider/utils/interfaces/options';
 import Observer from '../../../../../slider/observer/Observer';
 import INodes from '../../utils/interfaces/INodes';
-import debounce from '../../utils/debounce';
 
 class PanelSettingsForm extends Observer {
   private body: HTMLElement | null;
@@ -82,11 +81,11 @@ class PanelSettingsForm extends Observer {
     const { nodes } = this;
 
     /* Input type of NUMBER */
-    nodes.min.addEventListener('input', this.handleNumberInputInput);
-    nodes.max.addEventListener('input', this.handleNumberInputInput);
-    nodes.from.addEventListener('input', this.handleNumberInputInput);
-    nodes.to.addEventListener('input', this.handleNumberInputInput);
-    nodes.step.addEventListener('input', this.handleNumberInputInput);
+    nodes.min.addEventListener('change', this.handleInputChange);
+    nodes.max.addEventListener('change', this.handleInputChange);
+    nodes.from.addEventListener('change', this.handleInputChange);
+    nodes.to.addEventListener('change', this.handleInputChange);
+    nodes.step.addEventListener('change', this.handleInputChange);
 
     /* Input type of RADIO */
     nodes.horizontal.addEventListener('change', this.handleInputChange);
@@ -121,10 +120,6 @@ class PanelSettingsForm extends Observer {
 
     this.notify('changeOptions', newOptions);
   }
-
-  private handleNumberInputInput = debounce(() => {
-    this.updateSliderOptions();
-  });
 
   @bind
   private handleInputChange (): void {
