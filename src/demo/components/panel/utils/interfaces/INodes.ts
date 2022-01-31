@@ -4,6 +4,8 @@ interface INodes {
   from: HTMLInputElement,
   to: HTMLInputElement,
   step: HTMLInputElement,
+  single: HTMLInputElement,
+  double: HTMLInputElement,
   vertical: HTMLInputElement,
   horizontal: HTMLInputElement,
   rtl: HTMLInputElement,

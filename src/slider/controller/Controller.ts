@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 
 import Options from '../utils/interfaces/options';
-import { Direction, DomParent, Orientation, UpdateValues } from '../utils/types/namespace';
+import { Direction, DomParent, Orientation, Type, UpdateValues } from '../utils/types/namespace';
 import sliderDataAttributes from '../utils/sliderDataAttributes';
 import Observer from '../observer/Observer';
 import Model from '../model/Model';
@@ -67,6 +67,7 @@ class Controller extends Observer {
       step,
       from,
       to,
+      type,
       direction,
       orientation,
       withScale,
@@ -78,6 +79,7 @@ class Controller extends Observer {
       from: this.domParent.getAttribute(`${sliderDataAttributes.from}`),
       to: this.domParent.getAttribute(`${sliderDataAttributes.to}`),
       step: this.domParent.getAttribute(`${sliderDataAttributes.step}`),
+      type: this.domParent.getAttribute(`${sliderDataAttributes.type}`),
       direction: this.domParent.getAttribute(`${sliderDataAttributes.direction}`),
       orientation: this.domParent.getAttribute(`${sliderDataAttributes.orientation}`),
       withRange: this.domParent.getAttribute(`${sliderDataAttributes.withRange}`),
@@ -91,6 +93,7 @@ class Controller extends Observer {
       step: step ? parseFloat(step) : undefined,
       from: from ? parseFloat(from) : undefined,
       to: to ? parseFloat(to) : undefined,
+      type: type ? type as Type : undefined,
       direction: direction ? direction as Direction : undefined,
       orientation: orientation ? orientation as Orientation : undefined,
       withRange: withRange ? withRange === 'true' : undefined,

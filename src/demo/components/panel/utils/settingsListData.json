@@ -40,6 +40,21 @@
     ]
   },
   {
+    "title": "Type:",
+    "inputs": [
+      {
+        "type": "radio",
+        "optionType": "single",
+        "name": "type"
+      },
+      {
+        "type": "radio",
+        "optionType": "double",
+        "name": "type"
+      }
+    ]
+  },
+  {
     "title": "Orientation:",
     "inputs": [
       {
@@ -60,12 +75,12 @@
       {
         "type": "radio",
         "optionType": "ltr",
-        "name": "type"
+        "name": "direction"
       },
       {
         "type": "radio",
         "optionType": "rtl",
-        "name": "type"
+        "name": "direction"
       }
     ]
   },

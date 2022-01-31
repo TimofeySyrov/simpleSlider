@@ -23,37 +23,35 @@ class Model extends Observer {
 
   /* Метод обновления from и to опций в потоке */
   public updateValues ({ option, value }: UpdateValues): void {
-    const { min, max, from, to } = this.options;
-    const isRange = to !== undefined && !Number.isNaN(to);
+    const { min, max, from, to, type } = this.options;
+    const isDoubleType = type === 'double';
+    const isSingleType = type === 'single';
     const isValue = !Number.isNaN(value);
     const isFromOption = option === 'from';
     const isToOption = option === 'to';
     
     if (isValue) {
-      if (isRange) {
-        /* Если есть to, и передано значение для from */
+      if (isDoubleType) {
         if (isFromOption) {
           const correct = Model.getCorrectValueFromDiapason(value, min, to as number);
 
           this.options.from = correct;
           this.notify('updateValues', { option: 'from', value: correct });
         }
+
+        if (isToOption) {
+          const correct = Model.getCorrectValueFromDiapason(value, from, max);
+  
+          this.options.to = correct;
+          this.notify('updateValues', { option: 'to', value: correct });
+        }
       }
 
-      /* Если нет to, и передано значение для from */
-      if (!isRange) {
+      if (isSingleType) {
         const valueFromDiapason = Model.getCorrectValueFromDiapason(value, min, max);
 
         this.options.from = valueFromDiapason;
         this.notify('updateValues', { option: 'from', value: valueFromDiapason });
-      }
-
-      /* Если нет to, и передано значение для to */
-      if (isToOption) {
-        const correct = Model.getCorrectValueFromDiapason(value, from, max);
-
-        this.options.to = correct;
-        this.notify('updateValues', { option: 'to', value: correct });
       }
     }
   }
@@ -93,24 +91,22 @@ class Model extends Observer {
   }
 
   private handleFromTo (): void {
-    const { min, max, from, to } = this.correctOptions;
-    const hasTo = to !== undefined && !Number.isNaN(to);
+    const { min, max, from, to, type } = this.correctOptions;
+    const isDoubleType = type === 'double';
+    const isSingleType = type === 'single';
     const isNanFrom = Number.isNaN(from);
-    const correctFrom = Model.getCorrectValueFromDiapason(from, min, max);
+    const isNanTo = Number.isNaN(to);
+    const correctFrom = isNanFrom ? min : Model.getCorrectValueFromDiapason(from, min, max);
 
-    if (hasTo) {
-      const correctTo = Model.getCorrectValueFromDiapason(to as number, min, max);
+    if (isDoubleType) {
+      const correctTo = isNanTo ? max : Model.getCorrectValueFromDiapason(to as number, min, max);
 
       this.correctOptions.from = Model.getCorrectValueFromDiapason(correctFrom, min, correctTo);
       this.correctOptions.to = Model.getCorrectValueFromDiapason(correctTo, correctFrom, max);
     }
 
-    if (!hasTo) {
-      if (!isNanFrom) {
-        this.correctOptions.from = correctFrom;
-      } else {
-        this.correctOptions.from = min;
-      }
+    if (isSingleType) {
+      this.correctOptions.from = correctFrom;
     }
   }
 

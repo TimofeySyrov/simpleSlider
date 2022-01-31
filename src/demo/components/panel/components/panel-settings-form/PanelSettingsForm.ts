@@ -28,24 +28,27 @@ class PanelSettingsForm extends Observer {
       from,
       to,
       step,
+      type,
       direction,
       orientation,
       withRange,
       withScale,
       withThumb,
     } = this.sliderOptions;
-    const isRange = to !== undefined && !Number.isNaN(to);
+    const isDoubleType = type === 'double';
 
     nodes.min.value = `${min}`;
     nodes.max.value = `${max}`;
     nodes.from.value = `${from}`;
-    if (isRange) nodes.to.value = `${to}`;
+    nodes.to.value = isDoubleType ? `${to}` : '';
     nodes.step.value = `${step}`;
+    nodes[type].checked = true;
     nodes[orientation].checked = true;
     nodes[direction].checked = true;
     nodes.withRange.checked = withRange;
     nodes.withThumb.checked = withThumb;
     nodes.withScale.checked = withScale;
+    nodes.to.disabled = !isDoubleType;
   }
 
   private init (): void {
@@ -65,6 +68,8 @@ class PanelSettingsForm extends Observer {
         from: body.querySelector('[data-option-type="from"]') as HTMLInputElement,
         to: body.querySelector('[data-option-type="to"]') as HTMLInputElement,
         step: body.querySelector('[data-option-type="step"]') as HTMLInputElement,
+        single: body.querySelector('[data-option-type="single"]') as HTMLInputElement,
+        double: body.querySelector('[data-option-type="double"]') as HTMLInputElement,
         horizontal: body.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
         vertical: body.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
         ltr: body.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
@@ -87,6 +92,8 @@ class PanelSettingsForm extends Observer {
     nodes.step.addEventListener('change', this.handleInputChange);
 
     /* Input type of RADIO */
+    nodes.single.addEventListener('change', this.handleInputChange);
+    nodes.double.addEventListener('change', this.handleInputChange);
     nodes.horizontal.addEventListener('change', this.handleInputChange);
     nodes.vertical.addEventListener('change', this.handleInputChange);
     nodes.ltr.addEventListener('change', this.handleInputChange);
@@ -102,20 +109,18 @@ class PanelSettingsForm extends Observer {
     const { nodes } = this;
 
     const newOptions: Options = {
-      min: nodes.min.value ? parseFloat(nodes.min.value) : this.sliderOptions.min,
-      max: nodes.max.value ? parseFloat(nodes.max.value) : this.sliderOptions.max,
-      step: nodes.step.value ? parseFloat(nodes.step.value) : this.sliderOptions.step,
-      from: nodes.from.value ? parseFloat(nodes.from.value) : this.sliderOptions.min,
+      min: parseFloat(nodes.min.value),
+      max: parseFloat(nodes.max.value),
+      step: parseFloat(nodes.step.value),
+      from: parseFloat(nodes.from.value),
+      to: parseFloat(nodes.to.value),
+      type: nodes.single.checked ? 'single' : 'double',
       orientation: nodes.horizontal.checked ? 'horizontal' : 'vertical',
       direction: nodes.ltr.checked ? 'ltr' : 'rtl',
       withRange: nodes.withRange.checked,
       withThumb: nodes.withThumb.checked,
       withScale: nodes.withScale.checked,
     };
-
-    if (nodes.to.value) {
-      newOptions.to = parseFloat(nodes.to.value);
-    }
 
     this.notify('changeOptions', newOptions);
   }

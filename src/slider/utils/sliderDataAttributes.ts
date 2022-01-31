@@ -6,6 +6,7 @@ const sliderDataAttributes: SliderDataAttributes = {
   from: 'data-from',
   to: 'data-to',
   step: 'data-step',
+  type: 'data-type',
   direction: 'data-direction',
   orientation: 'data-orientation',
   withRange: 'data-with-range',

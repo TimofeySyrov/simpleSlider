@@ -21,10 +21,10 @@ class Range {
   }
 
   public setLength (fromValue: number, toValue: number): void {
-    const { orientation, direction, withRange, to } = this.options;
+    const { orientation, direction, withRange, type } = this.options;
     const isVertical = orientation === 'vertical';
     const isLtrDirection = direction === 'ltr';
-    const isRange = to !== undefined && !Number.isNaN(toValue);
+    const isDoubleType = type === 'double';
     const sideStart = isVertical ? 'bottom' : 'left';
     const sideEnd = isVertical ? 'top' : 'right';
 
@@ -32,7 +32,7 @@ class Range {
       const fromPercent = fromValue;
       const toPercent = 100 - toValue;
 
-      if (isRange) {
+      if (isDoubleType) {
         this.dom.style[sideStart] = isLtrDirection ? `${fromPercent}%` : `${100 - toPercent}%`;
         this.dom.style[sideEnd] = isLtrDirection ? `${toPercent}%` : `${100 - fromPercent}%`;
       } else {

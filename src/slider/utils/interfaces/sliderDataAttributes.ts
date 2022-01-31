@@ -4,6 +4,7 @@ interface SliderDataAttributes {
   from: string;
   to: string;
   step: string;
+  type: string;
   direction: string;
   orientation: string;
   withRange: string;

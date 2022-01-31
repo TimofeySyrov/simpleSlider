@@ -76,9 +76,9 @@ class View extends Observer {
   }
 
   private render () {
-    const { withRange, withThumb, withScale } = this.options;
+    const { withRange, withThumb, withScale, type } = this.options;
     const { bar, range, from, to, scale } = this.components;
-    const isRange = this.options.to !== undefined && !Number.isNaN(this.options.to);
+    const isDoubleType = type === 'double';
     const hasSlider = this.domParent.contains(this.domSlider);
     const hasBar = this.domSlider.contains(bar.getDom());
     const hasFrom = bar.getDom().contains(from.handle.getDom());
@@ -101,15 +101,15 @@ class View extends Observer {
       bar.getDom().appendChild(from.handle.getDom());
     }
 
-    if (!isRange) {
-      if (hasTo) {
-        bar.getDom().removeChild(to.handle.getDom());
+    if (isDoubleType) {
+      if (!hasTo) {
+        bar.getDom().appendChild(to.handle.getDom());
       }
     }
 
-    if (isRange) {
-      if (!hasTo) {
-        bar.getDom().appendChild(to.handle.getDom());
+    if (!isDoubleType) {
+      if (hasTo) {
+        bar.getDom().removeChild(to.handle.getDom());
       }
     }
 
@@ -228,13 +228,14 @@ class View extends Observer {
   }
 
   private chooseToggleByCoords (event: MouseEvent): ToggleType {
+    const { type } = this.options;
     const { bar, from, to } = this.components;
-    const isRange = this.options.to !== undefined && !Number.isNaN(this.options.to);
+    const isDoubleType = type === 'double';
     const barLenght = bar.getLength();
     const fromValue = from.handle.getCoords(barLenght);
     const mouseCoords = bar.getRelativeCoords(event);
 
-    if (isRange) {
+    if (isDoubleType) {
       const toValue = to.handle.getCoords(barLenght);
       const rangeMiddle = (toValue - fromValue) / 2;
       const valueFromRangeMiddle = (mouseCoords - fromValue);
@@ -276,11 +277,13 @@ class View extends Observer {
   }
 
   private setValues (): void {
-    const { from, to } = this.options;
-    const isRange = to !== undefined && !Number.isNaN(to);
+    const { from, to, type } = this.options;
+    const isDoubleType = type === 'double';
 
     this.setToggleValue('from', from);
-    if (isRange) this.setToggleValue('to', to as number);
+    if (isDoubleType) {
+      this.setToggleValue('to', to as number);
+    }
   }
 }
 
