@@ -46,7 +46,6 @@ class PanelSettingsForm extends Observer {
     nodes.withRange.checked = withRange;
     nodes.withThumb.checked = withThumb;
     nodes.withScale.checked = withScale;
-    nodes.to.disabled = !isRange;
   }
 
   private init (): void {
