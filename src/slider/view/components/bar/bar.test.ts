@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
- import Options from '../../../utils/interfaces/options';
-import defaultModelOptions from '../../../utils/defaultOptions';
+import Options from '../../../utils/interfaces/options';
+import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Bar from './bar';
 
 describe('Bar:', () => {
-  const bar = new Bar(defaultModelOptions);
+  const bar = new Bar(defaultOptions);
 
   /* Фикс получения размеров DOM элемента */
   Object.defineProperties(window.HTMLElement.prototype, {
@@ -26,13 +26,13 @@ describe('Bar:', () => {
   });
 
   beforeEach(() => {
-    bar.updateState(defaultModelOptions);
+    bar.updateState(defaultOptions);
   });
 
   describe('updateState:', () => {
     test('должен обновлять состояние бара', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{ orientation: 'vertical' },
       };
 

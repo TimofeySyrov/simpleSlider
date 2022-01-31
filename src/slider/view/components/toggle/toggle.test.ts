@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 import Options from '../../../utils/interfaces/options';
-import defaultModelOptions from '../../../utils/defaultOptions';
+import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Toggle from './toggle';
     
 describe('Toggle:', () => {
-  const toggle = new Toggle(defaultModelOptions);
+  const toggle = new Toggle(defaultOptions);
     
   /* Фикс получения размеров DOM элемента */
   Object.defineProperties(window.HTMLElement.prototype, {
@@ -26,13 +26,13 @@ describe('Toggle:', () => {
   });
     
   beforeEach(() => {
-    toggle.updateState(defaultModelOptions);
+    toggle.updateState(defaultOptions);
   });
     
   describe('updateState:', () => {
     test('должен обновлять состояние ползунка', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{ orientation: 'vertical' },
       };
   

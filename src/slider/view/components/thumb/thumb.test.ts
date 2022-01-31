@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 import Options from '../../../utils/interfaces/options';
-import defaultModelOptions from '../../../utils/defaultOptions';
+import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Thumb from './thumb';
    
 describe('Thumb:', () => {
-  const thumb = new Thumb(defaultModelOptions);
+  const thumb = new Thumb(defaultOptions);
    
   /* Фикс получения размеров DOM элемента */
   Object.defineProperties(window.HTMLElement.prototype, {
@@ -26,13 +26,13 @@ describe('Thumb:', () => {
   });
    
   beforeEach(() => {
-    thumb.updateState(defaultModelOptions);
+    thumb.updateState(defaultOptions);
   });
    
   describe('updateState:', () => {
     test('должен обновлять состояние подсказки', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{ orientation: 'vertical' },
       };
  

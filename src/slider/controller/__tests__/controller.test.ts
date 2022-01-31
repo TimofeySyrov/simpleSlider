@@ -38,6 +38,7 @@ describe('Controller:', () => {
       const newFrom: UpdateValues = { option: 'from', value: 57 };
       const newTo: UpdateValues = { option: 'to', value: 97 };
 
+      controller.updateOptions({ type: 'double' });
       controller.updateValues(newTo);
       controller.updateValues(newFrom);
 
@@ -54,6 +55,7 @@ describe('Controller:', () => {
         step: 2,
         from: 10,
         to: 22,
+        type: 'double',
         orientation: 'vertical',
         direction: 'rtl',
         withRange: false,
@@ -67,6 +69,7 @@ describe('Controller:', () => {
       newDomParent.setAttribute('data-step', `${newOptions.step}`);
       newDomParent.setAttribute('data-from', `${newOptions.from}`);
       newDomParent.setAttribute('data-to', `${newOptions.to}`);
+      newDomParent.setAttribute('data-type', `${newOptions.type}`);
       newDomParent.setAttribute('data-orientation', `${newOptions.orientation}`);
       newDomParent.setAttribute('data-direction', `${newOptions.direction}`);
       newDomParent.setAttribute('data-with-range', `${newOptions.withRange}`);

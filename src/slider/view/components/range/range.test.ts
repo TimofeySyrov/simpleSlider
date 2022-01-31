@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import defaultModelOptions from '../../../utils/defaultOptions';
+import defaultOptions from '../../../utils/defaultOptions';
 import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Range from './range';
  
 describe('Range:', () => {
-  const range = new Range(defaultModelOptions);
+  const range = new Range(defaultOptions);
  
   /* Фикс получения размеров DOM элемента */
   Object.defineProperties(window.HTMLElement.prototype, {
@@ -26,13 +26,13 @@ describe('Range:', () => {
   });
  
   beforeEach(() => {
-    range.updateState(defaultModelOptions);
+    range.updateState(defaultOptions);
   });
  
   describe('updateState:', () => {
     test('должен обновлять состояние диапазона', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{ orientation: 'vertical' },
       };
 
@@ -52,7 +52,7 @@ describe('Range:', () => {
     describe('при From:', () => {
       test('должен корректно задавать текущее значение диапазона при ltr положении', () => {
         const newOptions: Options = {
-          ...defaultModelOptions,
+          ...defaultOptions,
           ...{
             orientation: 'horizontal',
             from: 35,
@@ -67,7 +67,7 @@ describe('Range:', () => {
       });
       test('должен корректно задавать текущее значение диапазона при rtl положении', () => {
         const newOptions: Options = {
-          ...defaultModelOptions,
+          ...defaultOptions,
           ...{
             direction: 'rtl',
             from: 35,
@@ -84,11 +84,12 @@ describe('Range:', () => {
     describe('при From и To:', () => {
       test('должен корректно задавать текущее значение диапазона при ltr положении', () => {
         const newOptions: Options = {
-          ...defaultModelOptions,
+          ...defaultOptions,
           ...{
             orientation: 'vertical',
             from: 35,
             to: 75,
+            type: 'double',
           },
         };
   
@@ -100,12 +101,13 @@ describe('Range:', () => {
       });
       test('должен корректно задавать текущее значение диапазона при rtl положении', () => {
         const newOptions: Options = {
-          ...defaultModelOptions,
+          ...defaultOptions,
           ...{
             orientation: 'vertical',
             direction: 'rtl',
             from: 35,
             to: 75,
+            type: 'double',
           },
         };
   

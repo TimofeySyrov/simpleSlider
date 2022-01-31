@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 import Options from '../../../utils/interfaces/options';
-import defaultModelOptions from '../../../utils/defaultOptions';
+import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Scale from './scale';
   
 describe('Scale:', () => {
-  const scale = new Scale(defaultModelOptions);
+  const scale = new Scale(defaultOptions);
   
   /* Фикс получения размеров DOM элемента */
   Object.defineProperties(window.HTMLElement.prototype, {
@@ -26,13 +26,13 @@ describe('Scale:', () => {
   });
   
   beforeEach(() => {
-    scale.updateState(defaultModelOptions);
+    scale.updateState(defaultOptions);
   });
   
   describe('updateState:', () => {
     test('должен обновлять состояние шкалы', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{ orientation: 'vertical' },
       };
 

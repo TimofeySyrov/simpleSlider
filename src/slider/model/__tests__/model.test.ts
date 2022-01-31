@@ -11,11 +11,13 @@ describe('Model:', () => {
 
   describe('updateOptions:', () => {
     test('должен обновить опции слайдера на входящие', () => {
-      const newOptions: Options = {
+      const newOptions: Partial<Options> = {
         min: 10,
         max: 50,
         step: 2,
         from: 10,
+        to: 20,
+        type: 'double',
         orientation: 'vertical',
         direction: 'rtl',
         withRange: false,
@@ -25,7 +27,7 @@ describe('Model:', () => {
 
       model.updateOptions(newOptions);
 
-      expect(model.options).toStrictEqual(newOptions);
+      expect(model.options).toEqual(newOptions);
     });
 
     test('должен оставить текущие опции при пустом переданном объекте', () => {
@@ -49,7 +51,11 @@ describe('Model:', () => {
     test('должен вернуть входящее значение, если оно в диапазоне слайдера', () => {
       const newOptions: Options = {
         ...defaultOptions,
-        ...{ from: 30, to: 70 },
+        ...{
+          type: 'double',
+          from: 30,
+          to: 70,
+        },
       };
       const { from, to } = newOptions;
 
@@ -62,7 +68,11 @@ describe('Model:', () => {
     test('должен прировнять входящие значения, если минимальное больше максимального', () => {
       const newOptions: Options = {
         ...defaultOptions,
-        ...{ from: 33, to: 10 },
+        ...{
+          type: 'double',
+          from: 33,
+          to: 10,
+        },
       };
       const { from, to } = newOptions;
 
@@ -81,6 +91,7 @@ describe('Model:', () => {
         step: 2,
         from: 10,
         to: 25,
+        type: 'double',
         orientation: 'vertical',
         direction: 'rtl',
         withRange: false,
@@ -97,6 +108,7 @@ describe('Model:', () => {
     });
 
     test('должен корректно обновлять значения', () => {
+      model.updateOptions({ type: 'double' });
       model.updateValues({ option: 'from', value: 25 });
       model.updateValues({ option: 'to', value: 1 });
 

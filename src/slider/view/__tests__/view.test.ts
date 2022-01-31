@@ -5,13 +5,13 @@ import $ from 'jquery';
 
 import Options from '../../utils/interfaces/options';
 import { UpdateValues } from '../../utils/types/namespace';
-import defaultModelOptions from '../../utils/defaultOptions';
+import defaultOptions from '../../utils/defaultOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
 import View from '../View';
 
 describe('View:', () => {
   const domParent = document.createElement('div');
-  const view = new View(domParent, defaultModelOptions);
+  const view = new View(domParent, defaultOptions);
   const getNodes = (body: HTMLElement) => ({
     slider: body.querySelector(`.${sliderClassNames.slider.main}`) as HTMLElement,
     bar: body.querySelector(`.${sliderClassNames.bar.main}`) as HTMLElement,
@@ -29,21 +29,24 @@ describe('View:', () => {
   });
 
   beforeEach(() => {
-    view.updateOptions(defaultModelOptions);
+    view.updateOptions(defaultOptions);
   });
 
   describe('updateOptions:', () => {
     test('должен обновлять опции', () => {
       const newOptions: Options = {
-        min: 10,
-        max: 50,
-        step: 2,
-        orientation: 'vertical',
-        direction: 'ltr',
-        from: 10,
-        withRange: false,
-        withThumb: true,
-        withScale: false,
+        ...defaultOptions,
+        ...{
+          min: 10,
+          max: 50,
+          step: 2,
+          orientation: 'vertical',
+          direction: 'ltr',
+          from: 10,
+          withRange: false,
+          withThumb: true,
+          withScale: false,
+        },
       };
 
       view.updateOptions(newOptions);
@@ -61,8 +64,12 @@ describe('View:', () => {
   describe('UpdateValues:', () => {
     test('должен обновлять значения позлунков слайдера', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
-        ...{ from: 25, to: 50 },
+        ...defaultOptions,
+        ...{
+          type: 'double',
+          from: 25,
+          to: 50,
+        },
       };
       const newToValue: UpdateValues = { option: 'to', value: 76 };
       const newFromValue: UpdateValues = { option: 'from', value: 1 };
@@ -81,8 +88,9 @@ describe('View:', () => {
   describe('initComponents, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{
+          type: 'double',
           orientation: 'vertical',
           from: 25,
           to: 50,
@@ -107,8 +115,11 @@ describe('View:', () => {
   describe('render:', () => {
     test('должен добавлять отсутствующие dom-элементы subView', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
-        ...{ to: 100 },
+        ...defaultOptions,
+        ...{
+          to: 100,
+          type: 'double',
+        },
       };
 
       view.updateOptions(newOptions);
@@ -123,9 +134,10 @@ describe('View:', () => {
 
     test('должен удалять лишние dom-элементы subView', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
+        ...defaultOptions,
         ...{
           to: 100,
+          type: 'double',
           withThumb: false,
           withRange: false,
           withScale: false,
@@ -146,8 +158,12 @@ describe('View:', () => {
   describe('updateSliderState:', () => {
     test('должен корректно задавать классы для subView', () => {
       const newOptions: Options = {
-        ...defaultModelOptions,
-        ...{ orientation: 'vertical', to: 100 },
+        ...defaultOptions,
+        ...{
+          orientation: 'vertical',
+          to: 100,
+          type: 'double',
+        },
       };
 
       view.updateOptions(newOptions);
@@ -203,7 +219,7 @@ describe('View:', () => {
       describe('при vertical положении:', () => {
         test('при ltr положении', () => {
           const newOptions: Options = {
-            ...defaultModelOptions,
+            ...defaultOptions,
             ...{
               orientation: 'vertical',
               from: 99.9,
@@ -222,12 +238,13 @@ describe('View:', () => {
 
         test('при rtl положении', () => {
           const newOptions: Options = {
-            ...defaultModelOptions,
+            ...defaultOptions,
             ...{
               orientation: 'vertical',
               direction: 'rtl',
               from: 0,
               to: 20,
+              type: 'double',
             },
           };
     
@@ -245,7 +262,7 @@ describe('View:', () => {
       describe('при horizontal положении:', () => {
         test('при ltr положении', () => {
           const newOptions: Options = {
-            ...defaultModelOptions,
+            ...defaultOptions,
             ...{ from: 43 },
           };
     
@@ -261,11 +278,12 @@ describe('View:', () => {
 
         test('при rtl положении', () => {
           const newOptions: Options = {
-            ...defaultModelOptions,
+            ...defaultOptions,
             ...{
               direction: 'rtl',
               from: 27.4,
               to: 50,
+              type: 'double',
             },
           };
     
