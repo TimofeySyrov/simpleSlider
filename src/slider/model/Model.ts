@@ -31,26 +31,29 @@ class Model extends Observer {
     
     if (isValue) {
       if (isRange) {
+        /* Если есть to, и передано значение для from */
         if (isFromOption) {
-          const correct = Model.getCorrectValueFromDiapason(value, min, to);
+          const correct = Model.getCorrectValueFromDiapason(value, min, to as number);
 
           this.options.from = correct;
           this.notify('updateValues', { option: 'from', value: correct });
         }
-        
-        if (isToOption) {
-          const correct = Model.getCorrectValueFromDiapason(value, from, max);
-
-          this.options.to = correct;
-          this.notify('updateValues', { option: 'to', value: correct });
-        }
       }
 
+      /* Если нет to, и передано значение для from */
       if (!isRange) {
         const valueFromDiapason = Model.getCorrectValueFromDiapason(value, min, max);
 
         this.options.from = valueFromDiapason;
         this.notify('updateValues', { option: 'from', value: valueFromDiapason });
+      }
+
+      /* Если нет to, и передано значение для to */
+      if (isToOption) {
+        const correct = Model.getCorrectValueFromDiapason(value, from, max);
+
+        this.options.to = correct;
+        this.notify('updateValues', { option: 'to', value: correct });
       }
     }
   }
@@ -92,15 +95,22 @@ class Model extends Observer {
   private handleFromTo (): void {
     const { min, max, from, to } = this.correctOptions;
     const hasTo = to !== undefined && !Number.isNaN(to);
+    const isNanFrom = Number.isNaN(from);
     const correctFrom = Model.getCorrectValueFromDiapason(from, min, max);
 
     if (hasTo) {
-      const correctTo = Model.getCorrectValueFromDiapason(to, min, max);
+      const correctTo = Model.getCorrectValueFromDiapason(to as number, min, max);
 
       this.correctOptions.from = Model.getCorrectValueFromDiapason(correctFrom, min, correctTo);
       this.correctOptions.to = Model.getCorrectValueFromDiapason(correctTo, correctFrom, max);
-    } else {
-      this.correctOptions.from = correctFrom;
+    }
+
+    if (!hasTo) {
+      if (!isNanFrom) {
+        this.correctOptions.from = correctFrom;
+      } else {
+        this.correctOptions.from = min;
+      }
     }
   }
 
