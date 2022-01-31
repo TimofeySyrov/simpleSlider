@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import defaultModelOptions from '../../../utils/defaultModelOptions';
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
+import defaultModelOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Toggle from './toggle';
     
@@ -31,7 +31,7 @@ describe('Toggle:', () => {
     
   describe('updateState:', () => {
     test('должен обновлять состояние ползунка', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{ orientation: 'vertical' },
       };

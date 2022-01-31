@@ -280,7 +280,7 @@ class View extends Observer {
     const isRange = to !== undefined && !Number.isNaN(to);
 
     this.setToggleValue('from', from);
-    if (isRange) this.setToggleValue('to', to);
+    if (isRange) this.setToggleValue('to', to as number);
   }
 }
 

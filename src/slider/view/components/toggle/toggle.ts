@@ -46,11 +46,7 @@ class Toggle {
   }
 
   public setActive (): void {
-    const isActive = this.dom.classList.contains(`${sliderClassNames.toggle.active}`);
-
-    if (!isActive) {
-      this.dom.classList.add(`${sliderClassNames.toggle.active}`);
-    }
+    this.dom.classList.add(`${sliderClassNames.toggle.active}`);
   }
 
   public removeActive (): void {

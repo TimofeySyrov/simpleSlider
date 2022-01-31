@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import defaultModelOptions from '../../../utils/defaultModelOptions';
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+ import Options from '../../../utils/interfaces/options';
+import defaultModelOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
 import Bar from './bar';
 
@@ -31,7 +31,7 @@ describe('Bar:', () => {
 
   describe('updateState:', () => {
     test('должен обновлять состояние бара', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{ orientation: 'vertical' },
       };

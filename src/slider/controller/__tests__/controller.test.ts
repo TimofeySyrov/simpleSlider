@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import IUserOptions from '../../utils/interfaces/IUserOptions';
-import { CurrentValue, UpdateCurrentValue } from '../../utils/types/namespace';
-import defaultModelOptions from '../../utils/defaultModelOptions';
+import Options from '../../utils/interfaces/options';
+import { UpdateValues } from '../../utils/types/namespace';
+import defaultModelOptions from '../../utils/defaultOptions';
 import Controller from '../Controller';
 
 describe('Controller:', () => {
@@ -16,43 +16,33 @@ describe('Controller:', () => {
 
   describe('options:', () => {
     test('должен вернуть опции слайдера', () => {
-      expect(controller.options).toStrictEqual(defaultModelOptions);
-    });
-  });
-
-  describe('events:', () => {
-    test('должен вернуть эвенты слайдера', () => {
-      expect(controller.events.currentValueChanged).toBeTruthy();
-      expect(controller.events.modelOptionsChanged).toBeTruthy();
-      expect(controller.events.onSlide).toBeTruthy();
+      expect(controller.options).toEqual(defaultModelOptions);
     });
   });
 
   describe('updateOptions:', () => {
     test('должен обновлять опции слайдера', () => {
-      const newOptions: IUserOptions = {
+      const newOptions: Partial<Options> = {
         step: 2,
         withScale: false,
       };
 
       controller.updateOptions(newOptions);
 
-      expect(controller.options).toStrictEqual({ ...defaultModelOptions, ...newOptions });
+      expect(controller.options).toEqual({ ...defaultModelOptions, ...newOptions });
     });
   });
 
-  describe('updateCurrentValue:', () => {
+  describe('updateValues:', () => {
     test('должен обновлять текущее значение слайдера', () => {
-      const newOptions: IUserOptions = { type: 'range' };
-      const newFrom: UpdateCurrentValue = { option: 'from', value: 57 };
-      const newTo: UpdateCurrentValue = { option: 'to', value: 97 };
+      const newFrom: UpdateValues = { option: 'from', value: 57 };
+      const newTo: UpdateValues = { option: 'to', value: 97 };
 
-      controller.updateOptions(newOptions);
-      controller.updateCurrentValue(newTo);
-      controller.updateCurrentValue(newFrom);
-      const result: CurrentValue = { from: newFrom.value, to: newTo.value };
+      controller.updateValues(newTo);
+      controller.updateValues(newFrom);
 
-      expect(controller.options.currentValue).toStrictEqual(result);
+      expect(controller.options.from).toEqual(newFrom.value);
+      expect(controller.options.to).toEqual(newTo.value);
     });
   });
 });

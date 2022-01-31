@@ -74,7 +74,7 @@ class Scale {
 
   private createScaleItems (): void {
     this.dom.innerHTML = '';
-    this.getValues().forEach((value) => this.addItem(Number(value.toFixed(1))));
+    this.getValues().forEach((value) => this.addItem(Number(value?.toFixed(1))));
   }
 
   private updateStyles (): void {

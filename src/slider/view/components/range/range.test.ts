@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import defaultModelOptions from '../../../utils/defaultModelOptions';
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import defaultModelOptions from '../../../utils/defaultOptions';
+import Options from '../../../utils/interfaces/options';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Range from './Range';
+import Range from './range';
  
 describe('Range:', () => {
   const range = new Range(defaultModelOptions);
@@ -31,7 +31,7 @@ describe('Range:', () => {
  
   describe('updateState:', () => {
     test('должен обновлять состояние диапазона', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{ orientation: 'vertical' },
       };
@@ -49,18 +49,72 @@ describe('Range:', () => {
   });
  
   describe('setLength:', () => {
-    test('должен задавать текущие значения диапазона', () => {
-      const { from, to } = { from: 35, to: 75 };
-      const newOptions: ICorrectOptions = {
-        ...defaultModelOptions,
-        ...{ orientation: 'vertical', type: 'range' },
-      };
-
-      range.updateState(newOptions);
-      range.setLength(from, to);
- 
-      expect(parseFloat(range.getDom().style.bottom)).toEqual(from);
-      expect(parseFloat(range.getDom().style.top)).toEqual(100 - to);
+    describe('при From:', () => {
+      test('должен корректно задавать текущее значение диапазона при ltr положении', () => {
+        const newOptions: Options = {
+          ...defaultModelOptions,
+          ...{
+            orientation: 'horizontal',
+            from: 35,
+          },
+        };
+  
+        range.updateState(newOptions);
+        range.setLength(35, 0);
+   
+        expect(parseFloat(range.getDom().style.right)).toEqual(65);
+        expect(parseFloat(range.getDom().style.left)).toEqual(0);
+      });
+      test('должен корректно задавать текущее значение диапазона при rtl положении', () => {
+        const newOptions: Options = {
+          ...defaultModelOptions,
+          ...{
+            direction: 'rtl',
+            from: 35,
+          },
+        };
+  
+        range.updateState(newOptions);
+        range.setLength(35, 0);
+   
+        expect(parseFloat(range.getDom().style.right)).toEqual(0);
+        expect(parseFloat(range.getDom().style.left)).toEqual(35);
+      });
+    });
+    describe('при From и To:', () => {
+      test('должен корректно задавать текущее значение диапазона при ltr положении', () => {
+        const newOptions: Options = {
+          ...defaultModelOptions,
+          ...{
+            orientation: 'vertical',
+            from: 35,
+            to: 75,
+          },
+        };
+  
+        range.updateState(newOptions);
+        range.setLength(35, 75);
+   
+        expect(parseFloat(range.getDom().style.bottom)).toEqual(35);
+        expect(parseFloat(range.getDom().style.top)).toEqual(25);
+      });
+      test('должен корректно задавать текущее значение диапазона при rtl положении', () => {
+        const newOptions: Options = {
+          ...defaultModelOptions,
+          ...{
+            orientation: 'vertical',
+            direction: 'rtl',
+            from: 35,
+            to: 75,
+          },
+        };
+  
+        range.updateState(newOptions);
+        range.setLength(35, 75);
+   
+        expect(parseFloat(range.getDom().style.bottom)).toEqual(75);
+        expect(parseFloat(range.getDom().style.top)).toEqual(65);
+      });
     });
   });
 });

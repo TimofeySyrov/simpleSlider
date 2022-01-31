@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import defaultModelOptions from '../../../utils/defaultModelOptions';
-import ICorrectOptions from '../../../utils/interfaces/ICorrectOptions';
+import Options from '../../../utils/interfaces/options';
+import defaultModelOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Thumb from './Thumb';
+import Thumb from './thumb';
    
 describe('Thumb:', () => {
   const thumb = new Thumb(defaultModelOptions);
@@ -31,7 +31,7 @@ describe('Thumb:', () => {
    
   describe('updateState:', () => {
     test('должен обновлять состояние подсказки', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{ orientation: 'vertical' },
       };

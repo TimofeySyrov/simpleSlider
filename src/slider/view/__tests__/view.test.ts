@@ -3,9 +3,9 @@
  */
 import $ from 'jquery';
 
-import ICorrectOptions from '../../utils/interfaces/ICorrectOptions';
-import { UpdateCurrentValue } from '../../utils/types/namespace';
-import defaultModelOptions from '../../utils/defaultModelOptions';
+import Options from '../../utils/interfaces/options';
+import { UpdateValues } from '../../utils/types/namespace';
+import defaultModelOptions from '../../utils/defaultOptions';
 import sliderClassNames from '../../utils/sliderClassNames';
 import View from '../View';
 
@@ -34,55 +34,58 @@ describe('View:', () => {
 
   describe('updateOptions:', () => {
     test('должен обновлять опции', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         min: 10,
         max: 50,
         step: 2,
         orientation: 'vertical',
-        type: 'from-end',
-        currentValue: 10,
+        direction: 'ltr',
+        from: 10,
         withRange: false,
-        withThumb: false,
+        withThumb: true,
         withScale: false,
       };
 
       view.updateOptions(newOptions);
 
-      expect(view.options).toStrictEqual(newOptions);
+      const { slider, range, from, scale } = getNodes(domParent);
+
+      expect(slider.classList.contains(`${sliderClassNames.slider[newOptions.orientation]}`)).toBeTruthy();
+      expect(range).toBeFalsy();
+      expect(scale).toBeFalsy();
+      expect(from.thumb).not.toBeFalsy();
+      expect(from.thumb.textContent).toEqual(`${newOptions.from}`);
     });
   });
 
-  describe('updateCurrentValue:', () => {
+  describe('UpdateValues:', () => {
     test('должен обновлять значения позлунков слайдера', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
-        ...{
-          type: 'range',
-          currentValue: { from: 25, to: 50 },
-        },
+        ...{ from: 25, to: 50 },
       };
-      const newToValue: UpdateCurrentValue = { option: 'to', value: 76 };
-      const newFromValue: UpdateCurrentValue = { option: 'from', value: 1 };
+      const newToValue: UpdateValues = { option: 'to', value: 76 };
+      const newFromValue: UpdateValues = { option: 'from', value: 1 };
       
       view.updateOptions(newOptions);
-      view.updateCurrentValue(newToValue);
-      view.updateCurrentValue(newFromValue);
+      view.updateValues(newToValue);
+      view.updateValues(newFromValue);
 
       const { from, to } = getNodes(domParent);
 
-      expect(from.thumb.innerHTML).toBe(`${newFromValue.value}`);
-      expect(to.thumb.innerHTML).toBe(`${newToValue.value}`);
+      expect(from.thumb.textContent).toBe(`${newFromValue.value}`);
+      expect(to.thumb.textContent).toBe(`${newToValue.value}`);
     });
   });
 
   describe('initComponents, render:', () => {
     test('должны корректно создавать DOM слайдера', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{
           orientation: 'vertical',
-          type: 'range',
-          currentValue: { from: 25, to: 50 },
+          from: 25,
+          to: 50,
         },
       };
 
@@ -103,9 +106,9 @@ describe('View:', () => {
 
   describe('render:', () => {
     test('должен добавлять отсутствующие dom-элементы subView', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
-        ...{ type: 'range' },
+        ...{ to: 100 },
       };
 
       view.updateOptions(newOptions);
@@ -117,11 +120,12 @@ describe('View:', () => {
       expect(to.handle).toBeInstanceOf(HTMLElement);
       expect(to.thumb).toBeInstanceOf(HTMLElement);
     });
+
     test('должен удалять лишние dom-элементы subView', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
         ...{
-          type: 'range',
+          to: 100,
           withThumb: false,
           withRange: false,
           withScale: false,
@@ -132,20 +136,18 @@ describe('View:', () => {
 
       const { range, from, to, scale } = getNodes(domParent);
 
-      /* eslint-disable @typescript-eslint/no-unused-expressions */
-      expect(range).toBeUndefined;
-      expect(from.thumb).toBeUndefined;
-      expect(to.thumb).toBeUndefined;
-      expect(scale).toBeUndefined;
-      /* eslint-enable @typescript-eslint/no-unused-expressions */
+      expect(range).toBeFalsy();
+      expect(from.thumb).toBeFalsy();
+      expect(to.thumb).toBeFalsy();
+      expect(scale).toBeFalsy();
     });
   });
 
   describe('updateSliderState:', () => {
     test('должен корректно задавать классы для subView', () => {
-      const newOptions: ICorrectOptions = {
+      const newOptions: Options = {
         ...defaultModelOptions,
-        ...{ orientation: 'vertical', type: 'range' },
+        ...{ orientation: 'vertical', to: 100 },
       };
 
       view.updateOptions(newOptions);
@@ -177,7 +179,7 @@ describe('View:', () => {
       const sb = jest.fn();
       const { scaleItems } = getNodes(domParent);
 
-      view.events.onSlide.subscribe(sb);
+      view.subscribe('onSlide', sb);
       $(scaleItems[0]).trigger('click');
 
       expect(sb).toBeCalledTimes(1);
@@ -189,7 +191,7 @@ describe('View:', () => {
       const sb = jest.fn();
       const { bar } = getNodes(domParent);
 
-      view.events.onSlide.subscribe(sb);
+      view.subscribe('onSlide', sb);
       bar.dispatchEvent(new Event('mousedown'));
 
       expect(sb).toBeCalledTimes(1);
@@ -199,12 +201,12 @@ describe('View:', () => {
   describe('setRangePosition:', () => {
     describe('должен корректно задавать стили для DOM range элеменета слайдера:', () => {
       describe('при vertical положении:', () => {
-        test('при from-start типе', () => {
-          const newOptions: ICorrectOptions = {
+        test('при ltr положении', () => {
+          const newOptions: Options = {
             ...defaultModelOptions,
             ...{
               orientation: 'vertical',
-              currentValue: 99.9,
+              from: 99.9,
             },
           };
     
@@ -217,13 +219,15 @@ describe('View:', () => {
           expect(rangeTopNum).toEqual(0.1);
           expect(rangeBottomNum).toEqual(0);
         });
-        test('при from-end типе', () => {
-          const newOptions: ICorrectOptions = {
+
+        test('при rtl положении', () => {
+          const newOptions: Options = {
             ...defaultModelOptions,
             ...{
               orientation: 'vertical',
-              type: 'from-end',
-              currentValue: 0,
+              direction: 'rtl',
+              from: 0,
+              to: 20,
             },
           };
     
@@ -234,33 +238,15 @@ describe('View:', () => {
           const rangeBottomNum = parseFloat(range.style.bottom);
     
           expect(rangeTopNum).toEqual(0);
-          expect(rangeBottomNum).toEqual(100);
-        });
-        test('при range типе', () => {
-          const newOptions: ICorrectOptions = {
-            ...defaultModelOptions,
-            ...{
-              orientation: 'vertical',
-              type: 'range',
-              currentValue: { from: 25, to: 68 },
-            },
-          };
-    
-          view.updateOptions(newOptions);
-
-          const { range } = getNodes(domParent);
-          const rangeTopNum = parseFloat(range.style.top);
-          const rangeBottomNum = parseFloat(range.style.bottom);
-    
-          expect(rangeTopNum).toEqual(32);
-          expect(rangeBottomNum).toEqual(25);
+          expect(rangeBottomNum).toEqual(80);
         });
       });
+
       describe('при horizontal положении:', () => {
-        test('при from-start типе', () => {
-          const newOptions: ICorrectOptions = {
+        test('при ltr положении', () => {
+          const newOptions: Options = {
             ...defaultModelOptions,
-            ...{ currentValue: 43 },
+            ...{ from: 43 },
           };
     
           view.updateOptions(newOptions);
@@ -272,30 +258,14 @@ describe('View:', () => {
           expect(rangeLeftNum).toEqual(0);
           expect(rangeRightNum).toEqual(57);
         });
-        test('при from-end типе', () => {
-          const newOptions: ICorrectOptions = {
-            ...defaultModelOptions,
-            ...{
-              type: 'from-end',
-              currentValue: 27.4,
-            },
-          };
-    
-          view.updateOptions(newOptions);
 
-          const { range } = getNodes(domParent);
-          const rangeLeftNum = Number((parseFloat(range.style.left).toFixed(1)));
-          const rangeRightNum = parseFloat(range.style.right);
-    
-          expect(rangeLeftNum).toEqual(72.6);
-          expect(rangeRightNum).toEqual(0);
-        });
-        test('при range типе', () => {
-          const newOptions: ICorrectOptions = {
+        test('при rtl положении', () => {
+          const newOptions: Options = {
             ...defaultModelOptions,
             ...{
-              type: 'range',
-              currentValue: { from: 50, to: 50 },
+              direction: 'rtl',
+              from: 27.4,
+              to: 50,
             },
           };
     
@@ -303,10 +273,10 @@ describe('View:', () => {
 
           const { range } = getNodes(domParent);
           const rangeLeftNum = parseFloat(range.style.left);
-          const rangeRightNum = parseFloat(range.style.right);
+          const rangeRightNum = Number((parseFloat(range.style.right).toFixed(1)));
     
           expect(rangeLeftNum).toEqual(50);
-          expect(rangeRightNum).toEqual(50);
+          expect(rangeRightNum).toEqual(27.4);
         });
       });
     });
