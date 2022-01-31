@@ -1,11 +1,11 @@
-import Options from '../../../../../slider/utils/interfaces/options';
+import Options from '../../../slider/utils/interfaces/options';
 
-class PanelSlider {
+class Slider {
   private body: HTMLElement | null;
   private options: Partial<Options> | undefined;
 
   constructor (domParent: HTMLElement, options?: Partial<Options>) {
-    this.body = domParent.querySelector('.js-panel-slider');
+    this.body = domParent.querySelector('.js-slider');
     this.options = options;
 
     this.init();
@@ -25,4 +25,4 @@ class PanelSlider {
   }
 }
 
-export default PanelSlider;
+export default Slider;
