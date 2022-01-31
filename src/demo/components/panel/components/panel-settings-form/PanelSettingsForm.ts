@@ -22,6 +22,7 @@ class PanelSettingsForm extends Observer {
   @bind
   public updateState (options: Partial<Options>): void {
     const { nodes } = this;
+    this.sliderOptions = { ...this.sliderOptions, ...options };
     const {
       min,
       max,
@@ -33,7 +34,7 @@ class PanelSettingsForm extends Observer {
       withRange,
       withScale,
       withThumb,
-    } = { ...this.sliderOptions, ...options };
+    } = this.sliderOptions;
     const isRange = to !== undefined && !Number.isNaN(to);
 
     nodes.min.value = `${min}`;
