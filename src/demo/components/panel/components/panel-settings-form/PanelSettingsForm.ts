@@ -6,14 +6,14 @@ import INodes from './utils/interfaces/INodes';
 import debounce from './utils/debounce';
 
 class PanelSettingsForm extends Observer {
-  private domParent: HTMLElement;
+  private body: HTMLElement | null;
   private sliderOptions: Options;
   private nodes!: INodes;
 
   constructor (domParent: HTMLElement, options: Options) {
     super();
 
-    this.domParent = domParent;
+    this.body = domParent.querySelector('.js-panel-settings-form');
     this.sliderOptions = options;
 
     this.init();
@@ -57,21 +57,25 @@ class PanelSettingsForm extends Observer {
   }
 
   private findDOMElements (): void {
-    const { domParent } = this;
-    this.nodes = {
-      min: domParent.querySelector('[data-option-type="min"]') as HTMLInputElement,
-      max: domParent.querySelector('[data-option-type="max"]') as HTMLInputElement,
-      from: domParent.querySelector('[data-option-type="from"]') as HTMLInputElement,
-      to: domParent.querySelector('[data-option-type="to"]') as HTMLInputElement,
-      step: domParent.querySelector('[data-option-type="step"]') as HTMLInputElement,
-      horizontal: domParent.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
-      vertical: domParent.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
-      ltr: domParent.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
-      rtl: domParent.querySelector('[data-option-type="rtl"]') as HTMLInputElement,
-      withRange: domParent.querySelector('[data-option-type="withRange"]') as HTMLInputElement,
-      withThumb: domParent.querySelector('[data-option-type="withThumb"]') as HTMLInputElement,
-      withScale: domParent.querySelector('[data-option-type="withScale"]') as HTMLInputElement,
-    };
+    const { body } = this;
+    const hasBody = body !== undefined && body !== null;
+
+    if (hasBody) {
+      this.nodes = {
+        min: body.querySelector('[data-option-type="min"]') as HTMLInputElement,
+        max: body.querySelector('[data-option-type="max"]') as HTMLInputElement,
+        from: body.querySelector('[data-option-type="from"]') as HTMLInputElement,
+        to: body.querySelector('[data-option-type="to"]') as HTMLInputElement,
+        step: body.querySelector('[data-option-type="step"]') as HTMLInputElement,
+        horizontal: body.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
+        vertical: body.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
+        ltr: body.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
+        rtl: body.querySelector('[data-option-type="rtl"]') as HTMLInputElement,
+        withRange: body.querySelector('[data-option-type="withRange"]') as HTMLInputElement,
+        withThumb: body.querySelector('[data-option-type="withThumb"]') as HTMLInputElement,
+        withScale: body.querySelector('[data-option-type="withScale"]') as HTMLInputElement,
+      };
+    }
   }
 
   private bindEventListeners (): void {
