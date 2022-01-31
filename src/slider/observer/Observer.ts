@@ -12,7 +12,12 @@ class Observer implements IObserver {
   }
 
   public unsubscribe (event: string, cb: Function): void {
-    this.subscribers = this.subscribers.filter((item) => item !== { event, cb });
+    this.subscribers = this.subscribers.filter((item) => {
+      const current = item.cb === cb && item.event === event;
+
+      if (!current) return true;
+      return false;
+    });
   }
 
   public notify (event: string, data: ObserverData): void {
