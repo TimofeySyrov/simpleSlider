@@ -1,8 +1,8 @@
-import Bar from '../../../view/components/bar/bar';
-import Range from '../../../view/components/range/range';
-import Scale from '../../../view/components/scale/scale';
-import Thumb from '../../../view/components/thumb/thumb';
-import Toggle from '../../../view/components/toggle/toggle';
+import Bar from '../../../View/components/Bar/Bar';
+import Range from '../../../View/components/Range/Range';
+import Scale from '../../../View/components/Scale/Scale';
+import Thumb from '../../../View/components/Thumb/Thumb';
+import Toggle from '../../../View/components/Toggle/Toggle';
 
 interface ISliderComponents {
   bar: Bar;

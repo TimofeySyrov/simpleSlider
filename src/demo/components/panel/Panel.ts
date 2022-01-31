@@ -2,7 +2,7 @@ import { bind } from 'decko';
 
 import Options from '../../../slider/utils/interfaces/options';
 import { UpdateValues } from '../../../slider/utils/types/namespace';
-import SimpleSlider from '../../../slider/simpleSlider';
+import SimpleSlider from '../../../slider/SimpleSlider';
 import '../../../slider/index';
 import PanelSlider from '../slider/Slider';
 import PanelSettingsForm from './components/panel-settings-form/PanelSettingsForm';
