@@ -4,7 +4,7 @@ import Options from '../../../slider/utils/interfaces/options';
 import { UpdateValues } from '../../../slider/utils/types/namespace';
 import SimpleSlider from '../../../slider/simpleSlider';
 import '../../../slider/index';
-import PanelSlider from './components/panel-slider/PanelSlider';
+import PanelSlider from '../slider/Slider';
 import PanelSettingsForm from './components/panel-settings-form/PanelSettingsForm';
 
 class Panel {

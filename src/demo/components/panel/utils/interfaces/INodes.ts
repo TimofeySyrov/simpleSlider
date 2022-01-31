@@ -6,9 +6,8 @@ interface INodes {
   step: HTMLInputElement,
   vertical: HTMLInputElement,
   horizontal: HTMLInputElement,
-  'from-end': HTMLInputElement,
-  'from-start': HTMLInputElement,
-  'range': HTMLInputElement,
+  'rtl': HTMLInputElement,
+  'ltr': HTMLInputElement,
   withRange: HTMLInputElement,
   withThumb: HTMLInputElement,
   withScale: HTMLInputElement

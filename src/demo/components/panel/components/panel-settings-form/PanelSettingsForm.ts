@@ -2,8 +2,8 @@ import { bind } from 'decko';
 
 import Options from '../../../../../slider/utils/interfaces/options';
 import Observer from '../../../../../slider/observer/Observer';
-import INodes from './utils/interfaces/INodes';
-import debounce from './utils/debounce';
+import INodes from '../../utils/interfaces/INodes';
+import debounce from '../../utils/debounce';
 
 class PanelSettingsForm extends Observer {
   private body: HTMLElement | null;

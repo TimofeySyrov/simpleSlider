@@ -1,10 +1,10 @@
-include ./components/panel-slider/panel-slider.pug
+include ../slider/slider.pug
 include ./components/panel-settings-form/panel-settings-form.pug
 
 mixin panel({ title, sliderOptions, settings }={})
   .panel.js-panel
     .panel__title= title
     .panel__slider-box.js-panel__slider-box
-      +panel-slider(sliderOptions)
+      +slider(sliderOptions)
     .panel__settings-box.js-panel__settings-box
       +panel-settings-form(settings)
