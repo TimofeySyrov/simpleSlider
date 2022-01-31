@@ -4,14 +4,15 @@ import Options from '../../../slider/utils/interfaces/options';
 import { UpdateValues } from '../../../slider/utils/types/namespace';
 import SimpleSlider from '../../../slider/simpleSlider';
 import '../../../slider/index';
+import PanelSlider from './components/panel-slider/PanelSlider';
 import PanelSettingsForm from './components/panel-settings-form/PanelSettingsForm';
 
 class Panel {
   private domParent: HTMLElement;
   private sliderBox: HTMLElement | null;
   private settingsBox: HTMLElement | null;
-  private slider!: SimpleSlider;
   private settingsForm!: PanelSettingsForm;
+  private slider!: SimpleSlider;
 
   constructor (domParent: HTMLElement) {
     this.domParent = domParent;
@@ -22,48 +23,53 @@ class Panel {
   }
 
   private init (): void {
-    this.initSlider();
+    this.initPanelSlider();
     this.initPanelSettingsForm();
     this.bindEventListener();
   }
 
-  private initSlider (): void {
-    const panelSlider = this.sliderBox?.firstElementChild as HTMLElement;
-    const isPanelSlider = panelSlider !== undefined && panelSlider !== null;
+  private initPanelSlider (): void {
+    const { sliderBox } = this;
+    const hasSliderBox = sliderBox !== undefined && sliderBox !== null;
 
-    if (isPanelSlider) {
-      $(panelSlider).simpleSlider();
-      this.slider = $(panelSlider).data('simpleSlider');
+    if (hasSliderBox) {
+      const panelSlider = new PanelSlider(sliderBox);
+      const panelSliderDom = panelSlider.getDom();
+      const hasPanelSliderDom = panelSliderDom !== undefined && panelSliderDom !== null;
+      
+      if (hasPanelSliderDom) {
+        this.slider = $(panelSliderDom).data('simpleSlider');
+      }
     }
   }
 
   private initPanelSettingsForm (): void {
-    const panelForm = this.settingsBox?.firstElementChild as HTMLElement;
-    const isPaneForm = panelForm !== undefined && panelForm !== null;
+    const { settingsBox } = this;
+    const hasSettingsBox = settingsBox !== undefined && settingsBox !== null;
 
-    if (isPaneForm) {
-      this.settingsForm = new PanelSettingsForm(panelForm, this.slider.options);
+    if (hasSettingsBox) {
+      this.settingsForm = new PanelSettingsForm(settingsBox, this.slider.options);
     }
   }
 
   private bindEventListener (): void {
-    this.slider.subscribe('updateOptions', this.handleModelUpdateOptions);
-    this.slider.subscribe('updateValues', this.handleModelValuesUpdate);
-    this.settingsForm.subscribe('changeOptions', this.handleSettingsFormChange);
+    this.slider.subscribe('updateOptions', this.handleSliderUpdateOptions);
+    this.slider.subscribe('updateValues', this.handleSliderUpdateValues);
+    this.settingsForm.subscribe('changeOptions', this.handleSettingsFormChangeOptions);
   }
 
   @bind
-  private handleSettingsFormChange (newOptions: Options) {
+  private handleSettingsFormChangeOptions (newOptions: Options) {
     this.slider.updateOptions(newOptions);
   }
 
   @bind
-  private handleModelUpdateOptions (newOptions: Options) {
+  private handleSliderUpdateOptions (newOptions: Options) {
     this.settingsForm.updateState(newOptions);
   }
 
   @bind
-  private handleModelValuesUpdate ({ option, value }: UpdateValues) {
+  private handleSliderUpdateValues ({ option, value }: UpdateValues) {
     this.settingsForm.updateState({ [option]: value });
   }
 }
