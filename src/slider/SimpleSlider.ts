@@ -1,6 +1,6 @@
 import Options from './utils/interfaces/options';
 import { DomParent, SliderEvents, UpdateValues } from './utils/types/namespace';
-import Controller from './controller/Controller';
+import Controller from './Controller/Controller';
 
 class SimpleSlider {
   private controller: Controller;

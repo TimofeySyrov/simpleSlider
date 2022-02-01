@@ -3,9 +3,9 @@ import { bind } from 'decko';
 import Options from '../utils/interfaces/options';
 import { Direction, DomParent, Orientation, Type, UpdateValues } from '../utils/types/namespace';
 import sliderDataAttributes from '../utils/sliderDataAttributes';
-import Observer from '../observer/Observer';
-import Model from '../model/Model';
-import View from '../view/View';
+import Observer from '../Observer/Observer';
+import Model from '../Model/Model';
+import View from '../View/View';
 
 class Controller extends Observer {
   private domParent: DomParent;

@@ -4,7 +4,7 @@
 import Options from '../../../utils/interfaces/options';
 import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Scale from './scale';
+import Scale from './Scale';
   
 describe('Scale:', () => {
   const scale = new Scale(defaultOptions);

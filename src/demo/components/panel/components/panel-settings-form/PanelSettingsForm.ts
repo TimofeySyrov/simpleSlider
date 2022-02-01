@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 
 import Options from '../../../../../slider/utils/interfaces/options';
-import Observer from '../../../../../slider/observer/Observer';
+import Observer from '../../../../../slider/Observer/Observer';
 import INodes from '../../utils/interfaces/INodes';
 
 class PanelSettingsForm extends Observer {

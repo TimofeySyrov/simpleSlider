@@ -1,6 +1,6 @@
-import Observer from '../observer/Observer';
 import Options from '../utils/interfaces/options';
 import { UpdateValues } from '../utils/types/namespace';
+import Observer from '../Observer/Observer';
 
 class Model extends Observer {
   private correctOptions: Options;

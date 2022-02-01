@@ -4,7 +4,7 @@
 import Options from '../../../utils/interfaces/options';
 import defaultOptions from '../../../utils/defaultOptions';
 import sliderClassNames from '../../../utils/sliderClassNames';
-import Bar from './bar';
+import Bar from './Bar';
 
 describe('Bar:', () => {
   const bar = new Bar(defaultOptions);
