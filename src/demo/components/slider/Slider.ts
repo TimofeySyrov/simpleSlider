@@ -20,7 +20,7 @@ class Slider {
     const hasBody = body !== undefined && body !== null;
 
     if (hasBody) {
-      $(body).simpleSlider(options);
+      $(body as HTMLElement).simpleSlider(options);
     }
   }
 }

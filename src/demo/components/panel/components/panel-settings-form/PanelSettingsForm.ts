@@ -63,20 +63,20 @@ class PanelSettingsForm extends Observer {
 
     if (hasBody) {
       this.nodes = {
-        min: body.querySelector('[data-option-type="min"]') as HTMLInputElement,
-        max: body.querySelector('[data-option-type="max"]') as HTMLInputElement,
-        from: body.querySelector('[data-option-type="from"]') as HTMLInputElement,
-        to: body.querySelector('[data-option-type="to"]') as HTMLInputElement,
-        step: body.querySelector('[data-option-type="step"]') as HTMLInputElement,
-        single: body.querySelector('[data-option-type="single"]') as HTMLInputElement,
-        double: body.querySelector('[data-option-type="double"]') as HTMLInputElement,
-        horizontal: body.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
-        vertical: body.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
-        ltr: body.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
-        rtl: body.querySelector('[data-option-type="rtl"]') as HTMLInputElement,
-        withRange: body.querySelector('[data-option-type="withRange"]') as HTMLInputElement,
-        withThumb: body.querySelector('[data-option-type="withThumb"]') as HTMLInputElement,
-        withScale: body.querySelector('[data-option-type="withScale"]') as HTMLInputElement,
+        min: body?.querySelector('[data-option-type="min"]') as HTMLInputElement,
+        max: body?.querySelector('[data-option-type="max"]') as HTMLInputElement,
+        from: body?.querySelector('[data-option-type="from"]') as HTMLInputElement,
+        to: body?.querySelector('[data-option-type="to"]') as HTMLInputElement,
+        step: body?.querySelector('[data-option-type="step"]') as HTMLInputElement,
+        single: body?.querySelector('[data-option-type="single"]') as HTMLInputElement,
+        double: body?.querySelector('[data-option-type="double"]') as HTMLInputElement,
+        horizontal: body?.querySelector('[data-option-type="horizontal"]') as HTMLInputElement,
+        vertical: body?.querySelector('[data-option-type="vertical"]') as HTMLInputElement,
+        ltr: body?.querySelector('[data-option-type="ltr"]') as HTMLInputElement,
+        rtl: body?.querySelector('[data-option-type="rtl"]') as HTMLInputElement,
+        withRange: body?.querySelector('[data-option-type="withRange"]') as HTMLInputElement,
+        withThumb: body?.querySelector('[data-option-type="withThumb"]') as HTMLInputElement,
+        withScale: body?.querySelector('[data-option-type="withScale"]') as HTMLInputElement,
       };
     }
   }

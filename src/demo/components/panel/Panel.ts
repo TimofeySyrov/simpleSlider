@@ -33,12 +33,12 @@ class Panel {
     const hasSliderBox = sliderBox !== undefined && sliderBox !== null;
 
     if (hasSliderBox) {
-      const panelSlider = new PanelSlider(sliderBox);
+      const panelSlider = new PanelSlider(sliderBox as HTMLElement);
       const panelSliderDom = panelSlider.getDom();
       const hasPanelSliderDom = panelSliderDom !== undefined && panelSliderDom !== null;
       
       if (hasPanelSliderDom) {
-        this.slider = $(panelSliderDom).data('simpleSlider');
+        this.slider = $(panelSliderDom as HTMLElement).data('simpleSlider');
       }
     }
   }
@@ -48,7 +48,7 @@ class Panel {
     const hasSettingsBox = settingsBox !== undefined && settingsBox !== null;
 
     if (hasSettingsBox) {
-      this.settingsForm = new PanelSettingsForm(settingsBox, this.slider.options);
+      this.settingsForm = new PanelSettingsForm(settingsBox as HTMLElement, this.slider.options);
     }
   }
 
